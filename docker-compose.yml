@@ -1,7 +1,7 @@
 services:
   seeknal-worker:
     image: ${SEEKNAL_WORKER_IMAGE:-ghcr.io/mta-tech/seeknal-worker:2.9.5}
-    container_name: seeknal-worker-bpom-neo
+    container_name: seeknal-worker-bpom-pengawasan
     restart: unless-stopped
     pull_policy: always
     working_dir: /app/project
@@ -15,7 +15,7 @@ services:
       SEEKNAL_WORKER_TRANSPORT: http
     volumes:
       - type: bind
-        source: /home/cbnpom/seeknal-bpom-neo
+        source: /home/cbnpom/seeknal-bpom-pengawasan
         target: /app/project
     command: ["--project", "/app/project", "--transport", "http", "--max-concurrency", "20"]
   iba-engine:
