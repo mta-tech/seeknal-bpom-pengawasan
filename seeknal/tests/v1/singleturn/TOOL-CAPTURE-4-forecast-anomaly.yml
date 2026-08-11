@@ -1,0 +1,8 @@
+name: tool_capture_forecast_anomaly
+scenario_id: "TOOL-CAPTURE-4"
+description: "Forecast dengan anomali — harus trigger run_forecast + anomaly otomatis"
+turns:
+  - prompt: "Berapa prediksi jumlah registrasi BTP ERBA untuk6 bulan ke depan?"
+    assert_contains:
+      - "prediksi"
+    note: "BTP ERBA punya CV=0.34, MAPE~25% — kemungkinan besar LEMAH/TOLAK, sehingga anomaly otomatis ter-attach. Tool yang diharapkan: run_forecast (dengan anomaly otomatis jika MAPE>25%)."

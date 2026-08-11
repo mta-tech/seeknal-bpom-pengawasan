@@ -1,0 +1,19 @@
+name: UAT_JP_MINOR_1
+scenario_id: UAT-JP-MINOR-1
+description: 'UAT-JP-MINOR-1 — Scope-agnostic (ERBA/ERLA/UNION valid via assert_any_of). DB ref catatan (BUKAN standar kebenaran).'
+turns:
+- prompt: berapa permohonan perubahan minor yang diterima di tahun 2023?
+  assert_contains:
+  - 'minor'
+  - '2023'
+  assert_any_of:
+  -
+    - '10.198'
+  -
+    - '1.327'
+    - 'ERBA'
+  -
+    - '8.871'
+    - 'ERLA'
+  tolerance_pct: 0
+  note: 'UAT-JP-MINOR-1 — Scope-agnostic. ERBA=note kanonik 1.327; ERLA=live 8.871. SQL ERBA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_erba WHERE jenis_permohonan=''303'' AND tanggal_bayar::text LIKE ''2023%'' AND status IN (''0999'',''0906'',''9999''). SQL ERLA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_rilis_erla WHERE jenis_permohonan=''303'' AND tanggal_bayar::text LIKE ''2023%'' AND status IN (''0999'',''0906'',''9999''). UAT-JP-MINOR-1 — t_produk_3_erba jenis_permohonan=302 (Perubahan Minor), terbit 2023, NIE aktif = 1.327. Dictionary: JENIS_PERMOHONAN kode 302.'

@@ -1,0 +1,19 @@
+name: UAT_BELUM_KATEGORI_1
+scenario_id: UAT-BELUM-KATEGORI-1
+verification_date: '2026-07-23'
+description: 'UAT-BELUM-KATEGORI-1 — Scope-agnostic. Kode jenis_dokumen=000 SAMA di kedua sistem (dictionary shared). Re-verified 23Jul2026 dgn entity `nomor`.'
+turns:
+- prompt: berapa produk yang belum punya kategori risiko di BPOM?
+  assert_contains:
+  - 'belum'
+  assert_any_of:
+  -
+    - '31.052'
+  -
+    - '31.032'
+    - 'ERBA'
+  -
+    - '20'
+    - 'ERLA'
+  tolerance_pct: 5
+  note: 'SQL ERBA: SELECT COUNT(DISTINCT nomor) FROM t_produk_3_erba WHERE jenis_dokumen=''000'' AND nomor<>''''. SQL ERLA: SELECT COUNT(DISTINCT nomor) FROM t_produk_3_rilis_erla WHERE jenis_dokumen=''000'' AND nomor<>''''. GABUNGAN = COUNT(DISTINCT nomor) atas UNION ALL. DB 23Jul2026: ERBA=31.032 · ERLA=20 · gabungan=31.052. TANPA filter status: populasi yang ditanya adalah "belum dikategorikan" (state tersendiri), menumpuk filter status NIE sah akan menghapus populasi itu (predikat §3). Dictionary: JENIS_DOKUMEN sumber="ERLA dan ERBA" kode 000="Belum Dikategorikan" — kode SAMA kedua sistem. JANGAN tertukar: JENIS_DOKUMEN (301 Low/302 High/303 Medium) BEDA namespace dari KATEGORI_DOKUMEN ERBA (301 Tinggi/302 MT/303 MR/304 Tinggi Notifikasi) walau angka kodenya mirip (filter_code §3). KODE TAK TERDAFTAR: kolom jenis_dokumen juga berisi kode 304 di KEDUA sistem yang TIDAK ada di dictionary (~1.4k ERBA / ~2.5k ERLA baris — filter_code §4d). ENTITY: nomor; nilai lama 31.183/20 memakai produk_id.'

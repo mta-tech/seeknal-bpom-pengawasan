@@ -1,0 +1,19 @@
+name: UAT_DICABUT_1
+scenario_id: UAT-DICABUT-1
+verification_date: '2026-07-27'
+description: 'UAT-DICABUT-1 — scope-agnostic. "Dicabut" = status 0009 saja; pasangannya UAT-LC-TERMINASI-1 (compact-V) yang memakai 0009+0000 untuk pertanyaan "dicabut atau dihapus".'
+turns:
+- prompt: berapa izin edar yang sudah dicabut atau dibatalkan BPOM?
+  assert_contains:
+  - 'dicabut'
+  assert_any_of:
+  -
+    - '6.838'
+  -
+    - '5.598'
+    - 'ERBA'
+  -
+    - '1.240'
+    - 'ERLA'
+  tolerance_pct: 5
+  note: 'SQL ERBA: SELECT COUNT(DISTINCT nomor) FROM t_produk_3_erba WHERE status=''0009'' AND trader_id::bigint NOT IN (5,17,50,85) AND nomor<>''''. SQL ERLA: SELECT COUNT(DISTINCT nomor) FROM t_produk_3_rilis_erla WHERE status=''0009'' AND trader_id<>3384 AND nomor<>''''. GABUNGAN: COUNT(DISTINCT nomor) atas UNION ALL kedua query. DB 27Jul2026: ERBA=5.598 · ERLA=1.240 · gabungan=6.838. KODE: dictionary STATUS 0009 = "Dicabut/Dibatalkan" — kode sama di kedua sistem. Prompt menyebut "dicabut atau dibatalkan" yang keduanya ada di dalam deskripsi kode 0009, jadi 0009 SAJA sudah menjawab; kode 0000 "Dihapus/Dibatalkan" (ERBA=246 · ERLA=12) adalah tindakan lain dan hanya ikut bila pengguna menyebut "dihapus" — itu kasus UAT-LC-TERMINASI-1 (0009+0000 = 5.833/1.252/7.085). TANPA FILTER STATUS NIE SAH: populasinya justru didefinisikan oleh status terminasi; menumpuk status IN (''0999'',''0906'',''9999'') akan mengosongkannya. ENTITY: nomor. Pembanding produk_id: ERBA=5.732 · ERLA=2.064 — nilai ERLA lama (2.064) adalah hitungan produk_id, sehingga total lama 7.301 mencampur dua satuan. JANGAN SAMAKAN DENGAN KEDALUWARSA: status dan masa berlaku dua dimensi terpisah — NIE dicabut bisa saja masih di dalam periode berlakunya, dan NIE kedaluwarsa (ERLA status ''0099'', 2.704 NIE) bukan berarti dicabut. Nilai lama 7.301/5.237/2.064.'

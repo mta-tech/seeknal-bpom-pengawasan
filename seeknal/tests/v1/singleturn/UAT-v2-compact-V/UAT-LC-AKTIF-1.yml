@@ -1,0 +1,22 @@
+name: UAT_LC_AKTIF_1
+scenario_id: UAT-LC-AKTIF-1
+verification_date: '2026-07-27'
+description: 'UAT-LC-AKTIF-1 — SCOPE: scope-agnostic. Re-verified 27Jul2026. Kasus DUA TIER status (predikat §3): prompt "masih berlaku" memicu tier AKTIF (0999 saja), berbeda dari tier TERDAFTAR yang dipakai hampir semua berkas lain.'
+turns:
+- prompt: berapa izin edar yang masih berlaku saat ini?
+  assert_contains:
+  - 'berlaku'
+  assert_any_of:
+  -
+    - '308.308'
+  -
+    - '137.632'
+    - 'ERBA'
+  -
+    - '170.676'
+    - 'ERLA'
+  -
+    - '317.094'
+    - 'terdaftar'
+  tolerance_pct: 5
+  note: 'SCOPE = scope-agnostic. SQL ERBA SAJA (tier AKTIF): SELECT COUNT(DISTINCT nomor) FROM t_produk_3_erba WHERE status=''0999'' AND trader_id::bigint NOT IN (5,17,50,85) AND nomor<>''''. SQL ERLA SAJA: SELECT COUNT(DISTINCT nomor) FROM t_produk_3_rilis_erla WHERE status=''0999'' AND trader_id<>3384 AND nomor<>''''. SQL GABUNGAN: SELECT COUNT(DISTINCT nomor) FROM (SELECT nomor FROM t_produk_3_erba WHERE status=''0999'' AND trader_id::bigint NOT IN (5,17,50,85) AND nomor<>'''' UNION ALL SELECT nomor FROM t_produk_3_rilis_erla WHERE status=''0999'' AND trader_id<>3384 AND nomor<>'''') x. DB 27Jul2026 — tier AKTIF: ERBA=137.632 · ERLA=170.676 · gabungan=308.308. DUA TIER, PILIH DARI KATA KERJANYA (predikat §3): "masih berlaku / aktif" → status=''0999'' SAJA (baris 0906 dan 9999 adalah izin yang sudah diubah/digantikan, bukan izin yang sedang berlaku); "terdaftar / total / pernah terbit" → ERBA IN (''0999'',''0906'',''9999'') dan ERLA IN (''0099'',''0999'',''0906'',''9999'') yang per 27Jul2026 memberi ERBA=141.453 · ERLA=175.641 · gabungan=317.094. Frasa "saat ini" pada prompt ini TIDAK berdiri sendiri sebagai pemicu — yang memicu tier aktif adalah "masih berlaku"; bandingkan dgn UAT-TOTAL-1 ("terdaftar ... saat ini") yang tetap di tier terdaftar. Kedua angka disahkan di assert_any_of asalkan diberi label tier-nya. KODE FILTER ERBA vs ERLA: kode status 0999 SAMA di kedua sistem ("Perizinan Berusaha Terbit"), tapi SET status sah untuk tier terdaftar BERBEDA jumlah anggotanya — ERLA punya tambahan ''0099'' (Tidak Berlaku) yang tidak ada padanannya di daftar ERBA. Jadi walau satu kode kebetulan sama, daftar kodenya tidak boleh disalin bulat-bulat antar sistem. JANGAN menambah filter tanggal_exp kecuali pengguna secara eksplisit meminta "masih berlaku dan belum kedaluwarsa" — status dan masa berlaku adalah dua dimensi terpisah (filter_code §4c). ENTITY: "izin edar" → COUNT(DISTINCT nomor) (predikat §1). Pembanding entity produk_id: ERBA=144.896 · ERLA=183.861 — nilai lama berkas ini (ERLA 183.861) adalah hitungan produk_id, sedangkan nilai ERBA lama (140.082) mendekati hitungan nomor; total lama 323.943 mencampur keduanya. Nilai lama 323.943/140.082/183.861.'

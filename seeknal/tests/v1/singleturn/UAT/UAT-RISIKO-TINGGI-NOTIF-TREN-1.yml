@@ -1,0 +1,10 @@
+name: UAT_Risiko_Tinggi_Notifikasi_Tren
+scenario_id: UAT-RISIKO-TINGGI-NOTIF-TREN-1
+description: 'UAT-RISIKO-TINGGI-NOTIF-TREN-1 — [Domain 4: Kategori Risiko] Tren NIE Tinggi Notifikasi ERBA. DB verified 2026-06-17: 2024=519, 2025=1.891, 2026=1.531. Naik drastis mulai 2025 — mungkin kebijakan baru.'
+turns:
+- prompt: bagaimana tren izin edar dengan risiko tinggi notifikasi dari tahun ke tahun?
+  assert_contains:
+  - Tinggi Notifikasi
+  - '1.891'
+  - '2025'
+  note: 'UAT-RISIKO-TINGGI-NOTIF-TREN-1 — ERBA: 2024=519 → 2025=1.891 → 2026=1.531. Tren naik 3.6x dari 2024 ke 2025 = kemungkinan kebijakan baru. Domain: Kategori Risiko.'

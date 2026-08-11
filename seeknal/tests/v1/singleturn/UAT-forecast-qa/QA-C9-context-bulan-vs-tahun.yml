@@ -1,0 +1,10 @@
+name: QA_C9_Context_Bulan_Vs_Tahun
+scenario_id: QA-C9
+description: 'Peta QA C.9 (konteks satuan waktu tepat, P0, status QA: passed). Pertanyaan berbasis bulan harus dijawab per bulan, bukan disalahartikan per tahun.'
+turns:
+- prompt: Berapa proyeksi permohonan ERBA bulan depan saja?
+  assert_contains:
+  - Agustus
+  assert_not_contains:
+  - per tahun
+  note: 'Bulan lengkap terakhir di DB = Juni 2026 → "bulan depan" dari sudut pandang sistem = Agustus 2026 (Juli masih berjalan/belum lengkap) ATAU Juli 2026 jika sistem menganggap Juli sbg titik awal proyeksi. Assert longgar (nama bulan) karena ambiguitas titik-awal ini sah, TAPI jawaban wajib satuan bulan tunggal (periods=1), bukan tahunan.'

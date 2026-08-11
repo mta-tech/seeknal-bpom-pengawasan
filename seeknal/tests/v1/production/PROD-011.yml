@@ -1,0 +1,8 @@
+name: Jenis_Permohonan_Terbanyak
+scenario_id: PROD-011
+description: "PROD-011 — Jenis permohonan yang paling banyak diajukan"
+turns:
+- prompt: "Jenis permohonan apa yang paling banyak diajukan?"
+  assert_contains:
+  - "permohonan"
+  note: "PROD-011 — Group by jenis_permohonan, expects ranked list"

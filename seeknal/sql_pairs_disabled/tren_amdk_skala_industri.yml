@@ -1,0 +1,31 @@
+name: tren_amdk_skala_industri
+prompt: Tren produk Air Minum Dalam Kemasan AMDK berdasarkan skala industri
+intent: Count AMDK products grouped by skala industri with resolved labels.
+sql: |
+  SELECT
+    COALESCE(dd.deskripsi, 'Importir') AS skala_industri,
+    COUNT(*) AS jumlah_produk
+  FROM (
+    SELECT m.skala_industri_id AS skala_industri
+    FROM warehouse.public.t_produk_3_erba t
+    LEFT JOIN warehouse.public.m_trader_rba m ON t.trader_id = m.trader_id
+    WHERE t.jenis_pangan = '1401'
+      AND t.status IN ('0999','0906','9999')
+      AND t.jenis_permohonan IN ('301','305')
+    UNION ALL
+    SELECT m.skala_industri
+    FROM warehouse.public.t_produk_3_rilis_erla t
+    LEFT JOIN warehouse.public.m_trader_rla m ON t.trader_id = m.trader_id
+    WHERE t.jenis_pangan IN ('651', '652', '655')
+      AND t.status IN ('0999','0906','9999')
+      AND t.jenis_permohonan IN ('301','305')
+  ) AS gabungan
+  LEFT JOIN warehouse.public.data_dictionary dd
+    ON dd.kategori = 'SKALA_INDUSTRI dan SKALA_INDUSTRI_ID'
+    AND dd.kode = gabungan.skala_industri::text
+  GROUP BY COALESCE(dd.deskripsi, 'Importir')
+  ORDER BY jumlah_produk DESC
+notes:
+  - Returns AMDK counts by industrial scale with human-readable labels.
+  - Resolves scale IDs via data_dictionary table (kategori = 'SKALA_INDUSTRI dan SKALA_INDUSTRI_ID').
+  - NULL/empty skala_industri is labeled as 'Importir'.

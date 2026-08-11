@@ -1,0 +1,24 @@
+name: tren_btp_per_tahun
+prompt: Tren Jumlah Izin Edar produk bahan tambahan pangan per tahun
+intent: Count distinct BTP NIEs per year across ERBA and ERLA BTP tables.
+sql: |
+  SELECT EXTRACT(YEAR FROM tanggal) AS tahun_terbit,
+         COUNT(DISTINCT nomor) AS jumlah_produk
+  FROM (
+    SELECT nomor, tanggal
+    FROM warehouse.public.t_btp_3_erba
+    WHERE tanggal IS NOT NULL
+      AND status IN ('0999','0906','9999')
+      AND jenis_permohonan IN ('301','305')
+    UNION ALL
+    SELECT nomor, tanggal
+    FROM warehouse.public.t_btp_3_erla
+    WHERE tanggal IS NOT NULL
+      AND status IN ('0099','0999','0906','9999')
+      AND jenis_permohonan IN ('301','304','305')
+  ) AS data_produk
+  GROUP BY EXTRACT(YEAR FROM tanggal)
+  ORDER BY tahun_terbit
+notes:
+  - BTP = Bahan Tambahan Pangan (food additives).
+  - Same status/permohonan logic as product tables.

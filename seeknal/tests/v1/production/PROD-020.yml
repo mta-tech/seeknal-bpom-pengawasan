@@ -1,0 +1,8 @@
+name: Persen_NIE_Dari_Permohonan
+scenario_id: PROD-020
+description: "PROD-020 — Berapa persen produk yang sudah memiliki NIE dari total permohonan"
+turns:
+- prompt: "Berapa persen produk yang sudah memiliki nomor NIE dari total permohonan?"
+  assert_contains:
+  - "persen"
+  note: "PROD-020 — Ratio calculation NIE/permohonan, expects percentage result"

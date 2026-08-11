@@ -1,0 +1,31 @@
+name: nie_per_risiko_2023
+prompt: berapa jumlah NIE per kategori risiko di ERBA tahun 2023?
+sql: |
+  SELECT
+    CASE main.kategori_dokumen
+      WHEN '301' THEN 'Risiko Tinggi'
+      WHEN '304' THEN 'Risiko Tinggi'
+      WHEN '302' THEN 'Risiko Menengah Tinggi'
+      WHEN '303' THEN 'Risiko Menengah Rendah'
+    END AS kategori_risiko,
+    COUNT(DISTINCT main.nomor) AS jumlah_nie
+  FROM warehouse.public.t_produk_3_erba main
+  WHERE main.tanggal >= '2023-01-01' AND main.tanggal < '2024-01-01'
+    AND main.trader_id NOT IN (5, 17, 50, 85)
+    AND main.status IN ('0999','0906','9999')
+    AND main.jenis_permohonan IN ('301','305')
+    AND main.kategori_dokumen IN ('301','302','303','304')
+  GROUP BY 1
+  ORDER BY 2 DESC
+assertions:
+  answer_contains:
+    - "Risiko Tinggi"
+    - "Risiko Menengah Tinggi"
+    - "Risiko Menengah Rendah"
+    - "17.504"
+    - "2023"
+  answer_not_contains:
+    - "'301'"
+    - "'302'"
+    - "'303'"
+  expected_values: false

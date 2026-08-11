@@ -1,0 +1,20 @@
+name: UAT_BAYI_2
+scenario_id: UAT-BAYI-2
+verification_date: '2026-07-23'
+description: 'UAT-BAYI-2 — Scope-agnostic. Menguji beda "status aktif" vs "masih berlaku (belum kedaluwarsa)". Re-verified 23Jul2026 dgn entity `nomor`.'
+turns:
+- prompt: apakah semua izin edar formula bayi tersebut masih berlaku? berapa yang masih aktif?
+  assert_contains:
+  - 'formula bayi'
+  - 'berlaku'
+  assert_any_of:
+  -
+    - '83'
+  -
+    - '61'
+    - 'ERBA'
+  -
+    - '22'
+    - 'ERLA'
+  tolerance_pct: 5
+  note: 'SQL ERBA: SELECT COUNT(DISTINCT nomor) FROM t_produk_3_erba WHERE jenis_pangan IN (''1301'',''1302'') AND status IN (''0999'',''0906'',''9999'') AND trader_id::bigint NOT IN (5,17,50,85) AND nomor<>'''' AND (tanggal_exp IS NULL OR tanggal_exp='''' OR tanggal_exp::date>=CURRENT_DATE). SQL ERLA: SELECT COUNT(DISTINCT nomor) FROM t_produk_3_rilis_erla WHERE nama_kategori ILIKE ''Formula Bayi%'' AND status IN (''0099'',''0999'',''0906'',''9999'') AND trader_id<>3384 AND nomor<>'''' AND tanggal_exp>=CURRENT_DATE. GABUNGAN = COUNT(DISTINCT nomor) atas UNION ALL. DB 23Jul2026: ERBA=61 (dari 61 terdaftar — SEMUA tanggal_exp masih di masa depan) · ERLA=22 (dari 88 terdaftar — 66 sudah lewat tanggal_exp) · gabungan=83 (dari 149). TEMUAN: di ERLA, status kolom TIDAK cukup untuk klaim "masih berlaku" — sistem legacy beku, tidak ada proses pembaruan status, sehingga banyak baris berstatus aktif tapi tanggal_exp sudah lewat; wajib join tanggal_exp (filter_code §4c). ERBA sebaliknya konsisten. CAST: tanggal_exp ERBA bertipe TEXT (perlu ::date + guard kosong), ERLA bertipe timestamp — beda tipe antar sistem. ENTITY: nomor (predikat §1); nilai lama 97/62/159 memakai produk_id.'

@@ -1,0 +1,23 @@
+name: FORECAST_Interval_Melebar_Tingkat_Keyakinan_Berbeda
+scenario_id: FORECAST-3
+description: >
+  FORECAST-3 — Validasi bahwa interval melebar dengan horizon dan Tingkat Keyakinan berbeda.
+  H=1 harus Tinggi, H=2 dan H=3 harus Sedang. Ini structural test formula √H.
+  Jika Tingkat Keyakinan semua sama atau interval tidak melebar = formula tidak diterapkan.
+turns:
+- prompt: Prediksi permohonan untuk bulan depan, 2 bulan ke depan, dan 3 bulan ke depan
+  assert_contains:
+  - Tinggi
+  - Sedang
+  - Rentang Realistis
+  - Proyeksi Detail
+  assert_not_contains:
+  - sigma
+  - p10
+  - p90
+  note: >
+    FORECAST-3 — Interval widening test. H1 harus labeled Tinggi, H2-H3 harus Sedang.
+    Dalam tabel Proyeksi Detail: upper bound H3 > upper bound H1 (interval melebar).
+    Lower bound H3 < lower bound H1 (interval lebih lebar di kedua sisi).
+    Ini memvalidasi formula σ_H = σ × √H diterapkan dengan benar di SQL.
+    Jika semua baris menampilkan Tingkat Keyakinan yang sama = bug.

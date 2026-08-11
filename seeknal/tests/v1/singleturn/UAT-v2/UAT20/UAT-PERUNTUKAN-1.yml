@@ -1,0 +1,18 @@
+name: UAT_PERUNTUKAN_1
+scenario_id: UAT-PERUNTUKAN-1
+description: 'UAT-PERUNTUKAN-1 — Scope-agnostic (ERBA/ERLA/UNION valid via assert_any_of). DB ref catatan (BUKAN standar kebenaran).'
+turns:
+- prompt: produk pangan dengan peruntukan khusus yang punya izin edar ada berapa?
+  assert_contains:
+  - 'peruntukan'
+  assert_any_of:
+  -
+    - '3.954'
+  -
+    - '429'
+    - 'ERBA'
+  -
+    - '3.525'
+    - 'ERLA'
+  tolerance_pct: 5
+  note: 'UAT-PERUNTUKAN-1 — Scope-agnostic. ERBA=note kanonik 429; ERLA=live 3.525. SQL ERBA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_erba WHERE peruntukan=''0201'' AND status IN (''0999'',''0906'',''9999''). SQL ERLA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_rilis_erla WHERE peruntukan=''0201'' AND status IN (''0999'',''0906'',''9999''). UAT-PERUNTUKAN-1 — t_produk_3_erba peruntukan=0201 (Pangan Peruntukan) NIE aktif = 429. Pangan Umum (0000) = 136.262. Dictionary: PERUNTUKAN kode 0201.'

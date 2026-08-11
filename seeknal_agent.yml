@@ -1,0 +1,98 @@
+mode:
+  default: auto
+locale: {}
+
+prompt:
+  # Generic seeknal workflow section (reports/pipelines/publishing) disabled —
+  # irrelevant noise for the BPOM analyst; BPOM flow lives in SEEKNAL_ASK.md + skills.
+  workflow: false
+  custom: |
+    You are a BPOM data analyst operating a GATED procedure (SEEKNAL_ASK document):
+    CLASSIFY -> CLARIFY -> RESOLVE (read predikat.md + filter_code_reference.md once) ->
+    COMMIT (internal) -> EXECUTE (max 6 SQL per turn) -> VERIFY -> ANSWER.
+    A failed gate stops the turn honestly; extra exploration never substitutes for a failed
+    gate. If system/source, subject, event, or time scope is missing, clarify FIRST.
+agent:
+  ask_user:
+    enabled: true
+    auto_select: false
+  request_clarification:
+    enabled: true
+  forecast:
+    enabled: true
+  anomaly:
+    enabled: true
+  upload_to_s3:
+    enabled: true
+  visualize_chart:
+    enabled: true
+    # Charts are part of how a data answer is presented, not an opt-in extra:
+    # any answer carrying data gets one. Purely descriptive answers do not.
+    auto_emit: true
+
+sources:
+  warehouse:
+    source_kind: connected
+    source_type: database
+    connector: postgresql
+    namespace: warehouse
+    access: read_only
+    role: business_source_of_truth
+    priority: 100
+    context_sync:
+      enabled: true
+      refresh_policy: manual
+      stale_after_hours: 24
+      templates:
+      - overview
+      - columns
+      - relationships
+      - profiling
+    dsn_env: WAREHOUSE_URL
+
+# SQLR: send PG-only SQL straight to PostgreSQL. DuckDB's postgres_scanner
+# never pushes aggregation down, so COUNT(DISTINCT ...) over an attached table
+# pulls the raw column across the network first. Any failure on the routed
+# path falls back to DuckDB, so this can change speed but never the answer.
+sql_routing:
+  pg_passthrough: true
+
+agent_harness:
+  # Context rule documents run longer than the 200-line default read window,
+  # so the tail of predikat.md / filter_code_reference.md was never reaching the
+  # model unless it happened to ask for the next page. Sized above the longest
+  # file so one read returns the whole document.
+  read_max_lines: 500
+
+  auto_summarization:
+    # ON so the deterministic history processors (microcompact +
+    # sql_result_compactor) actually register — with enabled:false the engine
+    # skips BOTH and every SQL result stays full-size in history, snowballing
+    # tokens across a long turn. context_manager (LLM summarizer) stays off
+    # for determinism.
+    enabled: false
+    context_manager: true
+    context_manager_max_tokens: 800000
+    summarization_model: "google-gla:gemini-2.0-flash"
+    eviction_token_limit: 20000
+    patch_tool_calls: true
+    microcompact:
+      enabled: false
+      keep_recent_turns_analysis: 2
+    sql_result_compactor:
+      enabled: false
+      min_chars_analysis: 250
+  cost_tracking:
+    enabled: true
+  hooks:
+    enabled: true
+    sql_security: true
+    sql_self_correction: true
+  stuck_loop_detection:
+    enabled: true
+  subagents:
+    enabled: auto
+    include_builtin: true
+    lineage_investigator: true
+  teams:
+    enabled: false

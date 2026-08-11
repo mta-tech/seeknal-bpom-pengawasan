@@ -1,0 +1,9 @@
+name: UAT_Permohonan_Baru_2023
+scenario_id: UAT-JP-BARU-1
+description: 'UAT-JP-BARU-1 — NIE ERBA permohonan baru (jenis_permohonan=301) tahun 2023. DB verified 2026-06-17: 29.888. Uji terjemahan kode JENIS_PERMOHONAN ke "Permohonan Baru". Breakdown 2023: Baru=29.888, Minor=1.327, Mayor=881, Baru Notifikasi=359.'
+turns:
+- prompt: berapa permohonan baru izin edar yang disetujui di tahun 2023?
+  assert_contains:
+  - '29.888'
+  - '2023'
+  note: 'UAT-JP-BARU-1 — jenis_permohonan=301 (Permohonan Baru) ERBA 2023 = 29.888. Dictionary: JENIS_PERMOHONAN kode 301.'

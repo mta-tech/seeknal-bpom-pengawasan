@@ -1,0 +1,21 @@
+name: jumlah_permohonan_per_tahun
+prompt: Berapa jumlah permohonan per tahun
+intent: Count applications grouped by year of payment.
+sql: |
+  SELECT EXTRACT(YEAR FROM tanggal_bayar) AS tahun,
+         COUNT(DISTINCT produk_id) AS jumlah_permohonan
+  FROM (
+    SELECT produk_id, tanggal_bayar, jenis_permohonan FROM warehouse.public.t_produk_3_erba
+    UNION
+    SELECT produk_id, tanggal_bayar, jenis_permohonan FROM warehouse.public.t_btp_3_erba
+    UNION
+    SELECT produk_id, tanggal_bayar, jenis_permohonan FROM warehouse.public.t_produk_3_rilis_erla
+    UNION
+    SELECT produk_id, tanggal_bayar, jenis_permohonan FROM warehouse.public.t_btp_3_erla
+  ) AS a
+  WHERE jenis_permohonan IN ('301','302','303','304','305')
+    AND tanggal_bayar IS NOT NULL
+  GROUP BY EXTRACT(YEAR FROM tanggal_bayar)
+  ORDER BY tahun
+notes:
+  - Uses EXTRACT(YEAR FROM tanggal_bayar) for PostgreSQL compatibility.

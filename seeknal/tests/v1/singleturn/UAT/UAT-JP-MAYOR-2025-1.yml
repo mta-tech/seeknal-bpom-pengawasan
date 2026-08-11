@@ -1,0 +1,10 @@
+name: UAT_Permohonan_Mayor_2025
+scenario_id: UAT-JP-MAYOR-2025-1
+description: 'UAT-JP-MAYOR-2025-1 — NIE ERBA perubahan mayor (jenis_permohonan=302) tahun 2025. DB verified 2026-06-17: 6.636. Tren meningkat signifikan vs 2023=881. Uji terjemahan kode 302 ke "Perubahan Mayor".'
+turns:
+- prompt: berapa permohonan perubahan mayor yang disetujui tahun 2025?
+  assert_contains:
+  - '6.636'
+  - mayor
+  - '2025'
+  note: 'UAT-JP-MAYOR-2025-1 — jenis_permohonan=302 (Perubahan Mayor) ERBA 2025 = 6.636. Dibanding 2023=881 — naik 7x. Tren: bisnis yang matur makin banyak revisi.'

@@ -1,0 +1,13 @@
+name: UAT_MT_2
+scenario_id: UAT-MT-2
+verification_date: '2026-07-23'
+description: 'UAT-MT-2 — single-scope by-design. Phrasing alternatif UAT-MT-1; kanonik & keterbatasan ERLA identik.'
+turns:
+- prompt: ada berapa produk pangan olahan risiko menengah tinggi yang sudah punya izin edar?
+  assert_contains:
+  - 'Menengah Tinggi'
+  assert_any_of:
+  -
+    - '12.130'
+  tolerance_pct: 5
+  note: 'SQL: SELECT COUNT(DISTINCT nomor) FROM t_produk_3_erba WHERE kategori_dokumen=''302'' AND status IN (''0999'',''0906'',''9999'') AND trader_id::bigint NOT IN (5,17,50,85) AND nomor<>''''. DB 23Jul2026 = 12.130. Kanonik identik UAT-MT-1: dictionary KATEGORI_DOKUMEN sumber=ERBA kode 302="Menengah Tinggi"; ERLA tidak bisa mengisolasi MT (jenis_dokumen 303 = seluruh Pangan Medium Risk), jadi ERBA-only. ENTITY: "punya izin edar" → nomor (predikat §1) — bukan produk_id meski prompt memakai kata "produk". Nilai lama 17Jul=12.087.'

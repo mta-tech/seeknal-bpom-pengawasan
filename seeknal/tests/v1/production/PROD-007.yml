@@ -1,0 +1,8 @@
+name: Produk_Impor_Domestik_2024
+scenario_id: PROD-007
+description: "PROD-007 — Produk pangan olahan impor vs dalam negeri tahun 2024"
+turns:
+- prompt: "Berapa produk pangan olahan impor dan dalam negeri tahun 2024?"
+  assert_contains:
+  - "2024"
+  note: "PROD-007 — Import vs domestic comparison, expects two counts for 2024"

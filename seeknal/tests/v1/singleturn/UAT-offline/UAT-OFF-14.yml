@@ -1,0 +1,12 @@
+name: UAT_OFF_Formula_Bayi_JP_Breakdown
+scenario_id: UAT-OFF-14
+verification_date: '2026-06-26'
+description: 'Breakdown jenis permohonan dari izin edar formula bayi yang masih berlaku. DB 26Jun2026 (rows): baru(301+303+305)=267, perubahan(302+303)=200, daftar ulang(304)=18; distinct=285.'
+turns:
+- prompt: Dari 267 izin edar formula bayi yang masih berlaku, apakah semuanya adalah permohonan baru atau ada yang perubahan dan daftar ulang
+  assert_contains:
+  - '285'
+  - baru
+  - perubahan
+  - daftar ulang
+  note: 'Aktif distinct=285. Tidak semua baru. Breakdown transaksi (rows): permohonan baru(301+303+305)=267, perubahan data(302+303)=200, daftar ulang(304)=18. Total rows=485 vs distinct=285.'

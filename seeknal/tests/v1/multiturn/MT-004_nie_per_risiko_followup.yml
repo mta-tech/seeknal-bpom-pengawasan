@@ -1,0 +1,34 @@
+name: nie_per_risiko_followup
+scenario_id: "MT-004"
+description: "Drill-down kategori risiko satu per satu lalu konsolidasi"
+turns:
+  - prompt: "berapa jumlah NIE Risiko Tinggi di ERBA tahun 2023?"
+    assert_contains:
+      - "17.504"
+      - "Risiko Tinggi"
+      - "2023"
+    note: "Baseline risiko T — ERBA 2023"
+  - prompt: "kalau Risiko Menengah Tinggi?"
+    assert_contains:
+      - "3.077"
+      - "Menengah Tinggi"
+    note: "Retain ERBA + 2023 — user cuma ganti kategori risiko"
+  - prompt: "kalau Risiko Menengah Rendah?"
+    assert_contains:
+      - "9.649"
+      - "Menengah Rendah"
+    note: "Retain ERBA + 2023 — lanjut follow-up kategori risiko"
+  - prompt: "tampilkan semuanya per kategori risiko"
+    assert_contains:
+      - "17.504"
+      - "3.077"
+      - "9.649"
+      - "Risiko Tinggi"
+      - "Risiko Menengah Tinggi"
+      - "Risiko Menengah Rendah"
+    note: "Konsolidasi semua kategori — harus nyakup T, MT, MR lengkap"
+  - prompt: "mana yang paling besar?"
+    assert_contains:
+      - "Risiko Tinggi"
+      - "17.504"
+    note: "Ranking dari data T4 — agent harus bandingin hasil sebelumnya"

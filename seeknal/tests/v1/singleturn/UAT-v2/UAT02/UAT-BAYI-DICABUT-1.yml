@@ -1,0 +1,9 @@
+name: UAT_BAYI_DICABUT_1
+scenario_id: UAT-BAYI-DICABUT-1
+description: 'UAT-BAYI-DICABUT-1 — single-scope (by-design).'
+turns:
+- prompt: apakah ada izin edar formula bayi yang dicabut atau dibatalkan BPOM?
+  assert_contains:
+  - 'formula bayi'
+  - 'tidak ditemukan'
+  note: 'UAT-BAYI-DICABUT-1 — DB: tidak ada NIE formula bayi (ERBA kode 1301+1302, ERLA kode 622+604+624) dengan status dicabut/dibatalkan = 0. Dari UAT JSON: sistem sebelumnya bilang "10" (salah, itu kategori lain).'

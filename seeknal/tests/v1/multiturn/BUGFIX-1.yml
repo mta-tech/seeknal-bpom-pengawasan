@@ -1,0 +1,18 @@
+name: UMKM_Followup_Fresh_Query
+scenario_id: BUGFIX-1
+description: "Bug fix: UMKM follow-up harus fresh query, bukan dari memory. Bug lama: agent jawab 10.412 (drop Menengah). DB verified 2026-06-12: UMKM = 12.342"
+turns:
+- prompt: Berapa jumlah NIE pangan olahan per skala industri di ERBA tahun 2023?
+  assert_contains:
+  - Besar
+  - Mikro
+  - Kecil
+  - Menengah
+  - Importir
+  note: 'BUGFIX-1 T1 — Baseline: agent harus tampilkan 5 skala industri dengan jumlahnya'
+- prompt: dari situ, yang UMKM berapa?
+  assert_contains:
+  - UMKM
+  - Menengah
+  - '12.342'
+  note: "BUGFIX-1 T2 — FIX: UMKM harusnya Mikro(5.506)+Kecil(4.906)+Menengah(1.930) = 12.342. Agent harus query ulang (sqls>0), bukan jawab dari memory. Kata 'Menengah' harus muncul di jawaban."

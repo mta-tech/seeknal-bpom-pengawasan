@@ -1,0 +1,10 @@
+name: UAT_LC_Terminasi_Breakdown
+scenario_id: UAT-LC-TERMINASI-1
+description: 'UAT-LC-TERMINASI-1 — [Domain 1: Lifecycle] Breakdown NIE ERBA yang berakhir/terminasi. DB verified 2026-06-17: Dicabut(0009)=5.237, Dihapus(0000)=246. Total terminasi = 5.483.'
+turns:
+- prompt: berapa izin edar yang sudah dicabut atau dihapus BPOM secara keseluruhan?
+  assert_contains:
+  - '5.237'
+  - '246'
+  - dicabut
+  note: 'UAT-LC-TERMINASI-1 — Dicabut/Dibatalkan (0009)=5.237 + Dihapus/Dibatalkan (0000)=246 = 5.483 total terminasi ERBA. Domain: Lifecycle.'

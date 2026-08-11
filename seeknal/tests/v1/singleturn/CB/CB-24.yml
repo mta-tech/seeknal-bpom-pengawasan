@@ -1,0 +1,13 @@
+name: 24_Wilayah dan kategori pangan prioritas pengawasan
+scenario_id: CB-24
+description: 'CB-24 — Expected: Rekomendasi multi-aspek komprehensif'
+turns:
+- prompt: 'tampilkan Wilayah dan kategori pangan mana yang seharusnya menjadi prioritas
+    pengawasan dengan melihat aspek: Jumlah pertumbuhan izin edar tertinggi, tingkat
+    risiko produk, dan status pembatalan komitmen'
+  assert_contains:
+  - prioritas
+  - pengawasan
+  - risiko
+  - komitmen
+  note: 'CB-24 — Expected: Rekomendasi multi-aspek komprehensif'

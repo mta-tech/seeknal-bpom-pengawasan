@@ -1,0 +1,22 @@
+name: permohonan_gabungan_2023
+prompt: berapa total permohonan pangan olahan tahun 2023 dari semua sistem registrasi?
+sql: |
+  SELECT COUNT(DISTINCT produk_id) AS jumlah_permohonan
+  FROM (
+    SELECT produk_id FROM warehouse.public.t_produk_3_erba
+    WHERE tanggal_bayar >= '2023-01-01' AND tanggal_bayar < '2024-01-01'
+      AND jenis_permohonan IN ('301','302','303','304','305')
+      AND trader_id NOT IN (5, 17, 50, 85)
+    UNION ALL
+    SELECT produk_id FROM warehouse.public.t_produk_3_rilis_erla
+    WHERE tanggal_bayar >= '2023-01-01' AND tanggal_bayar < '2024-01-01'
+      AND jenis_permohonan IN ('301','302','303','304','305')
+      AND trader_id != 3384
+  ) gabungan
+assertions:
+  answer_contains:
+    - "2023"
+    - "61.213"
+  answer_not_contains:
+    - "42.329"
+  expected_values: false

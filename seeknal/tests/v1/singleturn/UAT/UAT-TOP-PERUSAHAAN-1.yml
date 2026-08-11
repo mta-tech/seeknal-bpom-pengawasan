@@ -1,0 +1,9 @@
+name: UAT_Top_Perusahaan_NIE_Terbanyak
+scenario_id: UAT-TOP-PERUSAHAAN-1
+description: 'UAT-TOP-PERUSAHAAN-1 — Perusahaan dengan NIE aktif ERBA terbanyak. DB verified 2026-06-17: 1.INTERFOOD SUKSES JASINDO=2.077, 2.BROTHER FOOD INDONESIA=1.319, 3.STAR NIAGA SUKSES=1.317. Uji kemampuan ranking/investigasi.'
+turns:
+- prompt: siapa perusahaan yang paling banyak produknya terdaftar di BPOM?
+  assert_contains:
+  - INTERFOOD
+  - '2.077'
+  note: 'UAT-TOP-PERUSAHAAN-1 — ranking NIE aktif ERBA: INTERFOOD SUKSES JASINDO=2.077, BROTHER FOOD=1.319, STAR NIAGA SUKSES=1.317. Pola investigasi: siapa yang paling aktif.'

@@ -1,0 +1,8 @@
+name: QA_C4_Refusal_Insufficient_Data
+scenario_id: QA-C4
+description: 'Peta QA C.4 (refusal series data kurang, P0, status QA: passed). Tidak ada series natural <10 titik di DB (semua series utama sehat, 45-47 bulan) — jadi diuji dengan window sengaja sempit (6 bulan terakhir), memaksa <10 titik sesuai forecast_guide.md §3 ("Refuse if history < 10 periods").'
+turns:
+- prompt: Prediksi permohonan ERBA untuk 3 bulan ke depan, tapi hanya pakai data 6 bulan terakhir saja
+  assert_contains:
+  - tidak
+  note: 'DB-verified: window Feb-Jul 2026 = 6 bulan data saja (< 10 minimum forecast_guide.md §3). Ekspektasi: DITOLAK dengan alasan data kurang / periode historis tidak cukup, bukan tetap memaksa forecast dari 6 titik. Tidak boleh crash, tidak boleh diam-diam mengabaikan batasan window dan pakai full history tanpa bilang.'

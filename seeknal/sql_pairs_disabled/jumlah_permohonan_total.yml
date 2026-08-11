@@ -1,0 +1,19 @@
+name: jumlah_permohonan_total
+prompt: Berapa jumlah permohonan
+intent: Count total unique applications across all tables.
+sql: |
+  SELECT COUNT(DISTINCT produk_id) AS jumlah_permohonan
+  FROM (
+    SELECT produk_id, tanggal_bayar, jenis_permohonan FROM warehouse.public.t_produk_3_erba
+    UNION
+    SELECT produk_id, tanggal_bayar, jenis_permohonan FROM warehouse.public.t_btp_3_erba
+    UNION
+    SELECT produk_id, tanggal_bayar, jenis_permohonan FROM warehouse.public.t_produk_3_rilis_erla
+    UNION
+    SELECT produk_id, tanggal_bayar, jenis_permohonan FROM warehouse.public.t_btp_3_erla
+  ) AS a
+  WHERE jenis_permohonan IN ('301','302','303','304','305')
+    AND tanggal_bayar IS NOT NULL
+notes:
+  - Returns a single total count of unique applications.
+  - tanggal_bayar must not be null.

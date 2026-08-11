@@ -1,0 +1,10 @@
+name: UAT_BTP_Bentuk_Serbuk
+scenario_id: UAT-BTP-SERBUK-1
+description: 'UAT-BTP-SERBUK-1 — NIE BTP ERBA aktif dengan bentuk sediaan serbuk (bentuk_sediaan=102). DB verified 2026-06-17: 1.796. Uji terjemahan kode BENTUK_SEDIAAN ke label "Serbuk".'
+turns:
+- prompt: ada berapa BTP dalam bentuk serbuk yang terdaftar di BPOM?
+  assert_contains:
+  - '1.796'
+  - serbuk
+  - BTP
+  note: 'UAT-BTP-SERBUK-1 — t_btp_3_erba bentuk_sediaan=102 (Serbuk) status aktif = 1.796. Cair/Pasta(101)=2.274 lebih banyak. Dictionary: BENTUK_SEDIAAN kode 102.'

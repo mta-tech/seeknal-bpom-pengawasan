@@ -1,0 +1,10 @@
+name: 25_Forecasting izin edar 2026-2027 per tingkat risiko
+scenario_id: CB-25
+description: 'CB-25 — Expected: Proyeksi 2026–2027 per risiko'
+turns:
+- prompt: Forecasting izin edar 2026–2027 per tingkat risiko (tren 5 tahun terakhir)
+  assert_contains:
+  - forecast
+  - '2026'
+  - '2027'
+  note: 'CB-25 — Expected: Proyeksi 2026–2027 per risiko'

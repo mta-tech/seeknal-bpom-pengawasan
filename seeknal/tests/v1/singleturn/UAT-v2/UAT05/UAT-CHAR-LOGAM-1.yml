@@ -1,0 +1,18 @@
+name: UAT_CHAR_LOGAM_1
+scenario_id: UAT-CHAR-LOGAM-1
+description: 'UAT-CHAR-LOGAM-1 — Scope-agnostic (ERBA/ERLA/UNION valid via assert_any_of). DB ref catatan (BUKAN standar kebenaran).'
+turns:
+- prompt: ada berapa produk pangan olahan yang menggunakan kemasan logam atau kaleng di BPOM?
+  assert_contains:
+  - 'logam'
+  assert_any_of:
+  -
+    - '49.854'
+  -
+    - '4.568'
+    - 'ERBA'
+  -
+    - '45.286'
+    - 'ERLA'
+  tolerance_pct: 5
+  note: 'UAT-CHAR-LOGAM-1 — Scope-agnostic. ERBA=note kanonik 4.568; ERLA=live 45.286. SQL ERBA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_erba WHERE kemasan_id=''5'' AND status IN (''0999'',''0906'',''9999''). SQL ERLA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_rilis_erla WHERE kemasan_id IN (''35'',''36'') AND status IN (''0999'',''0906'',''9999''). UAT-CHAR-LOGAM-1 — ERBA aktif kemasan logam = 4.568. Termasuk kaleng, tin, aluminium. Domain: Karakteristik Produk.'

@@ -1,0 +1,12 @@
+name: QA_C8_Disambiguation_Query_Vs_Forecast
+scenario_id: QA-C8
+description: 'Peta QA C.8 (disambiguasi intent forecast vs query biasa, P1, status QA: passed). Turn 1 = pertanyaan faktual historis (bpom-analyst), Turn 2 = forecast (bpom-forecaster) — dua skill/tool berbeda, tidak boleh tertukar.'
+turns:
+- prompt: berapa total permohonan ERBA bulan lalu?
+  assert_contains:
+  - Juni
+  note: 'T1 — query historis biasa. "Bulan lalu" dari Jul2026 = Juni 2026. Ekspektasi: bpom-analyst dipanggil, execute_sql biasa, angka FAKTUAL dari DB (bukan proyeksi). DB Jun2026 = 4.691 (permohonan, tanpa filter status).'
+- prompt: kalau begitu, ramalkan bulan depan
+  assert_contains:
+  - Proyeksi
+  note: 'T2 — forecast. Ekspektasi: bpom-forecaster dipanggil (BUKAN bpom-analyst lagi), run_forecast dipakai, jawaban jelas berupa PREDIKSI (kata "Proyeksi"/"prediksi"), bukan angka historis lain. Tool routing T1 vs T2 harus berbeda — inilah inti uji disambiguasi.'

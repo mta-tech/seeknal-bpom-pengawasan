@@ -1,0 +1,30 @@
+name: jumlah_permohonan_per_jenis
+prompt: Berapa jumlah permohonan berdasarkan jenis permohonan
+intent: Count applications grouped by jenis_permohonan code.
+sql: |
+  SELECT
+    COALESCE(dd.deskripsi, sub.jenis_permohonan) AS jenis_permohonan,
+    sub.jumlah_permohonan
+  FROM (
+    SELECT jenis_permohonan,
+           COUNT(DISTINCT produk_id) AS jumlah_permohonan
+    FROM (
+      SELECT produk_id, tanggal_bayar, jenis_permohonan FROM warehouse.public.t_produk_3_erba
+      UNION
+      SELECT produk_id, tanggal_bayar, jenis_permohonan FROM warehouse.public.t_btp_3_erba
+      UNION
+      SELECT produk_id, tanggal_bayar, jenis_permohonan FROM warehouse.public.t_produk_3_rilis_erla
+      UNION
+      SELECT produk_id, tanggal_bayar, jenis_permohonan FROM warehouse.public.t_btp_3_erla
+    ) AS a
+    WHERE jenis_permohonan IN ('301','302','303','304','305')
+      AND tanggal_bayar IS NOT NULL
+    GROUP BY jenis_permohonan
+  ) AS sub
+  LEFT JOIN warehouse.public.data_dictionary dd
+    ON dd.kategori = 'JENIS_PERMOHONAN'
+    AND dd.kode = sub.jenis_permohonan
+  ORDER BY sub.jumlah_permohonan DESC
+notes:
+  - Groups by jenis_permohonan to show breakdown by application type.
+  - Resolves jenis codes via data_dictionary (kategori = 'JENIS_PERMOHONAN').

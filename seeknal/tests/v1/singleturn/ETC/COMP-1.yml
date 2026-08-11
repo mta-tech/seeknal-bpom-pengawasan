@@ -1,0 +1,9 @@
+name: Top_5_Perusahaan_2025
+scenario_id: COMP-1
+description: 'COMP-1 — Top 5 perusahaan 2025. DB verified 2026-06-10: Interfood=603, Star Niaga=600, Brother Food=461'
+turns:
+- prompt: 5 perusahaan dengan izin edar terbanyak tahun 2025
+  assert_contains:
+  - perusahaan
+  - 2025
+  note: 'COMP-1 — DB aktual (t_produk_3_erba, nama_trader, tanggal 2025): Interfood=603, Star Niaga=600, Brother Food=461, Libra Food=366, Aneka Dasuib=307. Tolerance ±5%.'

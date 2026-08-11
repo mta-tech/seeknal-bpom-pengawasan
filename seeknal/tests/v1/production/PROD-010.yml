@@ -1,0 +1,8 @@
+name: Rata_Waktu_Proses_NIE
+scenario_id: PROD-010
+description: "PROD-010 — Rata-rata waktu proses penerbitan NIE dari tanggal permohonan"
+turns:
+- prompt: "Berapa rata-rata waktu proses penerbitan NIE dari tanggal permohonan sampai tanggal terbit?"
+  assert_contains:
+  - "rata"
+  note: "PROD-010 — Date difference calculation, expects average days metric"

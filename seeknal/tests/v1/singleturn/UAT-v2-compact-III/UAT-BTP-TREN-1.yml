@@ -1,0 +1,16 @@
+name: UAT_BTP_TREN_1
+scenario_id: UAT-BTP-TREN-1
+verification_date: '2026-07-23'
+description: 'UAT-BTP-TREN-1 — single-scope by-design (prompt menyebut "di ERBA"). Re-verified 23Jul2026: entity `nomor`, tanpa filter JP, kolom `tanggal`.'
+turns:
+- prompt: Bagaimana tren jumlah izin edar BTP dari tahun ke tahun di ERBA?
+  assert_contains:
+  - 'BTP'
+  - 'ERBA'
+  assert_any_of:
+  -
+    - '951'
+    - '1.107'
+    - '1.542'
+  tolerance_pct: 5
+  note: 'SQL: SELECT EXTRACT(YEAR FROM tanggal::timestamp)::int AS tahun, COUNT(DISTINCT nomor) FROM t_btp_3_erba WHERE status IN (''0999'',''0906'',''9999'') AND nomor<>'''' AND tanggal::timestamp>=''2000-01-01'' AND tanggal::timestamp<''2030-01-01'' GROUP BY 1 ORDER BY 1. DB 23Jul2026: 2023=951 · 2024=1.107 · 2025=1.542 · 2026=659 (berjalan, jangan di-assert). TREN NAIK 2023→2025. Koreksi sama seperti UAT-BTP-1: entity nomor (bukan produk_id), TANPA filter JP (prompt tak menyebut "baru"), kolom `tanggal` (bukan tanggal_bayar) — nilai lama 1.024/1.362/1.329 memakai ketiga asumsi yang keliru sehingga bahkan arah trennya ikut berubah. SUM-OF-PARTITIONS: total lintas tahun WAJIB dari query global DISTINCT sendiri, jangan menjumlah baris per tahun (predikat §12-C) — satu nomor bisa muncul di beberapa tahun lewat revisi.'

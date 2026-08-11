@@ -1,0 +1,13 @@
+name: Disetujui_Komitmen_Kode4_Dan7
+scenario_id: BUGFIX-2
+description: "Bug fix: disetujui komitmen harus kode 4+7, bukan hanya kode 4. Bug lama: agent jawab 993 (kode 4 saja). DB verified 2026-06-12: kode4=976 + kode7=5.262 = 6.238"
+turns:
+- prompt: Berapa jumlah NIE Risiko Menengah Rendah di ERBA tahun 2023?
+  assert_contains:
+  - '9.649'
+  note: 'BUGFIX-2 T1 — Baseline MR ERBA 2023'
+- prompt: dari MR itu, berapa yang disetujui komitmen?
+  assert_contains:
+  - disetujui
+  - '6.238'
+  note: "BUGFIX-2 T2 — FIX: Disetujui = kode 4 (976) + kode 7 (5.262) = 6.238. Bukan hanya kode 4 (993)."

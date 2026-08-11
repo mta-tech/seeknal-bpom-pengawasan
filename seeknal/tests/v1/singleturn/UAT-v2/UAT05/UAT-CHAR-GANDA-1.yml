@@ -1,0 +1,18 @@
+name: UAT_CHAR_GANDA_1
+scenario_id: UAT-CHAR-GANDA-1
+description: 'UAT-CHAR-GANDA-1 — Scope-agnostic (ERBA/ERLA/UNION valid via assert_any_of). DB ref catatan (BUKAN standar kebenaran).'
+turns:
+- prompt: berapa produk pangan olahan yang menggunakan kemasan ganda di BPOM?
+  assert_contains:
+  - 'kemasan ganda'
+  assert_any_of:
+  -
+    - '90.345'
+  -
+    - '29.495'
+    - 'ERBA'
+  -
+    - '60.850'
+    - 'ERLA'
+  tolerance_pct: 5
+  note: 'UAT-CHAR-GANDA-1 — Scope-agnostic. ERBA=note kanonik 29.495; ERLA=live 60.850. SQL ERBA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_erba WHERE kemasan_id=''7'' AND status IN (''0999'',''0906'',''9999''). SQL ERLA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_rilis_erla WHERE kemasan_id=''38'' AND status IN (''0999'',''0906'',''9999''). UAT-CHAR-GANDA-1 — ERBA aktif kemasan ganda = 29.495. Domain: Karakteristik Produk.'

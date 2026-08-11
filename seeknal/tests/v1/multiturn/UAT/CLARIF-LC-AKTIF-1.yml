@@ -1,0 +1,22 @@
+name: Clarification_Gate_Izin_Aktif
+scenario_id: "CLARIF-LC-AKTIF-1"
+description: "Uji clarification gate BUSINESS_EVENT: 'berapa izin edar yang aktif?' ambigu antara status 0999 saja, 0999+0906+9999, atau yang belum expired."
+turns:
+  - prompt: "berapa izin edar yang aktif?"
+    assert_contains:
+      - "aktif"
+    note: "Material ambiguity BUSINESS_EVENT: 'aktif' adalah trigger SEEKNAL_ASK.md. Bisa berarti 0999 saja, 0999+0906+9999, atau yang belum expired. Agent HARUS klarifikasi."
+  - prompt: "yang benar-benar aktif saja, status terbit"
+    assert_contains:
+      - "140."
+      - "berlaku"
+    note: "Setelah klarifikasi, agent harus lock status=0999 dan hasilkan 140.082. Verified DB 2026-06-17."
+  - prompt: "kalau termasuk 0906 dan 9999?"
+    assert_contains:
+      - "182."
+    note: "Follow-up: perluas scope ke 0999+0906+9999. Agent harus retain konteks izin edar dan ganti filter status. Total = 182.630."
+  - prompt: "buatkan grafik perbandingan status aktif vs semua"
+    assert_contains:
+      - "140."
+      - "182."
+    note: "Plot turn: agent harus buat chart perbandingan 0999 vs 0999+0906+9999 via execute_python."

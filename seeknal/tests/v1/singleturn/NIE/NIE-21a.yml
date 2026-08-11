@@ -1,0 +1,10 @@
+name: SQL_transparency_NIE_ERBA_2023
+scenario_id: NIE-21a
+description: 'NIE-21a — Expected: System menampilkan query SQL yang digunakan'
+turns:
+- prompt: Tampilkan query SQL yang digunakan untuk menghitung total NIE pangan olahan di ERBA tahun 2023
+  assert_contains:
+  - SQL
+  - SELECT
+  - COUNT
+  note: 'NIE-21a — Meta test: SQL transparency. System harus menampilkan query yang digunakan.'

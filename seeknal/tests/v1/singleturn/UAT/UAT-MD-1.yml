@@ -1,0 +1,13 @@
+name: UAT_Produk_MD_2025
+scenario_id: UAT-MD-1
+description: 'UAT-MD-1 — Produk domestik (MD) terbit 2025 ERBA+ERLA. DB verified 2026-06-17: ERBA 36.706 + ERLA 2.683 = 39.389. UAT sistem = 30.760 (SALAH: pakai prefix BPOM RI MD% yang tidak ada di DB; format aktual adalah "MD xxxx").'
+turns:
+- prompt: Berapa jumlah produk MD tahun 2025?
+  assert_contains:
+  - '39.389'
+  - '2025'
+  - nomor MD
+  assert_not_contains:
+  - '30.760'
+  - '30760'
+  note: 'UAT-MD-1 — Format nomor di DB = "MD xxxxx" bukan "BPOM RI MD". ERBA 36.706 + ERLA 2.683 = 39.389. RC: sistem UAT pakai prefix salah.'

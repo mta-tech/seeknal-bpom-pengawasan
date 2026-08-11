@@ -1,0 +1,15 @@
+name: UAT_DQ_BELUM_RISIKO_1
+scenario_id: UAT-DQ-BELUM-RISIKO-1
+verification_date: '2026-07-27'
+description: 'UAT-DQ-BELUM-RISIKO-1 — ERBA-only (prompt menyebut "di ERBA"). Filter lama (kategori_dokumen NULL) kini menghasilkan 0 sehingga assert lama 28.667 mustahil; konsep yang benar ada di kolom lain.'
+turns:
+- prompt: berapa produk pangan di ERBA yang belum ditetapkan kategori risikonya oleh BPOM?
+  assert_contains:
+  - 'belum'
+  assert_any_of:
+  -
+    - '29.920'
+  -
+    - '31.263'
+  tolerance_pct: 5
+  note: 'SQL ERBA: SELECT COUNT(DISTINCT nomor) FROM t_produk_3_erba WHERE jenis_dokumen=''000'' AND nomor<>'''' AND trader_id::bigint NOT IN (5,17,50,85). SQL ERLA: tidak dijalankan (prompt membatasi ke ERBA); query yang sama pada t_produk_3_rilis_erla = 20. GABUNGAN: tidak berlaku. DB 27Jul2026 = 29.920 dgn eksklusi trader · 31.263 tanpa eksklusi — keduanya disahkan karena berkas kembarnya memakai konvensi tanpa eksklusi. KOLOM YANG BENAR (ini inti perbaikannya): "belum ditetapkan kategori risikonya" = jenis_dokumen=''000'', dictionary JENIS_DOKUMEN sumber "ERLA dan ERBA" kode 000 = "Belum Dikategorikan". Filter versi lama kategori_dokumen IS NULL per 27Jul2026 menghasilkan 0 di ERBA — kolom itu sudah terisi penuh, jadi assert lama 28.667 tidak akan pernah tercapai lagi. Sisa kekosongan kategori_dokumen kini hanya di ERLA (162.950 produk_id / 66.454 nomor) dan itu artefak migrasi, bukan konsep "belum dikategorikan". DUA KOLOM MIRIP, JANGAN DICAMPUR: jenis_dokumen (000 Belum · 301 Low · 302 High · 303 Medium, dipakai kedua sistem) berbeda dari kategori_dokumen (301 Tinggi · 302 Menengah Tinggi · 303 Menengah Rendah · 304 Tinggi Notifikasi, hanya bermakna di ERBA) — angka kodenya bertabrakan tapi artinya lain. KODE TAK TERDAFTAR: jenis_dokumen juga berisi 304 (ERBA 1.386 baris) yang tidak ada di dictionary — laporkan apa adanya bila menampilkan seluruh keluarga kode. TANPA FILTER STATUS: populasinya adalah keadaan "belum dikategorikan" itu sendiri. ENTITY: nomor. KEMBARAN: UAT-BELUM-KATEGORI-1 (compact-III) menanyakan hal sama tanpa batas sistem — ERBA 31.032 · ERLA 20 · gabungan 31.052 (23Jul, tanpa eksklusi trader); jaga agar sepasang. Nilai lama 189.436/28.667/160.769.'

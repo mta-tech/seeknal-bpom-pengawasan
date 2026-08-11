@@ -1,0 +1,10 @@
+name: 33_Jumlah produk susu merk sekolah yang disetujui
+scenario_id: CB-33
+description: 'CB-33 — Expected: 25'
+turns:
+- prompt: Jumlah produk susu merk sekolah yang disetujui
+  assert_contains:
+  - '25'
+  - susu
+  - sekolah
+  note: 'CB-33 — Expected: 25'

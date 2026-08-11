@@ -1,0 +1,18 @@
+name: UAT_OFF_6
+scenario_id: UAT-OFF-6
+description: 'UAT-OFF-6 — Scope-agnostic. Nilai kanonik dari note asli (DB verified snapshot). DB ref catatan per 2026-07-14 (BUKAN standar kebenaran).'
+turns:
+- prompt: apakah semua produk formula bayi yang telah memiliki izin edar masih berlaku
+  assert_contains:
+  - 'berlaku'
+  assert_any_of:
+  -
+    - '285'
+  -
+    - '60'
+    - 'ERBA'
+  -
+    - '225'
+    - 'ERLA'
+  tolerance_pct: 5
+  note: 'UAT-OFF-6 — Scope-agnostic (ERBA/ERLA/UNION valid via assert_any_of). ERBA & ERLA = nilai kanonik note asli (agent output dari context, bukan re-query live karena live drift). Asal data Aktif: status valid AND (tanggal_exp>NOW OR tanggal_exp NULL/kosong). ERBA 60 + ERLA 225 = 285 (dari total 917). Data berubah: 17Jun2026=295. SQL ERBA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_erba WHERE jenis_pangan IN (''1301'',''1302'') AND status IN (''0999'',''0906'',''9999''). SQL ERLA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_rilis_erla WHERE jenis_pangan IN (''622'',''604'',''624'') AND status IN (''0999'',''0906'',''9999''). Tolerance sesuai field.'

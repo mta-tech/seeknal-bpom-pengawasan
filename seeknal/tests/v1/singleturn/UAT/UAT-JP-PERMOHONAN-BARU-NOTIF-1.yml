@@ -1,0 +1,10 @@
+name: UAT_JP_Baru_Notifikasi_2025
+scenario_id: UAT-JP-PERMOHONAN-BARU-NOTIF-1
+description: 'UAT-JP-PERMOHONAN-BARU-NOTIF-1 — [Domain 5: Jenis Permohonan] NIE ERBA permohonan baru notifikasi (jenis_permohonan=305) tahun 2025. DB verified 2026-06-17: 2.132. Ini jalur cepat untuk produk Very Low Risk.'
+turns:
+- prompt: berapa permohonan baru notifikasi yang terbit tahun 2025?
+  assert_contains:
+  - '2.132'
+  - notifikasi
+  - '2025'
+  note: 'UAT-JP-PERMOHONAN-BARU-NOTIF-1 — jenis_permohonan=305 (Permohonan Baru Notifikasi) ERBA 2025 = 2.132. Jalur notifikasi untuk produk Very Low Risk. Domain: Jenis Permohonan.'

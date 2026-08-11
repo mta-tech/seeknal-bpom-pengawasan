@@ -1,0 +1,9 @@
+name: Klaim_vs_Tanpa_Klaim_2024
+scenario_id: KLAIM-2
+description: 'KLAIM-2 — Komparasi klaim vs tanpa klaim 2024. DB verified 2026-06-10: klaim=2.492, tanpa klaim=39.569'
+turns:
+- prompt: Komparasi jumlah NIE produk dengan klaim kesehatan versus tanpa klaim tahun 2024
+  assert_contains:
+  - klaim
+  - 2024
+  note: 'KLAIM-2 — DB aktual (t_produk_3_erba, tanggal 2024): klaim=2.492, tanpa klaim=39.569. Tolerance ±5%.'

@@ -1,0 +1,31 @@
+name: permohonan_vs_nie
+scenario_id: "PROD-MT-009"
+description: "Bedain metrik permohonan vs NIE, breakdown per jenis, dan perbandingan semua sistem"
+turns:
+  - prompt: "berapa jumlah permohonan pangan olahan di sistem ERBA tahun 2024?"
+    assert_contains:
+      - "permohonan"
+      - "2024"
+      - "ERBA"
+    note: "Baseline permohonan ERBA 2024"
+  - prompt: "per jenis permohonannya bagaimana?"
+    assert_contains:
+      - "Permohonan Baru"
+      - "Perubahan"
+    note: "Retain ERBA + 2024 — breakdown jenis permohonan"
+  - prompt: "kalau total permohonan dari semua sistem registrasi?"
+    assert_contains:
+      - "ERBA"
+      - "ERLA"
+    note: "Switch scope dari ERBA ke gabungan — masih domain permohonan"
+  - prompt: "bandingkan dengan total NIE ERBA tahun 2024"
+    assert_contains:
+      - "NIE"
+      - "permohonan"
+    note: "Switch metrik dari permohonan ke NIE — agent harus tahu bedanya"
+  - prompt: "jelaskan perbedaan permohonan dan NIE"
+    assert_contains:
+      - "izin edar"
+      - "permohonan"
+      - "NIE"
+    note: "Conceptual reasoning — permohonan vs NIE (izin yang sudah terbit)"

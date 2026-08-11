@@ -1,0 +1,9 @@
+name: UAT_Draft_Belum_Bayar
+scenario_id: UAT-DRAFT-PROSES-1
+description: 'UAT-DRAFT-PROSES-1 — Permohonan ERBA yang status draft (0912 = belum bayar/menunggu). DB verified 2026-06-17: 20.020. Monitoring pipeline: berapa yang masih nyangkut di tahap draft.'
+turns:
+- prompt: berapa produk yang masih dalam status draft dan belum diproses lebih lanjut?
+  assert_contains:
+  - '20.020'
+  - draft
+  note: 'UAT-DRAFT-PROSES-1 — status=0912 (Pendaftar - Draft) ERBA = 20.020. Status 0910=4.939 juga draft. Total draft ~25.000.'

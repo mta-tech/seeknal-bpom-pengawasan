@@ -1,0 +1,13 @@
+name: UAT_MT_1
+scenario_id: UAT-MT-1
+verification_date: '2026-07-23'
+description: 'UAT-MT-1 — single-scope by-design: "Menengah Tinggi" hanya bisa diisolasi di ERBA; ERLA tidak punya padanan setara.'
+turns:
+- prompt: Berapa jumlah izin edar produk pangan dengan risiko menengah tinggi?
+  assert_contains:
+  - 'Menengah Tinggi'
+  assert_any_of:
+  -
+    - '12.130'
+  tolerance_pct: 5
+  note: 'SQL: SELECT COUNT(DISTINCT nomor) FROM t_produk_3_erba WHERE kategori_dokumen=''302'' AND status IN (''0999'',''0906'',''9999'') AND trader_id::bigint NOT IN (5,17,50,85) AND nomor<>''''. DB 23Jul2026 = 12.130. Dictionary KATEGORI_DOKUMEN sumber=ERBA kode 302="Menengah Tinggi". MENGAPA ERBA-ONLY (bukan pilihan gaya): ERLA hanya punya jenis_dokumen 303="Pangan Medium Risk" yang mencakup SELURUH tingkat menengah — tidak dapat memisahkan Menengah Tinggi dari Menengah Rendah, sehingga tidak ada padanan sah untuk digabungkan. Jawaban sebaiknya menyatakan keterbatasan ini, bukan diam-diam melaporkan ERBA sebagai total nasional. ENTITY: "izin edar" → nomor. Jawaban WAJIB mengeja "Menengah Tinggi" (jangan hanya "MT"/"Medium Risk" — predikat §12-B). Nilai lama 17Jul=12.087.'

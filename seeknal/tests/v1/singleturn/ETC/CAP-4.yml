@@ -1,0 +1,9 @@
+name: Domestik_Impor_Negara_Pabrik
+scenario_id: CAP-4
+description: "New capability: produk domestik/impor harus dihitung dari negara_pabrik (ID=domestik, lainnya=impor). DB verified 2026-06-12: Domestik=92.299, Impor(top: CN=10.795, MY=4.803)"
+turns:
+- prompt: Berapa proporsi produk pangan olahan domestik dibanding impor?
+  assert_contains:
+  - domestik
+  - impor
+  note: 'CAP-4 — Harus derive dari negara_pabrik: ID=domestik, lainnya=impor. ERBA/ERLA bukan domestik/impor.'

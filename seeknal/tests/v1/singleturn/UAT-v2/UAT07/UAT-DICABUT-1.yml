@@ -1,0 +1,18 @@
+name: UAT_DICABUT_1
+scenario_id: UAT-DICABUT-1
+description: 'UAT-DICABUT-1 — Scope-agnostic (ERBA/ERLA/UNION valid via assert_any_of). DB ref catatan (BUKAN standar kebenaran).'
+turns:
+- prompt: berapa izin edar yang sudah dicabut atau dibatalkan BPOM?
+  assert_contains:
+  - 'dicabut'
+  assert_any_of:
+  -
+    - '7.301'
+  -
+    - '5.237'
+    - 'ERBA'
+  -
+    - '2.064'
+    - 'ERLA'
+  tolerance_pct: 5
+  note: 'UAT-DICABUT-1 — Scope-agnostic. ERBA=note kanonik 5.237; ERLA=live 2.064. SQL ERBA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_erba WHERE status=''0009''. SQL ERLA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_rilis_erla WHERE status=''0009''. UAT-DICABUT-1 — status=0009 (Dicabut/Dibatalkan) ERBA = 5.237. Berbeda dari Dihapus (0000=246). Dictionary: STATUS kode 0009.'

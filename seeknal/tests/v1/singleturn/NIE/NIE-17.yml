@@ -1,0 +1,9 @@
+name: 55_Berapa total NIE tahun 2023
+scenario_id: NIE-17
+description: NIE-17
+turns:
+- prompt: Berapa total NIE tahun 2023?
+  assert_contains:
+  - NIE
+  - '2023'
+  note: NIE-17

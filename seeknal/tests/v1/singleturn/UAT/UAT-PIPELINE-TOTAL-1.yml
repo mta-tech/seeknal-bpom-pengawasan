@@ -1,0 +1,9 @@
+name: UAT_Pipeline_Total_Dalam_Proses
+scenario_id: UAT-PIPELINE-TOTAL-1
+description: 'UAT-PIPELINE-TOTAL-1 — Total permohonan ERBA yang masih dalam proses (belum terbit NIE, belum dibatalkan). DB verified 2026-06-17: 58.339. Uji kemampuan agregasi lintas status workflow.'
+turns:
+- prompt: total permohonan yang masih dalam antrian proses di BPOM ada berapa?
+  assert_contains:
+  - '58.339'
+  - proses
+  note: 'UAT-PIPELINE-TOTAL-1 — semua status bukan 0999/0906/9999/0000/0009/0099 = 58.339. Termasuk: draft, bayar, evaluasi, verifikasi, validasi.'

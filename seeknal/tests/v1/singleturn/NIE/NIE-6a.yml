@@ -1,0 +1,10 @@
+name: Total_NIE_pangan_olahan_ERBA_terbit_2022
+scenario_id: NIE-6a
+description: 'NIE-6a — Expected: Total NIE ERBA 2022. DB verified 2026-06-09: 1.414'
+turns:
+- prompt: Berapa total NIE pangan olahan di sistem ERBA yang terbit tahun 2022?
+  assert_contains:
+  - NIE
+  - ERBA
+  - 2022
+  note: 'NIE-6a — DB aktual 1.414 (t_produk_3_erba, tanggal 2022). Tolerance ±5%.'

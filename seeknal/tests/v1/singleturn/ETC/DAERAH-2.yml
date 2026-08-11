@@ -1,0 +1,9 @@
+name: NIE_Jawa_2024
+scenario_id: DAERAH-2
+description: 'DAERAH-2 — NIE di Jawa 2024. DB verified 2026-06-10: top daerah mostly Jawa'
+turns:
+- prompt: Berapa total NIE di pulau Jawa tahun 2024?
+  assert_contains:
+  - Jawa
+  - 2024
+  note: 'DAERAH-2 — DB aktual (t_produk_3_erba, tanggal 2024). Top daerah = Jawa (Tangerang, Jakarta, Bandung, Bekasi). Agent harus filter provinsi Jawa. Tolerance ±5%.'

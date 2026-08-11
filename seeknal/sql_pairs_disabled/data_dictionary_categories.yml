@@ -1,0 +1,13 @@
+name: data_dictionary_categories
+prompt: Daftar kategori yang tersedia di data dictionary
+intent: >
+  Discover all available categories in the data_dictionary table.
+  Use this FIRST when you need to find the correct category name for
+  resolving any code (regional, status, scale, etc.).
+sql: |
+  SELECT DISTINCT kategori
+  FROM warehouse.public.data_dictionary
+  ORDER BY kategori
+notes:
+  - Always run this first to discover the exact category name before querying.
+  - After finding the category, use data_dictionary_by_category to look up codes.

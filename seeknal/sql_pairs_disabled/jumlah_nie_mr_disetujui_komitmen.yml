@@ -1,0 +1,14 @@
+name: jumlah_nie_mr_disetujui_komitmen
+prompt: Jumlah izin edar risiko menengah rendah yang telah disetujui komitmen
+intent: Count MR NIEs approved by commitment (status_komitmen approved).
+sql: |
+  SELECT COUNT(DISTINCT nomor) AS jumlah_nie_mr
+  FROM warehouse.public.t_produk_3_erba
+  WHERE kategori_dokumen = '303'
+    AND status IN ('0999','0906','9999')
+    AND jenis_permohonan = '301'
+    AND status_komitmen IN ('4','7')
+notes:
+  - Only t_produk_3_erba has status_komitmen column; ERLA does not track commitment status.
+  - Status komitmen '4' and '7' indicate approved commitment states.
+  - Jenis permohonan '301' = new application.

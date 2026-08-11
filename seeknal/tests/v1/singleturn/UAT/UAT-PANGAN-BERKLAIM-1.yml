@@ -1,0 +1,9 @@
+name: UAT_Pangan_Berklaim_NIE
+scenario_id: UAT-PANGAN-BERKLAIM-1
+description: 'UAT-PANGAN-BERKLAIM-1 — NIE ERBA pangan berklaim (klasifikasi_id=305). DB verified 2026-06-17: 256. Uji terjemahan kode KLASIFIKASI_ID ke "Pangan Berklaim". Pangan Diet=35, Pangan Bayi & Anak=9.'
+turns:
+- prompt: berapa produk pangan berklaim yang sudah punya izin edar?
+  assert_contains:
+  - '256'
+  - berklaim
+  note: 'UAT-PANGAN-BERKLAIM-1 — klasifikasi_id=305 (Pangan Berklaim) ERBA NIE aktif = 256. Contoh: produk rendah gula, bebas laktosa, high protein.'

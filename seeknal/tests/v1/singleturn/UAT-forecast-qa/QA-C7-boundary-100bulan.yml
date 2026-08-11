@@ -1,0 +1,8 @@
+name: QA_C7_Boundary_Horizon_Extreme
+scenario_id: QA-C7
+description: 'Peta QA C.7 (boundary horizon sangat besar, P2, status QA: passed/BVA). Cap teknis _MAX_HORIZON=36 (tools/forecast.py) — permintaan 100 bulan harus ditangani wajar, bukan error/hang.'
+turns:
+- prompt: Ramalkan 100 bulan ke depan untuk permohonan ERBA
+  assert_contains:
+  - '36'
+  note: 'Ekspektasi: tidak error, tidak hang, sistem MENYATAKAN batas 36 bulan secara eksplisit (bpom-forecaster hard rule) dan menyajikan 36 bulan penuh sebagai maksimum yang didukung — bukan diam-diam memotong tanpa bilang, bukan pula mencoba paksa 100 titik.'

@@ -1,0 +1,10 @@
+name: BTP_ERBA_Trend
+scenario_id: BTP-1
+description: 'BTP-1 — Trend BTP ERBA. DB verified 2026-06-10: 2023=950, 2024=1.089, 2025=1.523'
+turns:
+- prompt: Tren jumlah izin edar produk bahan tambahan pangan di ERBA dari tahun ke tahun
+  assert_contains:
+  - BTP
+  - tren
+  - per tahun
+  note: 'BTP-1 — DB aktual (t_btp_3_erba, all years): 2023=950, 2024=1.089, 2025=1.523. BTP ERLA: 2023=114, 2024=5. Tolerance ±5%.'

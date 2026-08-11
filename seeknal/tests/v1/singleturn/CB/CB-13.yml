@@ -1,0 +1,9 @@
+name: 13_Tren Air Minum Dalam Kemasan
+scenario_id: CB-13
+description: 'CB-13 — Expected: Tren AMDK per tahun'
+turns:
+- prompt: Tren Air Minum Dalam Kemasan
+  assert_contains:
+  - AMDK
+  - tren
+  note: 'CB-13 — Expected: Tren AMDK per tahun'

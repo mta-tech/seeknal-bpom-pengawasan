@@ -1,0 +1,18 @@
+name: UAT_SINGLE_MD_1
+scenario_id: UAT-SINGLE-MD-1
+description: 'UAT-SINGLE-MD-1 — Scope-agnostic (ERBA/ERLA/UNION valid via assert_any_of). DB ref catatan (BUKAN standar kebenaran).'
+turns:
+- prompt: berapa produk yang terdaftar sebagai Single MD Induk di BPOM?
+  assert_contains:
+  - 'Single MD'
+  assert_any_of:
+  -
+    - '29.607'
+  -
+    - '5.658'
+    - 'ERBA'
+  -
+    - '23.949'
+    - 'ERLA'
+  tolerance_pct: 5
+  note: 'UAT-SINGLE-MD-1 — Scope-agnostic. ERBA=note kanonik 5.658; ERLA=live 23.949. SQL ERBA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_erba WHERE status_produk=''306'' AND status IN (''0999'',''0906'',''9999''). SQL ERLA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_rilis_erla WHERE status_produk=''306'' AND status IN (''0999'',''0906'',''9999''). UAT-SINGLE-MD-1 — status_produk=306 (Single MD Induk) ERBA NIE aktif = 5.658. Single MD Anak (307)=2.019. Dictionary: STATUS_PRODUK kode 306.'

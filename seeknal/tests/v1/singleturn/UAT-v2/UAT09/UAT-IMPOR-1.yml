@@ -1,0 +1,18 @@
+name: UAT_IMPOR_1
+scenario_id: UAT-IMPOR-1
+description: 'UAT-IMPOR-1 — Scope-agnostic (ERBA/ERLA/UNION valid via assert_any_of). DB ref catatan (BUKAN standar kebenaran).'
+turns:
+- prompt: berapa produk impor yang punya izin edar di BPOM?
+  assert_contains:
+  - 'impor'
+  assert_any_of:
+  -
+    - '160.287'
+  -
+    - '44.127'
+    - 'ERBA'
+  -
+    - '116.160'
+    - 'ERLA'
+  tolerance_pct: 5
+  note: 'UAT-IMPOR-1 — Scope-agnostic. ERBA=note kanonik 44.127; ERLA=live 116.160. SQL ERBA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_erba WHERE status_produk=''302'' AND status IN (''0999'',''0906'',''9999''). SQL ERLA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_rilis_erla WHERE status_produk=''302'' AND status IN (''0999'',''0906'',''9999''). UAT-IMPOR-1 — status_produk=302 (Impor) ERBA NIE aktif = 44.127. Dictionary: STATUS_PRODUK kode 302.'

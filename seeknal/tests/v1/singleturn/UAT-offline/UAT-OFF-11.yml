@@ -1,0 +1,9 @@
+name: UAT_OFF_Keterangan_Pencabutan
+scenario_id: UAT-OFF-11
+verification_date: '2026-06-26'
+description: 'Ketersediaan keterangan alasan pencabutan pada NIE dicabut (ERBA status=0009). DB 26Jun2026: 607 dari 5.106 punya keterangan terisi; mayoritas kosong.'
+turns:
+- prompt: pada izin edar formula bayi yang dicabut,apakah tersedia keterangan alasan pencabutannya
+  assert_contains:
+  - '607'
+  note: 'Dari 5.106 NIE dicabut (status=0009), hanya 607 yang field keterangan-nya terisi; 4.499 sisanya kosong. Mayoritas alasan pencabutan tidak tersedia secara tertulis di basis data.'

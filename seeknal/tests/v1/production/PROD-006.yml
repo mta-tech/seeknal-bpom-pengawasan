@@ -1,0 +1,9 @@
+name: NIE_Per_Risiko
+scenario_id: PROD-006
+description: "PROD-006 — Jumlah NIE per risiko tinggi, sedang, dan rendah"
+turns:
+- prompt: "Jumlah NIE per risiko tinggi, sedang, dan rendah"
+  assert_contains:
+  - "risiko"
+  - "tinggi"
+  note: "PROD-006 — Risk category breakdown, expects counts for high/medium/low risk"

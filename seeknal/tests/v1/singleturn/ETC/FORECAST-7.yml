@@ -1,0 +1,26 @@
+name: FORECAST_MR_Sub_Series_BAIK
+scenario_id: FORECAST-7
+description: >
+  FORECAST-7 — Proyeksi sub-series Menengah Rendah (303) yang sudah terbukti BAIK (MAPE 12.8%).
+  Test ini memvalidasi bahwa sistem bisa memforecast sub-series risiko, bukan hanya total.
+  Output harus sama strukturnya dengan total series — 7 blok format.
+turns:
+- prompt: Prediksi permohonan risiko menengah rendah untuk 3 bulan ke depan
+  assert_contains:
+  - Menengah Rendah
+  - BAIK
+  - Rentang Realistis
+  - Tingkat Keyakinan
+  - Historis & Proyeksi
+  - Apa Artinya
+  - Metodologi
+  assert_not_contains:
+  - sigma
+  - p10
+  - p90
+  note: >
+    FORECAST-7 — MR (kategori_dokumen=303) ERBA sub-series. Backtest MAPE ~12.8% → BAIK.
+    Volume avg ~1.300/bulan → tidak perlu volume adjustment.
+    Sistem harus filter dengan kategori_dokumen='303' dan gunakan tanggal_bayar::timestamp.
+    Output: 7-blok format identik dengan total series. Label BAIK harus muncul.
+    Tidak boleh ada angka teknis sigma/p10/p90 di output.

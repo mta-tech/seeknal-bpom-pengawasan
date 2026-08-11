@@ -1,0 +1,34 @@
+name: Clarification_Gate_BTP_Form_vs_ProductType
+scenario_id: "CLARIF-BTP-BENTUK-1"
+description: "Uji clarification gate CONCEPT_TYPE: 'bentuk BTP' ambigu antara bentuk sediaan (cair/serbuk) dan jenis produk BTP (campuran/tunggal)."
+turns:
+  - prompt: "BTP yang bentuknya paling banyak yang mana?"
+    assert_contains:
+      - "BTP"
+    note: "Material ambiguity CONCEPT_TYPE: 'bentuk' bisa berarti bentuk sediaan atau jenis produk. Agent HARUS tanya definisi yang dimaksud user."
+  - prompt: "maksud saya bentuk sediaan, yang cair"
+    assert_contains:
+      - "2.274"
+      - "cair"
+      - "BTP"
+    note: "Setelah klarifikasi, agent harus lock bentuk_sediaan=101 (Cair/Pasta) dan hasilkan 2.274."
+  - prompt: "kalau yang serbuk?"
+    assert_contains:
+      - "1.796"
+      - "serbuk"
+    note: "Follow-up same topic: bentuk_sediaan=102 (Serbuk) = 1.796."
+  - prompt: "sekarang ganti ke jenis produk, campuran vs tunggal"
+    assert_contains:
+      - "2.788"
+      - "695"
+      - "campuran"
+      - "tunggal"
+    note: "Topik masih BTP, tapi concept type bergeser ke jenis_produk_btp. Campuran=2.788, Tunggal=695."
+  - prompt: "ringkaskan perbedaan bentuk sediaan dan jenis produk itu"
+    assert_contains:
+      - "2.274"
+      - "1.796"
+      - "2.788"
+      - "695"
+    note: "Ringkasan harus menjaga pemisahan concept type: bentuk sediaan vs jenis produk, tanpa mencampur artinya."
+

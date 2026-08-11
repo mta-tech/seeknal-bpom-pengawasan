@@ -1,0 +1,14 @@
+name: UAT_KOMITMEN_VARIASI_1
+scenario_id: UAT-KOMITMEN-VARIASI-1
+verification_date: '2026-07-27'
+description: 'UAT-KOMITMEN-VARIASI-1 — SCOPE: ERBA-ONLY struktural (kolom status_komitmen tidak ada di ERLA). Re-verified 27Jul2026 + normalisasi format ganda diterapkan. Kode 9 memang eksklusif Menengah Rendah menurut dictionary. TRANSIENT.'
+turns:
+- prompt: ada berapa produk MR dengan status variasi komitmen di BPOM?
+  assert_contains:
+  - 'variasi'
+  - 'komitmen'
+  assert_any_of:
+  -
+    - '4.931'
+  tolerance_pct: 10
+  note: 'SCOPE = ERBA SAJA, struktural: kolom status_komitmen tidak ada di t_produk_3_rilis_erla (terverifikasi di information_schema), jadi tidak ada SQL ERLA maupun SQL GABUNGAN. SQL ERBA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_erba WHERE kategori_dokumen=''303'' AND ROUND(status_komitmen::numeric)::int::text=''9'' AND trader_id::bigint NOT IN (5,17,50,85). DB 27Jul2026 = 4.931. FORMAT GANDA status_komitmen (predikat §6): bentuk polos ''9'' = 4.713 · bentuk desimal ''9.0'' = 218 · total 4.931. Memakai status_komitmen=''9'' saja membuang 218 baris — ini persis kesalahan versi lama. Normalisasi ROUND wajib di setiap filter status_komitmen. KODE + DESKRIPSI (dictionary STATUS_KOMITMEN sumber=ERBA): 9 = "Variasi Komitmen (Khusus untuk aju Menengah Rendah)". Perhatikan dictionary sendiri menyatakan kode ini KHUSUS Menengah Rendah, jadi filter kategori_dokumen=''303'' bukan penyempitan tambahan melainkan penegasan lingkup yang memang melekat pada kodenya — sebutkan hal ini di jawaban agar pengguna tahu angka ini tidak punya padanan di Menengah Tinggi atau Tinggi. LINGKUP: MR = "Menengah Rendah", kategori_dokumen=''303'' (filter_code §3); tulis kepanjangannya minimal sekali, jangan hanya singkatan (predikat §12-B). CASE B (predikat §5): tanpa filter status NIE sah — subjeknya siklus komitmen, bukan izin terbit. ENTITY: COUNT(DISTINCT produk_id). PEMBANDING sekeluarga per 27Jul2026: 0 Draft=29.804 · 7 Disetujui Dengan Catatan=12.450 · 1 Proses Penilaian Kembali=10.015 · 5 Dibatalkan=5.666 · 4 Disetujui=2.934 · 8 Validasi Pembatalan=37. TRANSIENT: toleransi 10%. Nilai lama 4.099 (kode telanjang, snapshot lebih awal).'

@@ -1,0 +1,22 @@
+name: UAT_INVESTIGASI_KOMITMEN_1
+scenario_id: UAT-INVESTIGASI-KOMITMEN-1
+verification_date: '2026-07-28'
+description: 'UAT-INVESTIGASI-KOMITMEN-1 — ERBA-only (kolom status_komitmen tidak ada di t_produk_3_rilis_erla). Ringkasan tujuh kode sekaligus — SATU query GROUP BY, bukan tujuh query kode tunggal yang ditempel manual.'
+turns:
+- prompt: bisa kasih ringkasan status komitmen untuk produk menengah rendah secara keseluruhan?
+  assert_contains:
+  - 'Draft'
+  - 'Dibatalkan'
+  - 'Disetujui'
+  - 'komitmen'
+  assert_any_of:
+  -
+    - '29.777'
+  -
+    - '12.457'
+  -
+    - '10.105'
+  -
+    - '5.666'
+  tolerance_pct: 10
+  note: 'SQL: SELECT ROUND(status_komitmen::numeric)::int AS kode, COUNT(DISTINCT produk_id) FROM t_produk_3_erba WHERE kategori_dokumen=''303'' AND status_komitmen IS NOT NULL AND status_komitmen<>'''' AND trader_id::bigint NOT IN (5,17,50,85) GROUP BY 1 ORDER BY 2 DESC. DB 28Jul2026: 0 Draft Pemenuhan Komitmen=29.777 · 7 Disetujui Dengan Catatan=12.457 · 1 Proses Penilaian Kembali Komitmen=10.105 · 5 Komitmen Dibatalkan=5.666 · 9 Variasi Komitmen=4.939 · 4 Komitmen Disetujui=2.936 · 8 Validasi Pembatalan=37. Jumlah ketujuh kode = 65.917 — ini BUKAN total unik produk_id MR (satu produk_id hanya muncul di satu kode komitmen pada satu waktu karena status_komitmen adalah field titik-waktu per baris, jadi penjumlahan di sini kebetulan valid sebagai partisi lengkap; verifikasi ini sebelum menjumlahkan pola serupa di kolom lain seperti `status` yang MEMANG bisa membuat satu nomor muncul di banyak baris). KODE: dictionary STATUS_KOMITMEN sumber=ERBA mendaftarkan ketujuh kode ini persis; tidak ada kode kedelapan yang tersembunyi (dicek: seluruh nilai ROUND(status_komitmen) yang muncul di data cocok dengan tujuh kode ini). FORMAT GANDA: kolom status_komitmen bertipe TEXT dan sebagian baris menyimpan bentuk desimal (''0.0'', ''1.0'', dst) untuk nilai logis yang sama — tanpa normalisasi ROUND, kode 0 kehilangan sekitar 2.000 baris dan kode-kode lain kehilangan proporsi lebih kecil; SATU query GROUP BY dengan ROUND di dalamnya menangani ini otomatis, tidak perlu tujuh query terpisah. LINGKUP MR: kategori_dokumen=''303''. ENTITY: produk_id (yang dihitung berkas pengajuan komitmen, bukan NIE). TANPA FILTER STATUS NIE SAH: ringkasan siklus komitmen mencakup baris yang belum ber-NIE juga. TRANSIENT: seluruh angka ini bergerak harian; toleransi 10%. Nilai lama 28.720/11.688/10.233/5.198/4.099/2.717/42 — pola urutan sama, besarannya naik konsisten dengan pertumbuhan data.'

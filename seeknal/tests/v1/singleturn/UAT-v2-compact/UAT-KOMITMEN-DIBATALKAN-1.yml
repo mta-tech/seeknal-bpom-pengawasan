@@ -1,0 +1,14 @@
+name: UAT_KOMITMEN_DIBATALKAN_1
+scenario_id: UAT-KOMITMEN-DIBATALKAN-1
+verification_date: '2026-07-23'
+description: 'UAT-KOMITMEN-DIBATALKAN-1 — single-scope by-design (status_komitmen kolomnya TIDAK ADA di ERLA). TRANSIENT. Menguji Case B + normalisasi format ganda.'
+turns:
+- prompt: berapa produk menengah rendah yang dibatalkan komitmennya oleh BPOM?
+  assert_contains:
+  - 'Dibatalkan'
+  - 'Menengah Rendah'
+  assert_any_of:
+  -
+    - '5.667'
+  tolerance_pct: 5
+  note: 'SQL: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_erba WHERE kategori_dokumen=''303'' AND status_komitmen IS NOT NULL AND status_komitmen<>'''' AND ROUND(status_komitmen::numeric)::int=5. DB 23Jul2026 = 5.667 (rincian format: exact ''5''=5.474 + ''5.0''=193). CASE B (predikat §5/RC-4): subjeknya adalah OUTCOME siklus hidup komitmen, bukan NIE terbit → JANGAN menumpuk filter status NIE sah; menumpuknya memangkas jadi ~254 (salah ~20x). ENTITY: produk_id (permohonan/berkas), bukan nomor. FORMAT GANDA (predikat §6): kolom status_komitmen bertipe TEXT dan menyimpan DUA format untuk nilai logis yang sama (''5'' dan ''5.0'') — WAJIB dinormalisasi (ROUND(...)::int atau LIKE ''5%''); equality polos ''5'' saja akan kehilangan 193 baris. Terverifikasi masih terjadi per 23Jul2026. SCOPE: ERBA-only bukan pilihan — kolom status_komitmen memang tidak ada di t_produk_3_rilis_erla. Dictionary STATUS_KOMITMEN sumber=ERBA kode 5="Komitmen Dibatalkan". TRANSIENT: angka tumbuh; nilai lama 17Jun=5.198 · 26Jun=5.258 · 17Jul=5.457.'

@@ -1,0 +1,11 @@
+name: UAT_BTP_TREN_1
+scenario_id: UAT-BTP-TREN-1
+description: 'UAT-BTP-TREN-1 — single-scope (by-design).'
+turns:
+- prompt: Bagaimana tren jumlah izin edar BTP dari tahun ke tahun di ERBA?
+  assert_contains:
+  - 'BTP'
+  - '950'
+  - '1.089'
+  - '1.523'
+  note: 'UAT-BTP-TREN-1 — regression tren BTP ERBA. 2023=950, 2024=1.089, 2025=1.523.'

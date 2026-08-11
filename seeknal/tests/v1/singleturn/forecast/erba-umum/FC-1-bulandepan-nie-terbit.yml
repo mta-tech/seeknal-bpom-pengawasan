@@ -1,0 +1,8 @@
+name: FC_ERBA_BulanDepan_NIE_Terbit
+scenario_id: FC-ERBA-1
+description: 'Forecast natural (di luar QA) — frasa umum "bulan depan". Series: NIE terbit ERBA. Anchor "sekarang" = Jun2026 (bulan lengkap terakhir, DB-verified). Assert bulan konkret memaksa rincian per-bulan tampil, bukan cuma angka tunggal.'
+turns:
+- prompt: Proyeksikan jumlah NIE yang akan terbit bulan depan di sistem ERBA
+  assert_contains:
+  - Agustus
+  note: 'DB Jun2026 (bulan lengkap terakhir) NIE terbit (status issued, tanggal) = 5.836 (Jun), Mei=5.365, Apr=4.850 — histori penuh 47 bulan tanpa gap. "Bulan depan" dari Jun2026 = Agustus 2026 (Jul masih berjalan) — assert "Agustus" memverifikasi sistem menghitung horizon dari bulan LENGKAP terakhir, bukan dari bulan berjalan yang datanya belum penuh.'

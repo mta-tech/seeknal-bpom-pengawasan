@@ -1,0 +1,10 @@
+name: 53_Tampilkan NIE per skala tahun 2023
+scenario_id: NIE-15
+description: NIE-15
+turns:
+- prompt: Tampilkan NIE per skala tahun 2023
+  assert_contains:
+  - NIE
+  - skala
+  - '2023'
+  note: NIE-15

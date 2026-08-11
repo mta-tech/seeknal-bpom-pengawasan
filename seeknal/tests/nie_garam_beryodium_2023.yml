@@ -1,0 +1,16 @@
+name: nie_garam_beryodium_2023
+prompt: berapa jumlah NIE produk Garam Beryodium di ERBA tahun 2023?
+sql: |
+  SELECT COUNT(DISTINCT nomor) AS jumlah_nie_garam
+  FROM warehouse.public.t_produk_3_erba
+  WHERE kategori_pangan = '120101000001'
+    AND tanggal >= '2023-01-01' AND tanggal < '2024-01-01'
+    AND trader_id NOT IN (5, 17, 50, 85)
+    AND status IN ('0999','0906','9999')
+    AND jenis_permohonan IN ('301','305')
+assertions:
+  answer_contains:
+    - "Garam Beryodium"
+    - "2023"
+    - "189"
+  expected_values: false

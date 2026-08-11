@@ -1,0 +1,10 @@
+name: NIE_per_skala_industri_ERBA_2023
+scenario_id: NIE-15a
+description: 'NIE-15a — Expected: NIE per skala industri 2023. DB verified 2026-06-09: Besar:14.588, Mikro:5.412, Kecil:4.945, Menengah:1.938'
+turns:
+- prompt: Berapa jumlah NIE pangan olahan per skala industri di ERBA tahun 2023?
+  assert_contains:
+  - NIE
+  - skala
+  - 2023
+  note: 'NIE-15a — DB aktual: Besar(4)=14.588, Mikro(1)=5.412, Kecil(2)=4.945, Menengah(3)=1.938. Tolerance ±5%.'

@@ -1,0 +1,13 @@
+name: UAT_PIPE_VERIF2_1
+scenario_id: UAT-PIPE-VERIF2-1
+verification_date: '2026-07-27'
+description: 'UAT-PIPE-VERIF2-1 — ERBA-only untuk tabel produk. Kasus di mana dictionary dan data hampir tidak beririsan: kode 05xx yang terdaftar kosong, yang berisi tidak terdaftar. TRANSIENT tajam.'
+turns:
+- prompt: berapa permohonan yang sedang di tahap verifikasi kedua?
+  assert_contains:
+  - 'verifikasi'
+  assert_any_of:
+  -
+    - '206'
+  tolerance_pct: 10
+  note: 'SQL ERBA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_erba WHERE status IN (''0500'',''0502'',''0504'') AND trader_id::bigint NOT IN (5,17,50,85). SQL ERLA / GABUNGAN: tidak berlaku — satu-satunya kode 05xx di t_produk_3_rilis_erla adalah 0501 dengan 1 baris nyasar, bukan antrian aktif. DB 27Jul2026 = 206 (0500=86 · 0502=113 · 0504=7); eksklusi trader tidak berpengaruh di tahap ini. DICTIONARY vs DATA — DATA YANG MENANG: dictionary STATUS sumber=ERBA hanya mendaftarkan 0501 ("Verifikator 2 - Proses Validasi Ditolak"), 0502 ("Proses Verifikasi Jenis Pangan"), dan 0503 ("Proses Verifikasi") untuk tahap ini. Di data ERBA, 0501 dan 0503 NOL baris, sedangkan 0500 dan 0504 yang berisi justru TIDAK terdaftar di dictionary. Hanya 0502 ada di keduanya. Filternya diambil dari sebaran nyata, dan jawaban sebaiknya menyebut bahwa 0500/0504 tidak punya deskripsi resmi. JANGAN PAKAI status LIKE ''05%'': hari ini hasilnya kebetulan sama, tapi pola itu akan menyerap kode 05xx baru apa pun termasuk yang bukan Verifikator 2 — pakai daftar kode eksplisit. Versi lama memakai LIKE dan mencatat 159. BTP BEDA KODE: t_btp_3_erba memakai 0502 dan 0503, t_btp_3_erla memakai 0502; trio produk bila dipaksakan ke t_btp_3_erba menghasilkan 0 — jangan menyalin daftar kode antar tabel tanpa cek. ENTITY: produk_id. TANPA FILTER STATUS NIE SAH. SANGAT TRANSIEN: komposisinya berubah cepat (beberapa jam sebelumnya 0500=127 · 0502=82 · 0504=5, totalnya 214) — toleransi 10% dan stempel tanggal wajib. PEMBANDING: Verifikator 1 (0402,0403,0405,0406,0407)=1.623, jauh lebih besar; antrian kecil di sini bukan berarti bottleneck — bottleneck ada di Draft (26.401). Nilai lama 159.'

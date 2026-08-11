@@ -1,0 +1,9 @@
+name: Top10_Perusahaan_Izin_Edar
+scenario_id: PROD-004
+description: "PROD-004 — 10 perusahaan dengan izin edar terbanyak"
+turns:
+- prompt: "10 perusahaan dengan izin edar terbanyak"
+  assert_contains:
+  - "perusahaan"
+  - "izin edar"
+  note: "PROD-004 — Ranking query, expects trader/company names with NIE counts"

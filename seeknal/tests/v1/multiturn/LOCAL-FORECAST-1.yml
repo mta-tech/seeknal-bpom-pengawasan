@@ -1,0 +1,16 @@
+name: Local_Docker_Forecast_Smoke_ERLA_ERBA
+scenario_id: LOCAL-FORECAST-1
+description: "Smoke test end-to-end forecast+CSV via iba-engine+iba-storage lokal (docker). Replikasi sesi live dev VM 20 Jul: ERLA 3 bulan -> 5 tahun -> lampirkan data. Assert struktural (bukan angka pasti — data live/drift), fokus: engine benar-benar hidup + CSV benar-benar ter-upload."
+turns:
+- prompt: prediksi permohonan ERLA untuk 3 bulan ke depan
+  assert_contains:
+  - Proyeksi
+  note: 'T1 — harus TIDAK muncul "Engine belum dikonfigurasi". ERLA diharapkan ditolak (CV>0.8, forecast_guide.md §3) dengan fallback ERBA berlabel — bukan bug kalau ERLA ditolak.'
+- prompt: lakukan forecasting untuk 5 tahun kedepan
+  assert_contains:
+  - '36'
+  note: 'T2 — cap 36 bulan wajib dinyatakan eksplisit (bpom-forecaster hard rule). Cek CSV proyeksi otomatis ter-upload (upload_to_s3 di tool_trace, tool-owned, dari run_forecast).'
+- prompt: lampirkan data perbulan lengkap
+  assert_contains:
+  - permohonan
+  note: 'T3 — cek satu export historis manual (CSV Store Contract, self-check anti-dobel), dan cek isi CSV vs teks jawaban KONSISTEN (uji fabrikasi seperti temuan sesi dev sebelumnya).'

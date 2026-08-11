@@ -1,0 +1,225 @@
+# Code Translation Protocol — Two-Way, Source-Aware Resolution
+
+> **This file holds PROCEDURE, never answers.** It teaches the agent *how to look a code
+> up* and *how to handle ambiguity* — it does NOT store what any code means. Code meanings
+> live only in the live `warehouse.public.data_dictionary` table and are resolved at runtime.
+> Any other context file that lists code→meaning is wrong by construction; resolve here instead.
+
+The governing principle:
+
+> **A code is born from the dictionary and dies as a definition through the dictionary.**
+> Never decide what a code means — look it up, every time, per system, in both directions.
+
+---
+
+## 0. Why this exists
+
+`data_dictionary` (≈1,141 rows) is the authoritative meaning of every coded column value. It has
+a **`sumber`** column that distinguishes the two registration systems:
+
+| `sumber` value | Applies to |
+|---|---|
+| `ERBA` | ERBA only |
+| `ERLA` | ERLA only |
+| `ERBA dan ERLA` / `ERLA dan ERBA` | both systems (shared meaning) |
+
+The same numeric code can mean different things in ERBA vs ERLA (e.g. `STATUS` code `9999`
+exists in **both**; `KEMASAN_ID` and `STATUS` carry separate ERBA and ERLA rows). **A lookup or
+JOIN that ignores `sumber` produces a fan-out** (one product row joins to two dictionary rows →
+`COUNT(DISTINCT)` distortion) **or an ambiguous label.** Always filter by `sumber`.
+
+ERBA and ERLA also classify risk under **different category names** (not the same code reused):
+
+| Concept | ERBA | ERLA |
+|---|---|---|
+| Risk level column | `kategori_dokumen` | `jenis_dokumen` |
+| `data_dictionary` kategori | `KATEGORI_DOKUMEN` (sumber `ERBA`) | `JENIS_DOKUMEN` (sumber `ERLA dan ERBA`) |
+| Levels | 4 (Tinggi / Menengah Tinggi / Menengah Rendah / Tinggi Notifikasi) | 3 (Low / High / **Medium** Risk) |
+
+> ERLA has **no separate Menengah Tinggi** — its `JENIS_DOKUMEN` Medium-Risk code spans both MT and
+> MR. Never assume ERLA `303` equals ERBA `302`; that equivalence is false and must be tested, not
+> assumed (see §3).
+
+---
+
+## 1. Column → kategori pointer (where to look — NOT what it means)
+
+| Column | `kategori` | Notes |
+|---|---|---|
+| `kategori_dokumen` (ERBA risk) | `KATEGORI_DOKUMEN` | sumber `ERBA`; present "Risiko " prefix at output |
+| `jenis_dokumen` (ERLA risk) | `JENIS_DOKUMEN` | sumber `ERLA dan ERBA`; 3 levels only |
+| `status` | `STATUS` | **multi-source** — MUST filter `sumber` |
+| `status_komitmen` | `STATUS_KOMITMEN` | ERBA only; key `ROUND(status_komitmen::numeric)::int::text` |
+| `status_produk` | `STATUS_PRODUK` | ERBA |
+| `status_usaha` | `STATUS_USAHA` | ERBA |
+| `jenis_permohonan` | `JENIS_PERMOHONAN` | `ERBA dan ERLA` |
+| `jenis_dokumen` (document type, not risk, ERBA) | `JENIS_DOKUMEN` | only ERLA's carries risk; in ERBA it is document type |
+| `jenis_btp`, `jenis_produk_btp` | `JENIS_BTP`, `JENIS_PRODUK_BTP` | |
+| `bentuk_sediaan` | `BENTUK_SEDIAAN` | |
+| `kemasan_id`, `sub_kemasan_id` | `KEMASAN_ID`, `SUB_KEMASAN_ID` | `KEMASAN_ID` **multi-source** |
+| `klasifikasi_id` | `KLASIFIKASI_ID` | (deprecated for filtering — see glossary) |
+| `kode_kbli` | `KODE_KBLI` | |
+| `peruntukan` | `PERUNTUKAN` | |
+| `skala_industri_id` / `skala_industri` | `SKALA_INDUSTRI dan SKALA_INDUSTRI_ID` | NULL/empty → "Importir" |
+| `negara_pabrik`, `negara_produsen` | `NEGARA_PABRIK dan NEGARA_PRODUSEN` | |
+| `daerah_*`, `provinsi_id`, `kotakab_id` | `DAERAH_TRADER, DAERAH_PABRIK, DAERAH_PRODUSEN, PROVINSI_ID, KOTAKAB_ID` | needs `ROUND(/100,2)` conversion (see `code_resolution.md`) |
+| `kategori_pangan` (broad category) | `AKRONIM` | key `'KP ' || LEFT(kategori_pangan,2)` |
+| `jenis_penolakan_komitmen` | `JENIS_PENOLAKAN_KOMITMEN` | ERBA; "why cancelled" reason |
+
+To discover categories not listed: `SELECT DISTINCT kategori, sumber FROM warehouse.public.data_dictionary ORDER BY kategori`.
+
+---
+
+## 2. The canonical pattern — one query, two directions
+
+### 2.1 Inbound — user word → code (during RESOLVE, before any SQL)
+
+```sql
+SELECT sumber, kode, deskripsi
+FROM warehouse.public.data_dictionary
+WHERE kategori = '<KATEGORI>'
+  AND sumber IN ('<SYSTEM>', 'ERBA dan ERLA', 'ERLA dan ERBA')   -- <SYSTEM> = ERBA | ERLA
+  AND deskripsi ILIKE '%<user phrase>%';
+```
+
+Resolve **per system separately** when building a UNION (ERBA side with `sumber` ERBA…, ERLA side
+with `sumber` ERLA…). Bind the returned `kode` into the WHERE clause. Record the binding (see §5).
+
+### 2.2 Outbound — code → definition (during GENERATE)
+
+```sql
+LEFT JOIN warehouse.public.data_dictionary dd
+  ON dd.kategori = '<KATEGORI>'
+  AND dd.sumber IN ('<SYSTEM>', 'ERBA dan ERLA', 'ERLA dan ERBA')   -- prevents fan-out
+  AND dd.kode = <coded_column>::text
+-- status_komitmen: dd.kode = ROUND(status_komitmen::numeric)::int::text
+-- present COALESCE(dd.deskripsi, <coded_column>) — NEVER show a raw code in the answer
+```
+
+---
+
+## 3. Ambiguity loop — re-map until grounded
+
+After running §2.1, branch on the result:
+
+- **Exactly 1 strong match** → bind `term → kode` → proceed.
+- **0 rows (typo / unknown phrasing)** → broaden, do not give up:
+  - split into syllable/word patterns: `deskripsi ILIKE '%men%' AND deskripsi ILIKE '%tinggi%'`;
+  - try a related `kategori`; normalize obvious typos (`pg_trgm` is NOT installed — no DB
+    similarity function; the agent does the fuzzy step with multi-pattern `ILIKE`).
+- **>1 rows, or the two systems diverge** → this is real ambiguity. Do **not** guess:
+  1. enumerate candidate bindings;
+  2. **test each candidate against data** with a quick `COUNT(DISTINCT …)`;
+  3. judge by magnitude/plausibility — a candidate whose count is wildly off the expected order is
+     rejected. Example (cross-system equivalence): ERLA `JENIS_DOKUMEN='303'` (~87k) vs ERBA
+     `KATEGORI_DOKUMEN='302'` (~16k) differ ~5–7× → they are **not** the same granularity → ERLA
+     Medium ≈ ERBA MT+MR combined, so ERLA cannot isolate MT;
+  4. pick the data-supported binding and **state the basis + limitation** in the answer
+     (the clarification channel is not built — never silently pick; never fabricate).
+
+---
+
+## 4. Source hierarchy — translation is not dictionary-only
+
+Resolve meaning from the most authoritative source that applies:
+
+1. **`data_dictionary`** (sumber-aware) — for coded column values (§2).
+2. **Probe the related table** — for meanings absent from the dictionary:
+   - product segments (AMDK, Garam, susu, …) → discover via `nama_kategori` / confirm via
+     `jenis_pangan` in `t_produk_3_erba` / `t_produk_3_rilis_erla` (codes differ per system),
+     and choose the code by **coverage** (parent category over a single sub-code);
+   - company identity → `m_trader_rba` / `m_trader_rla`.
+   ```sql
+   SELECT DISTINCT jenis_pangan, nama_kategori, COUNT(*) AS cnt
+   FROM warehouse.public.<table>
+   WHERE nama_kategori ILIKE '%<keyword>%'
+   GROUP BY 1,2 ORDER BY 3 DESC LIMIT 10;
+   ```
+3. **Business semantics** (`business_glossary.md`) — for concepts that are not codes
+   (NIE = `COUNT(DISTINCT nomor)`, "pangan olahan" scope, final-vs-transient commitment concept).
+
+A segment code is never hardcoded as truth — it is discovered and coverage-tested.
+
+### Verified segment & risk filters (from PRODUCTION SQL — Direktorat Registrasi Pangan Olahan)
+
+These patterns come from the **production SQL reference** (Google Sheets "list pertanyaan
+analitik") — they are the ground truth for how BPOM analysts actually query NIE data.
+Internalize this **cara berpikir** before writing any NIE query.
+
+#### Mandatory filter chain for ALL NIE count queries
+
+Every "jumlah izin edar" / "NIE terbit" query MUST include these three filters:
+
+```sql
+WHERE status IN ('0999','0906','9999')              -- 3-status aktif (ERBA)
+  AND jenis_permohonan IN ('301','305')              -- baru + notifikasi only (ERBA)
+  AND tanggal IS NOT NULL                            -- must have issue date
+```
+
+For ERLA side of a UNION:
+```sql
+WHERE status IN ('0099','0999','0906','9999')        -- 4-status aktif (ERLA)
+  AND jenis_permohonan IN ('301','304','305')        -- ERLA includes 304 (daftar ulang)
+  AND tanggal IS NOT NULL
+```
+
+**`jenis_permohonan` is NOT optional.** Without it, perubahan mayor (302) and perubahan minor
+(303) inflate the count by 15-40%. The production SQL applies this filter to EVERY NIE query,
+including risk, AMDK, garam, tren, and komitmen.
+
+#### Risk categories — production grouping
+
+| User asks | ERBA filter | Production logic |
+|-----------|-------------|------------------|
+| "Risiko Tinggi" | `kategori_dokumen IN ('301','304')` | Tinggi (301) **+ Tinggi Notifikasi (304) combined** — these are one group in production |
+| "Risiko Menengah Tinggi" | `kategori_dokumen = '302'` | Separate |
+| "Risiko Menengah Rendah" | `kategori_dokumen = '303'` | Separate |
+
+> Never split 301 and 304 when the user asks for "Tinggi" — production treats them as one bucket.
+
+#### Segment filters (verified against production SQL)
+
+| Segment | ERBA filter | ERLA filter | Notes |
+|---------|-------------|-------------|-------|
+| AMDK | `jenis_pangan = '1401'` | `jenis_pangan IN ('651','652','655')` | Single code 1401 (NOT 1401+1402) |
+| Garam Beryodium | `kategori_pangan = '120101000001'` | `kategori_pangan = '12010103'` | Specific sub-code, NOT parent `jenis_pangan LIKE '1204%'` |
+| Formula Bayi | `jenis_pangan IN ('1301','1302')` | `jenis_pangan IN ('604','622')` | Strict formula bayi |
+
+#### Komitmen queries — production uses Case A (NIE + komitmen)
+
+Production SQL for "izin edar yang dibatalkan/disetujui komitmen" ALWAYS includes the NIE
+status filter AND jenis_permohonan:
+
+```sql
+-- Disetujui komitmen (status_komitmen IN 4,7)
+WHERE kategori_dokumen = '303'
+  AND status IN ('0999','0906','9999')
+  AND jenis_permohonan = '301'          -- Case A: JP 301 only (not 305)
+  AND status_komitmen IN ('4','7')
+
+-- Dibatalkan komitmen (status_komitmen = 5)
+WHERE kategori_dokumen = '303'
+  AND status IN ('0999','0906','9999')
+  AND jenis_permohonan = '301'
+  AND status_komitmen = '5'
+```
+
+> Production komitmen queries use `jenis_permohonan = '301'` (single, not IN '301','305').
+> This is narrower than the general NIE filter.
+
+---
+
+## 5. Binding record (feeds the SKILL.md RESOLVE gate)
+
+Before writing SQL, every coded term must have a row:
+
+```
+term            | kategori          | sumber | kode(s)        | source query
+"menengah tinggi"| KATEGORI_DOKUMEN | ERBA   | 302            | dict lookup §2.1
+"dibatalkan"     | STATUS_KOMITMEN  | ERBA   | 5              | dict lookup §2.1
+```
+
+No SQL may be written until every coded term is bound from the dictionary (not from memory).
+On a follow-up turn the binding is **re-derived** (re-queried) — it is a method, never inherited.
+The lookup *result* may be cached within a session (reference data is immutable mid-conversation);
+the *business decision* (which filter to apply) is still re-derived each turn.

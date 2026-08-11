@@ -1,0 +1,19 @@
+name: UAT_BAYI_1
+scenario_id: UAT-BAYI-1
+verification_date: '2026-07-23'
+description: 'UAT-BAYI-1 — Scope-agnostic (ERBA/ERLA/UNION valid via assert_any_of). Re-verified 23Jul2026: entity dikoreksi ke `nomor` (predikat §1) — versi sebelumnya memakai produk_id sehingga meng-inflate ~59%.'
+turns:
+- prompt: berapa jumlah produk formula bayi yang telah memiliki izin edar
+  assert_contains:
+  - 'formula bayi'
+  assert_any_of:
+  -
+    - '149'
+  -
+    - '61'
+    - 'ERBA'
+  -
+    - '88'
+    - 'ERLA'
+  tolerance_pct: 5
+  note: 'SQL ERBA: SELECT COUNT(DISTINCT nomor) FROM t_produk_3_erba WHERE jenis_pangan IN (''1301'',''1302'') AND status IN (''0999'',''0906'',''9999'') AND trader_id::bigint NOT IN (5,17,50,85) AND nomor<>''''. SQL ERLA: SELECT COUNT(DISTINCT nomor) FROM t_produk_3_rilis_erla WHERE nama_kategori ILIKE ''Formula Bayi%'' AND status IN (''0099'',''0999'',''0906'',''9999'') AND trader_id<>3384 AND nomor<>''''. GABUNGAN = COUNT(DISTINCT nomor) atas UNION ALL. DB 23Jul2026: ERBA=61 · ERLA=88 · gabungan=149. ENTITY (koreksi utama): "produk ... memiliki izin edar" = NIE → COUNT(DISTINCT nomor); produk_id menghitung tiap pengajuan/revisi berulang (satu NIE bisa punya banyak produk_id) sehingga menggelembung — nilai lama 97/305/402 adalah hitungan produk_id. KODE TIDAK ADA DI DICTIONARY: kategori JENIS_PANGAN / KATEGORI_PANGAN sama sekali TIDAK terdaftar di data_dictionary (filter_code §4d) — mapping 1301/1302 diturunkan empiris dari GROUP BY jenis_pangan + nama_kategori. BEDA ERBA vs ERLA: ERBA memakai jenis_pangan 1301 (Formula Bayi Padat) & 1302 (Cair); ERLA TIDAK punya kode setara yang eksklusif — kode 604/622/624 di ERLA dipakai bersama Formula Pertumbuhan/MP ASI/Makanan Selingan/PKMK, jadi dipakai match nama_kategori. Dictionary STATUS: ERBA 0999/0906/9999; ERLA tercatat tanpa zero-pad tapi data tersimpan 4-digit.'

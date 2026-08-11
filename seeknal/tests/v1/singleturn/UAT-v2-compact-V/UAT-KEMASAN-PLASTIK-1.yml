@@ -1,0 +1,19 @@
+name: UAT_KEMASAN_PLASTIK_1
+scenario_id: UAT-KEMASAN-PLASTIK-1
+verification_date: '2026-07-27'
+description: 'UAT-KEMASAN-PLASTIK-1 — SCOPE: scope-agnostic. Re-verified 27Jul2026. Pasangan dari UAT-KEMASAN-KACA-1: kode BERBEDA antar sistem (2 vs 32) dan cakupan definisinya juga berbeda (ERBA hanya monolayer).'
+turns:
+- prompt: berapa produk BPOM yang menggunakan kemasan plastik?
+  assert_contains:
+  - 'plastik'
+  assert_any_of:
+  -
+    - '143.942'
+  -
+    - '45.975'
+    - 'ERBA'
+  -
+    - '97.967'
+    - 'ERLA'
+  tolerance_pct: 5
+  note: 'SCOPE = scope-agnostic. SQL ERBA SAJA: SELECT COUNT(DISTINCT nomor) FROM t_produk_3_erba WHERE kemasan_id=''2'' AND status IN (''0999'',''0906'',''9999'') AND trader_id::bigint NOT IN (5,17,50,85) AND nomor<>''''. SQL ERLA SAJA (KODE BERBEDA): SELECT COUNT(DISTINCT nomor) FROM t_produk_3_rilis_erla WHERE kemasan_id=''32'' AND status IN (''0099'',''0999'',''0906'',''9999'') AND trader_id<>3384 AND nomor<>''''. SQL GABUNGAN: SELECT COUNT(DISTINCT nomor) FROM (SELECT nomor FROM t_produk_3_erba WHERE kemasan_id=''2'' AND status IN (''0999'',''0906'',''9999'') AND trader_id::bigint NOT IN (5,17,50,85) AND nomor<>'''' UNION ALL SELECT nomor FROM t_produk_3_rilis_erla WHERE kemasan_id=''32'' AND status IN (''0099'',''0999'',''0906'',''9999'') AND trader_id<>3384 AND nomor<>'''') x. DB 27Jul2026: ERBA=45.975 · ERLA=97.967 · gabungan=143.942. KODE FILTER ERBA vs ERLA — BERBEDA (filter_code §4): plastik = kemasan_id ''2'' di ERBA, ''32'' di ERLA. Dua blok dictionary KEMASAN_ID yang terpisah (ERBA 1..7 · ERLA 31..39); tidak boleh saling dipakai. CAKUPAN DEFINISI BERBEDA — INI PENTING UNTUK JAWABAN: kode ERBA 2 berbunyi "Plastik tunggal (monolayer)" sehingga plastik berlapis/multilayer TIDAK masuk; kode ERLA 32 berbunyi "Plastik (Metalized, PS, PP, PET, LDPE, HDPE)" yang jauh lebih lebar. Jadi angka gabungan 143.942 menjumlahkan definisi sempit (ERBA) dengan definisi lebar (ERLA), dan sebagian plastik ERBA yang berlapis kemungkinan tercatat di kode lain (4 komposit · 7 ganda). Sebutkan keterbatasan ini; bila pengguna menanya "semua kemasan plastik" tanpa batas monolayer, tawarkan pembacaan yang menyertakan kode komposit/ganda di sisi ERBA. ENTITY: COUNT(DISTINCT nomor) (predikat §1). Pembanding entity produk_id: ERBA=58.611 · ERLA=248.026. Selisih ERLA sangat ekstrem (248.026 vs 97.967 = 2,5x) karena satu NIE di sistem legacy bisa punya puluhan baris revisi — nilai lama berkas ini (ERLA 248.026) adalah hitungan produk_id murni dan itulah sumber angka lama 292.657 yang menggelembung. Nilai lama 292.657/44.631/248.026.'

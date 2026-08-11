@@ -1,0 +1,11 @@
+name: Komitmen_MR_2024_Status
+scenario_id: COMMIT-1
+description: 'COMMIT-1 — Status komitmen MR 2024. DB verified 2026-06-10: disetujui_catatan=4.752, disetujui=1.228, dibatalkan=208, pending=4.471'
+turns:
+- prompt: 'Status komitmen produk Risiko Menengah Rendah di ERBA tahun 2024: berapa yang disetujui, dibatalkan, dan masih pending?'
+  assert_contains:
+  - komitmen
+  - disetujui
+  - dibatalkan
+  - 2024
+  note: 'COMMIT-1 — DB aktual (t_produk_3_erba, kategori_dokumen=303, tanggal 2024): Disetujui Catatan(7)=4.752, Disetujui(4)=1.228, Dibatalkan(5)=208, Pending(0+1)=4.471. Tolerance ±5%.'

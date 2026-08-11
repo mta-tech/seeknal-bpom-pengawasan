@@ -1,0 +1,34 @@
+name: Clarification_Gate_JP_Baru_vs_Revisi
+scenario_id: "CLARIF-JP-BARU-REVISI-1"
+description: "Uji clarification gate BUSINESS_EVENT + ENTITY: 'daftar produk baru atau ubah produk lama' ambigu antara semua revisi, mayor saja, atau minor+mayor."
+turns:
+  - prompt: "tahun 2025 lebih banyak mana, industri yang daftar produk baru atau yang mengubah produk lama?"
+    assert_contains:
+      - "2025"
+    note: "Material ambiguity BUSINESS_EVENT: 'mengubah produk lama' bisa berarti mayor saja atau mayor+minor. Agent HARUS tanya definisi revisi."
+  - prompt: "gabungkan semua revisi, mayor dan minor"
+    assert_contains:
+      - "43.142"
+      - "13.571"
+      - "permohonan baru"
+    note: "Setelah klarifikasi, agent harus lock Baru=43.142 vs Revisi(Mayor+Minor)=13.571."
+  - prompt: "kalau dipisah minor dan mayor?"
+    assert_contains:
+      - "6.935"
+      - "6.636"
+      - "minor"
+      - "mayor"
+    note: "Follow-up same topic: Minor=6.935, Mayor=6.636."
+  - prompt: "mana yang lebih dominan di revisi?"
+    assert_contains:
+      - "6.935"
+      - "minor"
+    note: "Agent harus simpulkan minor lebih tinggi tipis daripada mayor."
+  - prompt: "ringkaskan pola bisnisnya"
+    assert_contains:
+      - "43.142"
+      - "13.571"
+      - "6.935"
+      - "6.636"
+    note: "Ringkasan harus konsisten: daftar produk baru jauh lebih besar daripada revisi, dan dalam revisi minor sedikit lebih dominan."
+

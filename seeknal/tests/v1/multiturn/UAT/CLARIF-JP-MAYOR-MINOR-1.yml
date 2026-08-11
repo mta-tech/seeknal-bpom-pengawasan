@@ -1,0 +1,27 @@
+name: Clarification_Gate_JP_Mayor_vs_Minor
+scenario_id: "CLARIF-JP-MAYOR-MINOR-1"
+description: "Uji clarification gate EXACT_TERM: 'perubahan produk' ambigu antara perubahan mayor dan perubahan minor."
+turns:
+  - prompt: "berapa permohonan perubahan produk yang disetujui tahun 2025?"
+    assert_contains:
+      - "2025"
+      - "perubahan"
+    note: "Material ambiguity EXACT_TERM: 'perubahan produk' bisa mayor atau minor. Agent HARUS tanya jenis perubahan."
+  - prompt: "yang mayor dulu"
+    assert_contains:
+      - "6.636"
+      - "mayor"
+      - "2025"
+    note: "Setelah klarifikasi, agent harus lock Perubahan Mayor 2025 = 6.636."
+  - prompt: "kalau yang minor?"
+    assert_contains:
+      - "6.935"
+      - "minor"
+      - "2025"
+    note: "Follow-up same topic: Perubahan Minor 2025 = 6.935."
+  - prompt: "berapa selisihnya?"
+    assert_contains:
+      - "6.935"
+      - "6.636"
+    note: "Agent harus memakai dua angka sebelumnya untuk menjelaskan bahwa minor lebih tinggi tipis."
+

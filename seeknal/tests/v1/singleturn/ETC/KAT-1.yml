@@ -1,0 +1,9 @@
+name: Top_10_Kategori_Pangan_2024
+scenario_id: KAT-1
+description: 'KAT-1 — Top 10 kategori pangan 2024. DB verified 2026-06-10: Air Mineral=1.020, Konsentrat Minuman=628'
+turns:
+- prompt: 10 kategori pangan dengan izin edar terbanyak tahun 2024
+  assert_contains:
+  - kategori
+  - 2024
+  note: 'KAT-1 — DB aktual (t_produk_3_erba, nama_kategori, tanggal 2024): Air Mineral=1.020, Konsentrat Minuman=628, Still Grape Wine=521, Kopi Bubuk=476, Anggur=447. Tolerance ±5%.'

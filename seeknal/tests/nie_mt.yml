@@ -1,0 +1,16 @@
+name: nie_risiko_menengah_tinggi_2023
+prompt: berapa jumlah NIE Risiko Menengah Tinggi di ERBA tahun 2023?
+sql: |
+  SELECT COUNT(DISTINCT nomor) AS jumlah_nie_mt
+  FROM warehouse.public.t_produk_3_erba
+  WHERE kategori_dokumen = '302'
+    AND tanggal >= '2023-01-01' AND tanggal < '2024-01-01'
+    AND trader_id NOT IN (5, 17, 50, 85)
+    AND status IN ('0999','0906','9999')
+    AND jenis_permohonan IN ('301','305')
+assertions:
+  answer_contains:
+    - "Risiko Menengah Tinggi"
+    - "2023"
+    - "3.077"
+  expected_values: false

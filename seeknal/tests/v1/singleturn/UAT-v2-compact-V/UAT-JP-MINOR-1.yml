@@ -1,0 +1,20 @@
+name: UAT_JP_MINOR_1
+scenario_id: UAT-JP-MINOR-1
+verification_date: '2026-07-27'
+description: 'UAT-JP-MINOR-1 — SCOPE: scope-agnostic (ERBA saja / ERLA saja / gabungan sah via assert_any_of). Re-verified 27Jul2026. Versi lama punya CACAT NOTE: teksnya menulis "jenis_permohonan=302 (Perubahan Minor)" padahal 302 = Perubahan MAYOR; SQL-nya sendiri sudah memakai 303 yang benar.'
+turns:
+- prompt: berapa permohonan perubahan minor yang diterima di tahun 2023?
+  assert_contains:
+  - 'minor'
+  - '2023'
+  assert_any_of:
+  -
+    - '10.425'
+  -
+    - '1.554'
+    - 'ERBA'
+  -
+    - '8.871'
+    - 'ERLA'
+  tolerance_pct: 5
+  note: 'SCOPE = scope-agnostic. SQL ERBA SAJA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_erba WHERE jenis_permohonan=''303'' AND NULLIF(tanggal_bayar,'''')::timestamp>=''2023-01-01'' AND NULLIF(tanggal_bayar,'''')::timestamp<''2024-01-01'' AND status IN (''0999'',''0906'',''9999'') AND trader_id::bigint NOT IN (5,17,50,85). SQL ERLA SAJA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_rilis_erla WHERE jenis_permohonan=''303'' AND tanggal_bayar>=''2023-01-01'' AND tanggal_bayar<''2024-01-01'' AND status IN (''0099'',''0999'',''0906'',''9999'') AND trader_id<>3384. SQL GABUNGAN: SELECT COUNT(DISTINCT produk_id) FROM (SELECT produk_id FROM t_produk_3_erba WHERE jenis_permohonan=''303'' AND NULLIF(tanggal_bayar,'''')::timestamp>=''2023-01-01'' AND NULLIF(tanggal_bayar,'''')::timestamp<''2024-01-01'' AND status IN (''0999'',''0906'',''9999'') AND trader_id::bigint NOT IN (5,17,50,85) UNION ALL SELECT produk_id FROM t_produk_3_rilis_erla WHERE jenis_permohonan=''303'' AND tanggal_bayar>=''2023-01-01'' AND tanggal_bayar<''2024-01-01'' AND status IN (''0099'',''0999'',''0906'',''9999'') AND trader_id<>3384) x. DB 27Jul2026: ERBA=1.554 · ERLA=8.871 · gabungan=10.425. KODE YANG BENAR — INI SUMBER CACAT VERSI LAMA: dictionary JENIS_PERMOHONAN sumber="ERBA dan ERLA" menetapkan 302 = Perubahan Mayor dan 303 = Perubahan Minor. Note versi lama menyebut 302 sebagai Minor; bila seseorang mengikuti note itu dan bukan SQL-nya, hasilnya jadi angka Mayor (ERBA 2023 = 1.091) yang bukan jawaban pertanyaan ini. Selalu ambil kode dari dictionary, jangan dari prosa note. KODE FILTER ERBA vs ERLA: SAMA (303 berlaku di kedua sistem); yang berbeda hanya set status sah, akun uji, dan cast tanggal. ENTITY: "permohonan ... yang diterima" → COUNT(DISTINCT produk_id) (predikat §1). Pembanding entity nomor: ERBA=1.317 · ERLA=6.438 — nilai lama ERBA (1.327) adalah hitungan nomor dari snapshot lama sedangkan nilai ERLA (8.871) hitungan produk_id, jadi total lama 10.198 mencampur dua satuan. KOLOM TANGGAL: tanggal_bayar (predikat §2). KONTRAS BEBAN SISTEM 2023: perubahan minor masih didominasi ERLA (8.871 vs 1.554) karena produk lama yang direvisi tetap diproses di sistem legacy — jawaban wajib memecah per sistem, bukan hanya total. Nilai lama 10.198/1.327/8.871 (tol 0).'

@@ -1,0 +1,10 @@
+name: 58_Tampilkan permohonan per jenis tahun 2023
+scenario_id: NIE-20
+description: NIE-20
+turns:
+- prompt: Tampilkan permohonan per jenis tahun 2023
+  assert_contains:
+  - permohonan
+  - jenis
+  - '2023'
+  note: NIE-20

@@ -1,0 +1,95 @@
+# =============================================================================
+# IBA Production Test Configuration
+#
+# Purpose:
+#   Configuration for running IBA test scripts against the live production
+#   environment at alpha.keycenter.ai. Contains Keycloak credentials, test
+#   user accounts, and domain-specific settings.
+#
+# Used by:
+#   - scripts/test_concurrency_production.py (main test runner)
+#
+# Environment:
+#   - IBA API: https://alpha.keycenter.ai/api
+#   - Keycloak: https://auth.keycenter.ai/auth (realm: keycenter)
+#   - Client: web (ROPC grant)
+#
+# Test Users:
+#   - Primary: user-test@pom.go.id (for sequential/single-user tests)
+#   - Additional: user-test-1@pom.go.id through user-test-24@pom.go.id
+#     (for multi-user and multiturn concurrent tests)
+#
+# Usage:
+#   uv run python scripts/test_concurrency_production.py --config scripts/iba_test_config_production.yml
+#
+# Notes:
+#   - domain_id is hardcoded (not auto-discovered from DB)
+#   - service_path is empty because base_url already includes /api
+#   - Credentials are for testing purposes only
+# =============================================================================
+
+iba:
+  base_url: https://alpha.keycenter.ai/api
+  service_path: ""
+
+keycloak:
+  url: https://auth.keycenter.ai/auth
+  realm: keycenter
+  client_id: web
+  client_secret: qlbfj4lOnpUig5DUrQnTXsGjeWKh7fqq
+
+test_users:
+  - email: user-test@pom.go.id
+    password: "12345678"
+  - email: user-test-1@pom.go.id
+    password: "BPOM@2026"
+  - email: user-test-2@pom.go.id
+    password: "BPOM@2026"
+  - email: user-test-4@pom.go.id
+    password: "BPOM@2026"
+  - email: user-test-5@pom.go.id
+    password: "BPOM@2026"
+  - email: user-test-6@pom.go.id
+    password: "BPOM@2026"
+  - email: user-test-7@pom.go.id
+    password: "BPOM@2026"
+  - email: user-test-8@pom.go.id
+    password: "BPOM@2026"
+  - email: user-test-9@pom.go.id
+    password: "BPOM@2026"
+  - email: user-test-10@pom.go.id
+    password: "BPOM@2026"
+  - email: user-test-11@pom.go.id
+    password: "BPOM@2026"
+  - email: user-test-12@pom.go.id
+    password: "BPOM@2026"
+  - email: user-test-13@pom.go.id
+    password: "BPOM@2026"
+  - email: user-test-14@pom.go.id
+    password: "BPOM@2026"
+  - email: user-test-15@pom.go.id
+    password: "BPOM@2026"
+  - email: user-test-16@pom.go.id
+    password: "BPOM@2026"
+  - email: user-test-17@pom.go.id
+    password: "BPOM@2026"
+  - email: user-test-18@pom.go.id
+    password: "BPOM@2026"
+  - email: user-test-19@pom.go.id
+    password: "BPOM@2026"
+  - email: user-test-20@pom.go.id
+    password: "BPOM@2026"
+  - email: user-test-21@pom.go.id
+    password: "BPOM@2026"
+  - email: user-test-22@pom.go.id
+    password: "BPOM@2026"
+  - email: user-test-23@pom.go.id
+    password: "BPOM@2026"
+  - email: user-test-24@pom.go.id
+    password: "BPOM@2026"
+
+domain_id: "bbc5a1a3-dcdd-4684-9e6c-6134f0583005"
+
+seeknal:
+  yaml_path: seeknal/tests/v1/production
+  output_path: seeknal/tests/outputs

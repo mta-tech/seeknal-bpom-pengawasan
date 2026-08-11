@@ -1,0 +1,10 @@
+name: UAT_Permohonan_Minor_2023
+scenario_id: UAT-JP-MINOR-1
+description: 'UAT-JP-MINOR-1 — Permohonan perubahan minor ERBA tahun 2023 (jenis_permohonan=302). DB verified 2026-06-17: 1.327. Uji terjemahan kode JENIS_PERMOHONAN ke label "Perubahan Minor".'
+turns:
+- prompt: berapa permohonan perubahan minor yang diterima di tahun 2023?
+  assert_contains:
+  - '1.327'
+  - minor
+  - '2023'
+  note: 'UAT-JP-MINOR-1 — t_produk_3_erba jenis_permohonan=302 (Perubahan Minor), terbit 2023, NIE aktif = 1.327. Dictionary: JENIS_PERMOHONAN kode 302.'

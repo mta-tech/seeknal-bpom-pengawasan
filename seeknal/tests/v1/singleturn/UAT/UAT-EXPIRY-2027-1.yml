@@ -1,0 +1,10 @@
+name: UAT_NIE_Kadaluarsa_2027
+scenario_id: UAT-EXPIRY-2027-1
+description: 'UAT-EXPIRY-2027-1 — NIE ERBA aktif yang akan kadaluarsa di tahun 2027 (tanggal_exp). DB verified 2026-06-17: 1.415. Early warning: izin yang perlu diperpanjang. Terbanyak kadaluarsa: 2030=44.758, 2029=42.092, 2028=30.256.'
+turns:
+- prompt: berapa izin edar yang akan habis masa berlakunya di tahun 2027?
+  assert_contains:
+  - '1.415'
+  - '2027'
+  - kadaluarsa
+  note: 'UAT-EXPIRY-2027-1 — tanggal_exp::timestamp BETWEEN 2027-01-01 AND 2027-12-31, status aktif = 1.415. Early warning scenario.'

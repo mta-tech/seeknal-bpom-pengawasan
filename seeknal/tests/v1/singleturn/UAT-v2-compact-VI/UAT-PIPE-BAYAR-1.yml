@@ -1,0 +1,16 @@
+name: UAT_PIPE_BAYAR_1
+scenario_id: UAT-PIPE-BAYAR-1
+verification_date: '2026-07-27'
+description: 'UAT-PIPE-BAYAR-1 — ERBA-only untuk tabel produk (ERLA hanya menyimpan status final), dengan angka pendamping produk+BTP. TRANSIENT.'
+turns:
+- prompt: ada berapa permohonan yang sudah diproses tapi masih menunggu pembayaran?
+  assert_contains:
+  - 'pembayaran'
+  assert_any_of:
+  -
+    - '7.182'
+  -
+    - '7.432'
+    - 'BTP'
+  tolerance_pct: 10
+  note: 'SQL ERBA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_erba WHERE status IN (''0903'',''0907'') AND trader_id::bigint NOT IN (5,17,50,85). SQL ERLA / GABUNGAN: tidak berlaku — seluruh nilai status di t_produk_3_rilis_erla hanya {0000, 0009, 0099, 0501, 0906, 0999, 9999}, semuanya final; kode 0903/0907 tidak ada di sana. SQL produk+BTP (pendamping): UNION ALL query di atas dengan t_btp_3_erba dan t_btp_3_erla pada kode yang sama, lalu COUNT(DISTINCT produk_id) di lapisan luar. DB 27Jul2026: produk ERBA=7.182 (0903=6.841 · 0907=341) · produk+BTP=7.432. Headline kanonik = produk saja; bacaan +BTP sah asal diberi label tabel sumbernya. KODE: dictionary STATUS sumber=ERBA memberi deskripsi IDENTIK untuk 0903 dan 0907 ("Pendaftar - Pembayaran SPB/HPR") — dua kode, satu bunyi; jangan memilih salah satu karena mengira duplikat, keduanya berisi baris nyata. Populasinya: sudah dapat tagihan, belum bayar. BTP: kode 0903/0907 dipakai dengan arti sama di t_btp_3_erba dan t_btp_3_erla — beda dari tabel produk yang ERLA-nya memang tidak merekam tahap ini. Perhatikan trader_id di t_produk_3_erba bertipe TEXT (perlu ::bigint) sedangkan di kedua tabel BTP sudah BIGINT. ENTITY: produk_id — yang dihitung pengajuan, bukan NIE. TANPA FILTER STATUS NIE SAH: menumpuknya akan menghapus populasi yang ditanya. TRANSIENT: antrian bergerak dua arah, toleransi 10% dan jawaban wajib menstempel tanggal. Nilai lama 6.988 (tanpa eksklusi trader, snapshot lebih awal).'

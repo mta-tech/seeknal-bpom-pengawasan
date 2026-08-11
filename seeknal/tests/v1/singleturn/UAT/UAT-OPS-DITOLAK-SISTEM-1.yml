@@ -1,0 +1,9 @@
+name: UAT_Ops_Ditolak_Sistem
+scenario_id: UAT-OPS-DITOLAK-SISTEM-1
+description: 'UAT-OPS-DITOLAK-SISTEM-1 — [Domain 3: Operational Health] Permohonan ERBA yang ditolak oleh sistem otomatis (status 0908+0918+0911). DB verified 2026-06-17: 12.278. Ini bukan ditolak manual tapi sistem.'
+turns:
+- prompt: berapa permohonan yang ditolak otomatis oleh sistem BPOM?
+  assert_contains:
+  - '12.278'
+  - ditolak
+  note: 'UAT-OPS-DITOLAK-SISTEM-1 — 0908+0918+0911 (Ditolak Oleh System) = 12.278. Ini terbesar ke-4 dalam pipeline. Domain: Kualitas Proses.'

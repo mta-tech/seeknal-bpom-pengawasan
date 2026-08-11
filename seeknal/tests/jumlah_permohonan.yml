@@ -1,0 +1,15 @@
+name: permohonan_erba_2023
+prompt: berapa jumlah permohonan pangan olahan di sistem ERBA tahun 2023?
+sql: |
+  SELECT COUNT(DISTINCT produk_id) AS jumlah_permohonan
+  FROM warehouse.public.t_produk_3_erba
+  WHERE tanggal_bayar >= '2023-01-01' AND tanggal_bayar < '2024-01-01'
+    AND jenis_permohonan IN ('301','302','303','304','305')
+assertions:
+  answer_contains:
+    - "permohonan"
+    - "2023"
+    - "42.329"
+  answer_not_contains:
+    - "30.276"
+  expected_values: false

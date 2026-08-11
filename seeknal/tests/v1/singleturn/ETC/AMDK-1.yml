@@ -1,0 +1,10 @@
+name: AMDK_Trend
+scenario_id: AMDK-1
+description: 'AMDK-1 — Trend AMDK. DB verified 2026-06-10: 2022=96, 2023=1.743, 2024=2.208, 2025=1.952'
+turns:
+- prompt: Tren jumlah izin edar produk Air Minum Dalam Kemasan dari tahun ke tahun
+  assert_contains:
+  - AMDK
+  - tren
+  - per tahun
+  note: 'AMDK-1 — DB aktual (t_produk_3_erba, jenis_pangan=1401): 2022=96, 2023=1.743, 2024=2.208, 2025=1.952. Tolerance ±5%.'

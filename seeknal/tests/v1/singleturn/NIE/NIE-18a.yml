@@ -1,0 +1,11 @@
+name: Jumlah_NIE_UMKM_ERBA_2023
+scenario_id: NIE-18a
+description: 'NIE-18a — Expected: NIE UMKM ERBA 2023. DB verified 2026-06-09: 12.295'
+turns:
+- prompt: Berapa jumlah NIE pangan olahan untuk UMKM di ERBA tahun 2023?
+  assert_contains:
+  - NIE
+  - UMKM
+  - ERBA
+  - 2023
+  note: 'NIE-18a — DB aktual 12.295 (t_produk_3_erba JOIN m_trader_rba, skala_industri_id IN (1,2,3), tanggal 2023). Tolerance ±5%.'

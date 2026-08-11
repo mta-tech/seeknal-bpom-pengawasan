@@ -1,0 +1,9 @@
+name: UAT_PIPELINE_TOTAL_1
+scenario_id: UAT-PIPELINE-TOTAL-1
+description: 'UAT-PIPELINE-TOTAL-1 — single-scope (by-design).'
+turns:
+- prompt: total permohonan yang masih dalam antrian proses di BPOM ada berapa?
+  assert_contains:
+  - '58.339'
+  - 'proses'
+  note: 'UAT-PIPELINE-TOTAL-1 — semua status bukan 0999/0906/9999/0000/0009/0099 = 58.339. Termasuk: draft, bayar, evaluasi, verifikasi, validasi.'

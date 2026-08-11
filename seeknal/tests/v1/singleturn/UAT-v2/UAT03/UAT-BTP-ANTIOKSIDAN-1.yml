@@ -1,0 +1,10 @@
+name: UAT_BTP_ANTIOKSIDAN_1
+scenario_id: UAT-BTP-ANTIOKSIDAN-1
+description: 'UAT-BTP-ANTIOKSIDAN-1 — single-scope (by-design).'
+turns:
+- prompt: berapa izin edar BTP antioksidan yang ada di ERBA?
+  assert_contains:
+  - '942'
+  - 'antioksidan'
+  - 'BTP'
+  note: 'UAT-BTP-ANTIOKSIDAN-1 — t_btp_3_erba jenis_btp=48 (Antioksidan) status aktif = 942. Dictionary: JENIS_BTP kode 48.'

@@ -1,0 +1,19 @@
+name: UAT_BTP_PEWARNA_1
+scenario_id: UAT-BTP-PEWARNA-1
+description: 'UAT-BTP-PEWARNA-1 — Scope-agnostic (ERBA/ERLA/UNION valid via assert_any_of). DB ref catatan (BUKAN standar kebenaran).'
+turns:
+- prompt: ada berapa BTP pewarna yang terdaftar di BPOM?
+  assert_contains:
+  - 'pewarna'
+  - 'BTP'
+  assert_any_of:
+  -
+    - '600'
+  -
+    - '600'
+    - 'ERBA'
+  -
+    - '0'
+    - 'ERLA'
+  tolerance_pct: 5
+  note: 'UAT-BTP-PEWARNA-1 — Scope-agnostic. ERBA=note kanonik 600; ERLA=live 0. SQL ERBA: SELECT COUNT(DISTINCT produk_id) FROM t_btp_3_erba WHERE jenis_btp=''47'' AND status IN (''0999'',''0906'',''9999''). SQL ERLA: SELECT COUNT(DISTINCT produk_id) FROM t_btp_3_erla WHERE jenis_btp=''47'' AND status IN (''0999'',''0906'',''9999''). UAT-BTP-PEWARNA-1 — t_btp_3_erba jenis_btp=47 (Pewarna) status aktif = 600. Dictionary: JENIS_BTP kode 47.'

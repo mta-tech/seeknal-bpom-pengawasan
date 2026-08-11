@@ -1,0 +1,37 @@
+name: nie_definisi_ke_eksplorasi
+scenario_id: "MT-001"
+description: "Dari definisi NIE sampai eksplorasi data: total, risiko, skala, UMKM"
+turns:
+  - prompt: "apa itu NIE?"
+    assert_contains:
+      - "Nomor Izin Edar"
+      - "izin edar"
+    note: "Definisi dasar — agent harus jelasin konsep, bukan cuma sebut singkatan"
+  - prompt: "berapa total NIE pangan olahan di sistem ERBA yang terbit tahun 2023?"
+    assert_contains:
+      - "30.230"
+      - "2023"
+      - "ERBA"
+    note: "Baseline angka — agent harus pakai tanggal (terbit), bukan tanggal_bayar"
+  - prompt: "kalau per kategori risiko bagaimana?"
+    assert_contains:
+      - "Risiko Tinggi"
+      - "Risiko Menengah Tinggi"
+      - "Risiko Menengah Rendah"
+      - "17.504"
+    note: "Retain ERBA + 2023 — user tidak ulang konteks, agent harus ingat"
+  - prompt: "kalau per skala industri?"
+    assert_contains:
+      - "Besar"
+      - "Menengah"
+      - "Kecil"
+      - "Mikro"
+    note: "Ganti dimensi dari risiko ke skala — masih retain ERBA + 2023. Skala: Besar(14.588), Mikro(5.412), Kecil(4.945), Menengah(1.938)"
+  - prompt: "dari situ, yang UMKM berapa?"
+    assert_contains:
+      - "UMKM"
+      - "12.295"
+      - "Mikro"
+      - "Kecil"
+      - "Menengah"
+    note: "'Dari situ' = referensi implisit ke data skala T4 — UMKM = Mikro+Kecil+Menengah (12.295)"

@@ -1,0 +1,8 @@
+name: Status_Komitmen
+scenario_id: PROD-012
+description: "PROD-012 — Produk dengan status komitmen menunggu verifikasi"
+turns:
+- prompt: "Berapa produk yang memiliki status komitmen menunggu verifikasi?"
+  assert_contains:
+  - "komitmen"
+  note: "PROD-012 — Commitment status filter, expects count of pending verification"

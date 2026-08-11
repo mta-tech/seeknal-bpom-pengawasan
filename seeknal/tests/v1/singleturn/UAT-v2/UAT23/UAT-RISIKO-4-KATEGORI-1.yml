@@ -1,0 +1,11 @@
+name: UAT_RISIKO_4_KATEGORI_1
+scenario_id: UAT-RISIKO-4-KATEGORI-1
+description: 'UAT-RISIKO-4-KATEGORI-1 — single-scope (by-design).'
+turns:
+- prompt: bisa tampilkan distribusi izin edar berdasarkan kategori risiko dari yang paling banyak?
+  assert_contains:
+  - '80.'
+  - 'Tinggi'
+  - 'Menengah Rendah'
+  - 'Menengah Tinggi'
+  note: 'UAT-RISIKO-4-KATEGORI-1 — ERBA aktif: Tinggi=80.394, MR=41.425, MT=11.919, TinggiNotif=3.500. Tinggi dominan karena mencakup semua high risk termasuk notifikasi.'

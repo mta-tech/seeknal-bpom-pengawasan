@@ -1,0 +1,11 @@
+name: Jumlah_NIE_produk_BTP_ERLA_2023
+scenario_id: NIE-5a
+description: 'NIE-5a — Expected: NIE BTP ERLA 2023. DB verified 2026-06-09: 584'
+turns:
+- prompt: Berapa jumlah NIE produk BTP di sistem ERLA tahun 2023?
+  assert_contains:
+  - NIE
+  - BTP
+  - ERLA
+  - 2023
+  note: 'NIE-5a — DB aktual 584 (t_btp_3_erla, tanggal 2023). Tolerance ±5%.'

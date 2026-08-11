@@ -1,0 +1,9 @@
+name: UAT_Produk_Daerah_JakartaTimur
+scenario_id: UAT-DAERAH-1
+description: 'UAT-DAERAH-1 — NIE ERBA aktif dari perusahaan di Jakarta Timur (daerah_trader=3175). DB verified 2026-06-17: 17.544. Uji terjemahan kode daerah ke nama wilayah. Top 5: JakTim=17.544, JakPus=10.598, JakSel=10.196, JakBar=8.235, Tangerang=6.811.'
+turns:
+- prompt: berapa produk pangan olahan yang terdaftar dari perusahaan di Jakarta Timur?
+  assert_contains:
+  - '17.544'
+  - Jakarta Timur
+  note: 'UAT-DAERAH-1 — daerah_trader=3175 → 17.544. Dictionary: DAERAH_TRADER ... kode 31.75 → "Kota Administrasi Jakarta Timur".'

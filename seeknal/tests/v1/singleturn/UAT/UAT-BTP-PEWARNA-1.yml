@@ -1,0 +1,10 @@
+name: UAT_BTP_Pewarna_NIE
+scenario_id: UAT-BTP-PEWARNA-1
+description: 'UAT-BTP-PEWARNA-1 — NIE BTP pewarna ERBA aktif (jenis_btp=47). DB verified 2026-06-17: 600. Uji terjemahan kode JENIS_BTP ke label "Pewarna".'
+turns:
+- prompt: ada berapa BTP pewarna yang terdaftar di BPOM?
+  assert_contains:
+  - '600'
+  - pewarna
+  - BTP
+  note: 'UAT-BTP-PEWARNA-1 — t_btp_3_erba jenis_btp=47 (Pewarna) status aktif = 600. Dictionary: JENIS_BTP kode 47.'

@@ -1,0 +1,12 @@
+name: NIE_MR_disetujui_komitmen_2023
+scenario_id: NIE-12a
+description: 'NIE-12a — Expected: NIE MR disetujui komitmen 2023. DB verified 2026-06-09: 6.236'
+turns:
+- prompt: Berapa NIE Risiko Menengah Rendah di ERBA yang disetujui komitmen tahun 2023?
+  assert_contains:
+  - NIE
+  - Menengah Rendah
+  - disetujui
+  - komitmen
+  - 2023
+  note: 'NIE-12a — DB aktual 6.236 (kategori_dokumen=303 AND status_komitmen IN (4,7), tanggal 2023). Tolerance ±5%.'

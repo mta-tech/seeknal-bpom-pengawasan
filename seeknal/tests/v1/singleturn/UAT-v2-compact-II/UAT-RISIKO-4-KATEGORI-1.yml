@@ -1,0 +1,23 @@
+name: UAT_RISIKO_4_KATEGORI_1
+scenario_id: UAT-RISIKO-4-KATEGORI-1
+verification_date: '2026-07-18'
+description: 'UAT-RISIKO-4-KATEGORI-1 — single-scope by-design (risiko = ERBA only). Dua tier status sama-sama diterima.'
+turns:
+- prompt: bisa tampilkan distribusi izin edar berdasarkan kategori risiko dari yang paling banyak?
+  assert_contains:
+  - 'Tinggi'
+  - 'Menengah Rendah'
+  - 'Menengah Tinggi'
+  assert_any_of:
+  -
+    - '83.403'
+    - '42.001'
+    - '12.090'
+    - '3.689'
+  -
+    - '80.540'
+    - '41.131'
+    - '11.885'
+    - '3.432'
+  tolerance_pct: 5
+  note: 'SQL path: SELECT kategori_dokumen, COUNT(DISTINCT nomor) FROM t_produk_3_erba WHERE kategori_dokumen IN (''301'',''302'',''303'',''304'') AND status IN (''0999'',''0906'',''9999'') GROUP BY 1 ORDER BY 2 DESC. DB 18Jul2026 tier TERDAFTAR (grup 1): Tinggi murni 301=83.403 · MR 303=42.001 · MT 302=12.090 · TinggiNotif 304=3.689. Tier AKTIF status=''0999'' saja (grup 2): 80.540 · 41.131 · 11.885 · 3.432. Keluarga Tinggi = 301+304 — laporkan SPLIT per kode (Answer Contract predikat §12), jangan digabung diam-diam. KOREKSI GT lama (80.394/41.425/11.919/3.500): itu tier aktif, dan angka "Tinggi"-nya ternyata kd301-SAJA — teks note lama ("mencakup notifikasi") kontradiksi dengan angkanya sendiri.'

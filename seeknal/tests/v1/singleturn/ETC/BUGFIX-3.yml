@@ -1,0 +1,9 @@
+name: BTP_NIE_ERBA_Kolom_Benar
+scenario_id: BUGFIX-3
+description: 'Bug fix: BTP ERBA harus gunakan trader_id bukan user_id. DB verified 2026-06-12: 950'
+turns:
+- prompt: Berapa jumlah NIE produk BTP di ERBA tahun 2023?
+  assert_contains:
+  - '950'
+  - BTP
+  note: 'FIX-3 — BTP ERBA 2023 = 950. Agent harus gunakan trader_id, bukan user_id untuk exclude test accounts.'

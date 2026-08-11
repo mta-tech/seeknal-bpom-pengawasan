@@ -1,0 +1,8 @@
+name: docker_test_anomaly
+scenario_id: "DOCKER-TEST-2"
+description: "Test anomaly tool - tangkap semua tool calls dari awal hingga akhir"
+turns:
+  - prompt: "Apakah ada anomali pada data registrasi ERBA dari tahun2022? Gunakan detect_anomaly."
+    assert_contains:
+      - "anomali"
+    note: "Harus trigger: detect_anomaly. Cek Docker logs iba-forecast untuk POST /anomaly."

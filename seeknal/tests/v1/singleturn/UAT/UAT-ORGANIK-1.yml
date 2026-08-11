@@ -1,0 +1,9 @@
+name: UAT_Produk_Organik_NIE
+scenario_id: UAT-ORGANIK-1
+description: 'UAT-ORGANIK-1 — NIE ERBA produk organik (pemrosesan=301). DB verified 2026-06-17: 202. Uji terjemahan kode PEMROSESAN ke label "Organik". GMO hanya 1 produk.'
+turns:
+- prompt: ada berapa produk organik yang punya izin edar di BPOM?
+  assert_contains:
+  - '202'
+  - organik
+  note: 'UAT-ORGANIK-1 — pemrosesan=301 (Organik) ERBA NIE aktif = 202. Dictionary: PEMROSESAN kode 301. GMO (302) = 1, Iradiasi (304) = 0.'

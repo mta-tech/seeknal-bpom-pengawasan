@@ -1,0 +1,10 @@
+name: UAT_LC_Kadaluarsa_2027_PerRisiko
+scenario_id: UAT-LC-EXP-RISIKO-1
+description: 'UAT-LC-EXP-RISIKO-1 — [Domain 1: Lifecycle] NIE ERBA aktif yang kadaluarsa 2027 per kategori risiko. DB verified 2026-06-17: MR=1.048, MT=209, Tinggi=166, Total=1.415. Early warning per risiko.'
+turns:
+- prompt: dari izin edar yang akan habis tahun 2027, kategori risiko mana yang paling banyak?
+  assert_contains:
+  - Menengah Rendah
+  - '1.048'
+  - '2027'
+  note: 'UAT-LC-EXP-RISIKO-1 — exp 2027: MR=1.048, MT=209, Tinggi=166. MR dominan karena volumenya paling besar. Domain: Early Warning Lifecycle.'

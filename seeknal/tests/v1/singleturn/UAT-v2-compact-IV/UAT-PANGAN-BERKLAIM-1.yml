@@ -1,0 +1,19 @@
+name: UAT_PANGAN_BERKLAIM_1
+scenario_id: UAT-PANGAN-BERKLAIM-1
+verification_date: '2026-07-23'
+description: 'UAT-PANGAN-BERKLAIM-1 — Scope-agnostic (ERBA/ERLA/UNION valid via assert_any_of). Timpang ekstrem antar sistem (ERLA 34x ERBA) — wajib disebut per sistem.'
+turns:
+- prompt: berapa produk pangan berklaim yang sudah punya izin edar?
+  assert_contains:
+  - 'berklaim'
+  assert_any_of:
+  -
+    - '8.947'
+  -
+    - '256'
+    - 'ERBA'
+  -
+    - '8.691'
+    - 'ERLA'
+  tolerance_pct: 5
+  note: 'SQL ERBA: SELECT COUNT(DISTINCT nomor) FROM t_produk_3_erba WHERE klasifikasi_id=''305'' AND status IN (''0999'',''0906'',''9999'') AND trader_id::bigint NOT IN (5,17,50,85) AND nomor<>''''. SQL ERLA: idem pada t_produk_3_rilis_erla dgn status ERLA + trader_id<>3384. GABUNGAN = COUNT(DISTINCT nomor) atas UNION ALL. DB 23Jul2026: ERBA=256 · ERLA=8.691 · gabungan=8.947. Dictionary: KLASIFIKASI_ID sumber="ERBA dan ERLA" kode 305=Pangan Berklaim — kode SAMA kedua sistem. FIXED BINDING (filter_code §4): berklaim = klasifikasi_id=''305'', JANGAN memakai kolom `klaim` (teks bebas) — itu decoy. Timpangnya ERLA:ERBA = 34:1 karena mayoritas produk berklaim lama terdaftar di sistem legacy; jawaban WAJIB memecah per sistem, bukan hanya total.'

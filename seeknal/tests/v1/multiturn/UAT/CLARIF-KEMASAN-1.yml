@@ -1,0 +1,23 @@
+name: Clarification_Gate_Kemasan_Tunggal
+scenario_id: "CLARIF-KEMASAN-1"
+description: "Uji clarification gate CONCEPT_TYPE + SOURCE_PATH: 'produk dengan kemasan tunggal' ambigu karena definisi 'tunggal' berbeda di ERBA vs ERLA."
+turns:
+  - prompt: "berapa produk dengan kemasan tunggal?"
+    assert_contains:
+      - "kemasan"
+    note: "Material ambiguity CONCEPT_TYPE + SOURCE_PATH: 'tunggal' di ERBA = kemasan_id 2 (Plastik monolayer), di ERLA = kemasan_id 31. Atau 'tunggal' sebagai konsep umum? Agent HARUS tanya."
+  - prompt: "ERBA saja, plastik tunggal"
+    assert_contains:
+      - "44.631"
+      - "plastik"
+    note: "Setelah klarifikasi, agent harus lock ERBA kemasan_id=2 dan hasilkan 44.631. Verified DB 2026-06-17."
+  - prompt: "kalau kemasan logam di ERBA?"
+    assert_contains:
+      - "4.568"
+      - "logam"
+    note: "Follow-up: ganti tipe kemasan ke logam, retain ERBA. Agent harus retain konteks ERBA dan ganti kemasan_id=5. Verified DB 2026-06-17."
+  - prompt: "buatkan grafik perbandingan plastik vs logam"
+    assert_contains:
+      - "44.631"
+      - "4.568"
+    note: "Plot turn: agent harus buat chart perbandingan plastik vs logam via execute_python."

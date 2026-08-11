@@ -1,0 +1,10 @@
+name: UAT_AMDK_NIE_2023_ERBA
+scenario_id: UAT-AMDK-2
+description: 'UAT-AMDK-2 — NIE AMDK 2023 ERBA saja. DB verified 2026-06-17: 1.743'
+turns:
+- prompt: Berapa NIE AMDK tahun 2023 dari sistem ERBA saja?
+  assert_contains:
+  - AMDK
+  - '1.743'
+  - ERBA
+  note: 'UAT-AMDK-2 — ERBA 1.743. Verifikasi komponen ERBA saja.'

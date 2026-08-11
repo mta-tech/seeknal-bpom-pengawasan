@@ -1,0 +1,16 @@
+name: jumlah_nie_total
+prompt: Berapa total jumlah NIE / izin edar
+intent: Count all valid NIEs across all risk categories.
+sql: |
+  SELECT COUNT(DISTINCT nomor) AS jumlah_nie_total
+  FROM (
+    SELECT nomor FROM warehouse.public.t_produk_3_erba
+    WHERE status IN ('0999','0906','9999')
+      AND jenis_permohonan IN ('301','305')
+    UNION ALL
+    SELECT nomor FROM warehouse.public.t_produk_3_rilis_erla
+    WHERE status IN ('0999','0906','9999')
+      AND jenis_permohonan IN ('301','305')
+  ) AS gabungan
+notes:
+  - Aggregates all valid NIEs regardless of risk category.

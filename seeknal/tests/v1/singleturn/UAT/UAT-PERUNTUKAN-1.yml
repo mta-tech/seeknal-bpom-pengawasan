@@ -1,0 +1,9 @@
+name: UAT_Produk_Peruntukan_Khusus
+scenario_id: UAT-PERUNTUKAN-1
+description: 'UAT-PERUNTUKAN-1 — NIE ERBA produk pangan peruntukan khusus (peruntukan=0201). DB verified 2026-06-17: 429. Uji terjemahan kode PERUNTUKAN ke label "Pangan Peruntukan".'
+turns:
+- prompt: produk pangan dengan peruntukan khusus yang punya izin edar ada berapa?
+  assert_contains:
+  - '429'
+  - peruntukan
+  note: 'UAT-PERUNTUKAN-1 — t_produk_3_erba peruntukan=0201 (Pangan Peruntukan) NIE aktif = 429. Pangan Umum (0000) = 136.262. Dictionary: PERUNTUKAN kode 0201.'

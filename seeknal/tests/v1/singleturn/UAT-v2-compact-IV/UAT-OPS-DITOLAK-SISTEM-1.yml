@@ -1,0 +1,13 @@
+name: UAT_OPS_DITOLAK_SISTEM_1
+scenario_id: UAT-OPS-DITOLAK-SISTEM-1
+verification_date: '2026-07-23'
+description: 'UAT-OPS-DITOLAK-SISTEM-1 — single-scope by-design (pipeline = ERBA only). Bedakan "ditolak SISTEM" (otomatis) dari "ditolak petugas".'
+turns:
+- prompt: berapa permohonan yang ditolak otomatis oleh sistem BPOM?
+  assert_contains:
+  - 'ditolak'
+  assert_any_of:
+  -
+    - '12.957'
+  tolerance_pct: 10
+  note: 'SQL: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_erba WHERE status IN (''0908'',''0911'',''0918''). DB 23Jul2026 = 12.957. Dictionary STATUS sumber=ERBA: 0908 & 0918 = "Pendaftar - Proses Ditolak Oleh System" · 0911 = "Pendaftar - Proses SPB Ditolak Oleh System" — ketiganya penolakan OTOMATIS. JANGAN dicampur dgn penolakan oleh PETUGAS (0902/0905/0913 = penerimaan/verifikasi ditolak) — itu konsep berbeda dan akan meng-overcount. ENTITY: "permohonan" → produk_id (predikat §1); TANPA filter status NIE. SCOPE: ERBA only (filter_code §2). TRANSIENT: toleransi 10%. Nilai lama 12.278.'

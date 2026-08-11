@@ -1,0 +1,20 @@
+name: UAT_JP_MAYOR_2025_1
+scenario_id: UAT-JP-MAYOR-2025-1
+verification_date: '2026-07-27'
+description: 'UAT-JP-MAYOR-2025-1 — SCOPE: scope-agnostic (ERBA saja / ERLA saja / gabungan sah via assert_any_of). Re-verified 27Jul2026. Entity dikoreksi: subjek pertanyaan adalah PERMOHONAN sehingga hitungannya produk_id, dan versi lama mencampur dua semantik (nilai ERBA dihitung dgn nomor, nilai ERLA dgn produk_id, lalu dijumlahkan).'
+turns:
+- prompt: berapa permohonan perubahan mayor yang disetujui tahun 2025?
+  assert_contains:
+  - 'mayor'
+  - '2025'
+  assert_any_of:
+  -
+    - '10.460'
+  -
+    - '8.182'
+    - 'ERBA'
+  -
+    - '2.278'
+    - 'ERLA'
+  tolerance_pct: 5
+  note: 'SCOPE = scope-agnostic; ketiga bacaan sah asalkan berlabel sistem. SQL ERBA SAJA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_erba WHERE jenis_permohonan=''302'' AND NULLIF(tanggal_bayar,'''')::timestamp>=''2025-01-01'' AND NULLIF(tanggal_bayar,'''')::timestamp<''2026-01-01'' AND status IN (''0999'',''0906'',''9999'') AND trader_id::bigint NOT IN (5,17,50,85). SQL ERLA SAJA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_rilis_erla WHERE jenis_permohonan=''302'' AND tanggal_bayar>=''2025-01-01'' AND tanggal_bayar<''2026-01-01'' AND status IN (''0099'',''0999'',''0906'',''9999'') AND trader_id<>3384. SQL GABUNGAN: SELECT COUNT(DISTINCT produk_id) FROM (SELECT produk_id FROM t_produk_3_erba WHERE jenis_permohonan=''302'' AND NULLIF(tanggal_bayar,'''')::timestamp>=''2025-01-01'' AND NULLIF(tanggal_bayar,'''')::timestamp<''2026-01-01'' AND status IN (''0999'',''0906'',''9999'') AND trader_id::bigint NOT IN (5,17,50,85) UNION ALL SELECT produk_id FROM t_produk_3_rilis_erla WHERE jenis_permohonan=''302'' AND tanggal_bayar>=''2025-01-01'' AND tanggal_bayar<''2026-01-01'' AND status IN (''0099'',''0999'',''0906'',''9999'') AND trader_id<>3384) x. DB 27Jul2026: ERBA=8.182 · ERLA=2.278 · gabungan=10.460. produk_id tidak overlap antar sistem (irisan terverifikasi = 0), tapi bentuk kanonik tetap satu DISTINCT global (predikat §12-C). ENTITY (koreksi utama): subjeknya "permohonan" → COUNT(DISTINCT produk_id) (predikat §1). Pembanding entity nomor pada filter yang sama: ERBA=6.831 · ERLA=1.811 — nilai lama berkas ini (ERBA 6.636) sebenarnya hitungan nomor dari snapshot lama, sedangkan nilai ERLA (2.278) hitungan produk_id; totalnya 8.914 karena itu adalah PENJUMLAHAN DUA SATUAN BERBEDA dan tidak sah. KOLOM TANGGAL: tanggal_bayar (tanggal kanonik permohonan — predikat §2), BUKAN tanggal (terbit NIE) atau tanggal_aju (pengajuan). FILTER STATUS DIPAKAI karena prompt menyebut "yang DISETUJUI" — populasinya permohonan yang berujung terbit; untuk pertanyaan "berapa permohonan masuk" tanpa kata disetujui/diterima, filter status justru DILEPAS (predikat §4 baris permohonan) dan angkanya jadi ERBA=8.365. KODE FILTER ERBA vs ERLA: SAMA — dictionary JENIS_PERMOHONAN sumber="ERBA dan ERLA" kode 302 = Perubahan Mayor berlaku di kedua tabel. Yang berbeda: set status sah (ERBA 3 kode vs ERLA 4 kode), akun uji (5,17,50,85 vs 3384), dan tipe kolom (ERBA TEXT wajib cast NULLIF(...)::timestamp; ERLA sudah TIMESTAMP). Nilai lama 8.914/6.636/2.278 (tol 0) — diganti karena campur entity; toleransi dinaikkan ke 5% karena ERBA masih menerima baris susulan.'

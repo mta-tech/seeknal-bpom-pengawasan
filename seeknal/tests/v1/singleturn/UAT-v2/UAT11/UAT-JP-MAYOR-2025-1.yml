@@ -1,0 +1,19 @@
+name: UAT_JP_MAYOR_2025_1
+scenario_id: UAT-JP-MAYOR-2025-1
+description: 'UAT-JP-MAYOR-2025-1 — Scope-agnostic (ERBA/ERLA/UNION valid via assert_any_of). DB ref catatan (BUKAN standar kebenaran).'
+turns:
+- prompt: berapa permohonan perubahan mayor yang disetujui tahun 2025?
+  assert_contains:
+  - 'mayor'
+  - '2025'
+  assert_any_of:
+  -
+    - '8.914'
+  -
+    - '6.636'
+    - 'ERBA'
+  -
+    - '2.278'
+    - 'ERLA'
+  tolerance_pct: 0
+  note: 'UAT-JP-MAYOR-2025-1 — Scope-agnostic. ERBA=note kanonik 6.636; ERLA=live 2.278. SQL ERBA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_erba WHERE jenis_permohonan=''302'' AND tanggal_bayar::text LIKE ''2025%'' AND status IN (''0999'',''0906'',''9999''). SQL ERLA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_rilis_erla WHERE jenis_permohonan=''302'' AND tanggal_bayar::text LIKE ''2025%'' AND status IN (''0999'',''0906'',''9999''). UAT-JP-MAYOR-2025-1 — jenis_permohonan=302 (Perubahan Mayor) ERBA 2025 = 6.636. Dibanding 2023=881 — naik 7x. Tren: bisnis yang matur makin banyak revisi.'

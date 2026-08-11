@@ -1,0 +1,53 @@
+name: Multi_Ambiguity_Importir_Expiry_MT
+scenario_id: "CLARIF-MULTI-TOPIC-2"
+description: >
+  Verifikasi tiga topik ambigu berbeda dalam satu conversation dengan reset state per topik:
+  (1) importir = ENTITY ambiguity, (2) izin habis masa berlaku = SCOPE ambiguity,
+  (3) risiko menengah tinggi = SOURCE_PATH ambiguity.
+turns:
+  - prompt: "ada berapa importir di BPOM?"
+    assert_contains:
+      - "importir"
+    note: >
+      Topik 1. Ambiguitas ENTITY: 'importir' bisa berarti jumlah perusahaan importir
+      atau jumlah produk yang diimpor. Sistem HARUS tanya balik.
+  - prompt: "maksud saya perusahaan importir"
+    assert_contains:
+      - "1.300"
+      - "importir"
+    note: >
+      Setelah klarifikasi topik 1, agent harus lock entity=perusahaan importir dan hasilkan 1.300.
+  - prompt: "beda topik: berapa izin edar yang akan habis masa berlakunya?"
+    assert_contains:
+      - "masa berlaku"
+    note: >
+      Topik 2. Ambiguitas SCOPE: user belum menyebut tahun atau distribusi.
+      Sistem HARUS tanya balik lagi.
+  - prompt: "tahun 2027 saja"
+    assert_contains:
+      - "1.415"
+      - "2027"
+    note: >
+      Setelah klarifikasi topik 2, agent harus lock exp 2027 dan hasilkan 1.415.
+  - prompt: "topik terakhir: berapa jumlah izin edar risiko menengah tinggi?"
+    assert_contains:
+      - "Menengah Tinggi"
+    note: >
+      Topik 3. Ambiguitas SOURCE_PATH: MT tidak bisa digabung naif ERBA+ERLA.
+      Sistem HARUS tanya balik lagi.
+  - prompt: "ERBA saja"
+    assert_contains:
+      - "11.919"
+      - "ERBA"
+      - "Menengah Tinggi"
+    note: >
+      Setelah klarifikasi topik 3, agent harus lock ERBA-only dan hasilkan 11.919.
+  - prompt: "ringkaskan tiga jawaban tadi dalam satu paragraf"
+    assert_contains:
+      - "1.300"
+      - "1.415"
+      - "11.919"
+    note: >
+      Follow-up tanpa ambiguitas baru. Agent cukup rangkum hasil tiga topik dari ledger:
+      perusahaan importir 1.300, exp 2027 = 1.415, MT ERBA = 11.919.
+

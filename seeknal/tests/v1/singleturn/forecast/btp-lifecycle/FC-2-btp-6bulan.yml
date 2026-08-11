@@ -1,0 +1,10 @@
+name: FC_BTP_6Bulan
+scenario_id: FC-BTP-2
+description: 'Forecast natural — BTP ERBA, 6 bulan ke depan (horizon lebih panjang dari FC-BTP-1, series sama — cek konsistensi lintas horizon untuk series yang sama).'
+turns:
+- prompt: Berapa prediksi jumlah registrasi BTP ERBA untuk 6 bulan ke depan?
+  assert_contains:
+  - BTP
+  - Juli
+  - Desember
+  note: 'Series identik FC-BTP-1, horizon beda (6 vs 3 bulan). 3 titik pertama (Jul-Sep) SEHARUSNYA identik dengan hasil FC-BTP-1 jika model deterministik dan SQL konsisten — bandingkan langsung setelah run.'

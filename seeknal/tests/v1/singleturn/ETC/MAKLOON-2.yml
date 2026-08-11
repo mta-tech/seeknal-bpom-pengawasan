@@ -1,0 +1,10 @@
+name: Makloon_per_Risiko_2024
+scenario_id: MAKLOON-2
+description: 'MAKLOON-2 — Makloon per risiko 2024. DB verified 2026-06-10: T=387, MT=124, MR=28'
+turns:
+- prompt: Produk makloon per kategori risiko tahun 2024
+  assert_contains:
+  - makloon
+  - risiko
+  - 2024
+  note: 'MAKLOON-2 — DB aktual (t_produk_3_erba, status_produk=304, tanggal 2024): T=387, MT=124, MR=28. Tolerance ±5%.'

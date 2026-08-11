@@ -1,0 +1,34 @@
+name: produk_berdasarkan_nama_daerah_pabrik
+prompt: Jumlah produk berdasarkan nama produk dan daerah pabrik
+intent: Count distinct NIEs grouped by product name and factory region.
+sql: |
+  SELECT
+    sub.nama,
+    COALESCE(dd.deskripsi, sub.daerah_pabrik) AS nama_daerah,
+    sub.jumlah_produk
+  FROM (
+    SELECT nama, daerah_pabrik, COUNT(DISTINCT nomor) AS jumlah_produk
+    FROM (
+      SELECT nama, daerah_pabrik, nomor
+      FROM warehouse.public.t_produk_3_erba
+      WHERE tanggal IS NOT NULL
+        AND status IN ('0999','0906','9999')
+        AND jenis_permohonan IN ('301','305')
+      UNION ALL
+      SELECT nama, daerah_pabrik, nomor
+      FROM warehouse.public.t_produk_3_rilis_erla
+      WHERE tanggal IS NOT NULL
+        AND status IN ('0099','0999','0906','9999')
+        AND jenis_permohonan IN ('301','304','305')
+    ) AS data_produk
+    WHERE daerah_pabrik IS NOT NULL AND daerah_pabrik != 'NULL' AND daerah_pabrik != '9999'
+    GROUP BY nama, daerah_pabrik
+  ) AS sub
+  LEFT JOIN warehouse.public.data_dictionary dd
+    ON dd.kategori = 'DAERAH_TRADER, DAERAH_PABRIK, DAERAH_PRODUSEN, PROVINSI_ID, KOTAKAB_ID'
+    AND dd.kode = ROUND(sub.daerah_pabrik::numeric / 100, 2)::text
+  ORDER BY sub.nama, nama_daerah
+notes:
+  - Can return many rows; consider adding LIMIT for interactive use.
+  - Resolves regional codes via data_dictionary using conversion: ROUND(daerah_pabrik / 100, 2).
+  - Filters out string 'NULL' and placeholder '9999' from daerah_pabrik.

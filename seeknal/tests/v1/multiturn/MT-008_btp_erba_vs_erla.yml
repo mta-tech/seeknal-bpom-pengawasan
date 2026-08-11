@@ -1,0 +1,26 @@
+name: btp_erba_vs_erla
+scenario_id: "MT-008"
+description: "Produk BTP yang sama dibandingkan antara sistem ERBA dan ERLA"
+turns:
+  - prompt: "berapa jumlah NIE produk BTP di ERBA tahun 2023?"
+    assert_contains:
+      - "950"
+      - "BTP"
+      - "ERBA"
+      - "2023"
+    note: "Baseline BTP ERBA 2023"
+  - prompt: "kalau di sistem ERLA tahun yang sama?"
+    assert_contains:
+      - "ERLA"
+      - "2023"
+      - "BTP"
+    note: "'Tahun yang sama' = 2023 — agent switch ke ERLA, produk sama"
+  - prompt: "selisih ERBA dan ERLA berapa?"
+    assert_contains:
+      - "ERBA"
+      - "ERLA"
+    note: "Cross-turn calculation — agent harus hitung dari T1 dan T2, jangan campur sistem"
+  - prompt: "mana yang lebih besar?"
+    assert_contains:
+      - "ERBA"
+    note: "Perbandingan sistem — ERBA (950) > ERLA (584)"

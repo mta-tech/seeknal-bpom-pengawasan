@@ -1,0 +1,10 @@
+name: Tren_NIE_pangan_olahan_ERBA_2020_2023
+scenario_id: NIE-23a
+description: 'NIE-23a — Expected: Tren NIE ERBA 2020-2023. DB verified 2026-06-09: 2022:1.414, 2023:30.230, 2024:42.061'
+turns:
+- prompt: Bagaimana tren NIE pangan olahan di sistem ERBA dari tahun 2020 sampai 2023?
+  assert_contains:
+  - NIE
+  - ERBA
+  - tren
+  note: 'NIE-23a — DB aktual: 2022=1.414, 2023=30.230, 2024=42.061 (2020-2021: 0, ERBA mulai 2022). Tolerance ±5%.'

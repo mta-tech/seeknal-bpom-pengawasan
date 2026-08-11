@@ -1,0 +1,11 @@
+name: 26_Kategori pangan dengan pertumbuhan izin edar tercepat tahun 2026
+scenario_id: CB-26
+description: 'CB-26 — Expected: Prediksi + justifikasi historis'
+turns:
+- prompt: Berdasarkan tren 5 tahun terakhir, kategori pangan apa yang diperkirakan
+    akan mengalami pertumbuhan izin edar tercepat pada tahun 2026 ini?
+  assert_contains:
+  - kategori pangan
+  - pertumbuhan
+  - '2026'
+  note: 'CB-26 — Expected: Prediksi + justifikasi historis'

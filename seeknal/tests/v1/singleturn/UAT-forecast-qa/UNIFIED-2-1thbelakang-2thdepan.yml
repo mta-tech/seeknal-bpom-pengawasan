@@ -1,0 +1,9 @@
+name: Unified_Timeline_1ThBelakang_2ThDepan
+scenario_id: UNIFIED-1Y-2Y
+description: 'Pola pelampiran data berurutan: 1 tahun ke belakang HINGGA 2 tahun ke depan, jendela proyeksi lebih panjang dari histori yang dilampirkan — menguji apakah timeline tetap koheren saat rasio histori:proyeksi tidak 1:1.'
+turns:
+- prompt: Bagaimana perkembangan permohonan ERBA dalam 1 tahun terakhir dan proyeksinya untuk 2 tahun ke depan?
+  assert_contains:
+  - Historis
+  - Proyeksi
+  note: 'Ekspektasi: timeline Jul2025-Jun2028 (12 bulan histori + 24 bulan proyeksi), tetap satu alur kronologis dgn penanda "sekarang". Cek apakah sistem salah kaprah memotong histori sama panjang dgn proyeksi (24 vs 24) alih-alih menghormati "1 tahun terakhir" yang diminta eksplisit (12).'

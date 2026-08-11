@@ -1,0 +1,25 @@
+name: Clarification_Gate_Top_Company_Metric
+scenario_id: "CLARIF-TOP-PERUSAHAAN-1"
+description: "Uji clarification gate METRIC: 'perusahaan paling besar di BPOM' ambigu antara produk terbanyak, izin terbanyak, atau skala usaha terbesar."
+turns:
+  - prompt: "siapa perusahaan paling besar di BPOM?"
+    assert_contains:
+      - "perusahaan"
+    note: "Material ambiguity METRIC: 'paling besar' bisa berarti produk terbanyak terdaftar, skala industri terbesar, atau volume izin edar. Agent HARUS tanya metrik."
+  - prompt: "yang produknya paling banyak terdaftar"
+    assert_contains:
+      - "INTERFOOD"
+      - "2.077"
+    note: "Setelah klarifikasi, agent harus lock ranking produk/NIE aktif terbanyak dan hasilkan INTERFOOD SUKSES JASINDO = 2.077."
+  - prompt: "siapa urutan kedua dan ketiga?"
+    assert_contains:
+      - "1.319"
+      - "1.317"
+    note: "Follow-up same topic: urutan berikutnya BROTHER FOOD INDONESIA=1.319 dan STAR NIAGA SUKSES=1.317."
+  - prompt: "ringkaskan top 3-nya"
+    assert_contains:
+      - "2.077"
+      - "1.319"
+      - "1.317"
+    note: "Ringkasan harus memuat top 3 perusahaan dengan jumlah yang konsisten."
+

@@ -1,0 +1,36 @@
+name: tren_izin_edar_tahun_daerah_pabrik
+prompt: Tren jumlah izin edar berdasarkan tahun dan daerah pabrik
+intent: Count NIEs grouped by year and factory region.
+sql: |
+  SELECT
+    sub.tahun_terbit,
+    COALESCE(dd.deskripsi, sub.daerah_pabrik) AS nama_daerah,
+    sub.jumlah_produk
+  FROM (
+    SELECT EXTRACT(YEAR FROM tanggal) AS tahun_terbit,
+           daerah_pabrik,
+           COUNT(DISTINCT nomor) AS jumlah_produk
+    FROM (
+      SELECT nomor, tanggal, daerah_pabrik
+      FROM warehouse.public.t_produk_3_erba
+      WHERE tanggal IS NOT NULL
+        AND status IN ('0999','0906','9999')
+        AND jenis_permohonan IN ('301','305')
+      UNION ALL
+      SELECT nomor, tanggal, daerah_pabrik
+      FROM warehouse.public.t_produk_3_rilis_erla
+      WHERE tanggal IS NOT NULL
+        AND status IN ('0099','0999','0906','9999')
+        AND jenis_permohonan IN ('301','304','305')
+    ) AS data_produk
+    WHERE daerah_pabrik IS NOT NULL AND daerah_pabrik != 'NULL' AND daerah_pabrik != '9999'
+    GROUP BY EXTRACT(YEAR FROM tanggal), daerah_pabrik
+  ) AS sub
+  LEFT JOIN warehouse.public.data_dictionary dd
+    ON dd.kategori = 'DAERAH_TRADER, DAERAH_PABRIK, DAERAH_PRODUSEN, PROVINSI_ID, KOTAKAB_ID'
+    AND dd.kode = ROUND(sub.daerah_pabrik::numeric / 100, 2)::text
+  ORDER BY sub.tahun_terbit, nama_daerah
+notes:
+  - Returns a matrix of year x factory region counts.
+  - Resolves regional codes via data_dictionary using conversion: ROUND(daerah_pabrik / 100, 2).
+  - Filters out string 'NULL' and placeholder '9999' from daerah_pabrik.

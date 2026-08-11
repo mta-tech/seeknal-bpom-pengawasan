@@ -1,0 +1,9 @@
+name: UAT_Perusahaan_Skala_Besar
+scenario_id: UAT-SKALA-2
+description: 'UAT-SKALA-2 — Jumlah perusahaan skala besar di m_trader_rba (skala_industri_id=4). DB verified 2026-06-17: 1.367. Uji terjemahan kode 4 ke label "Besar".'
+turns:
+- prompt: perusahaan skala besar yang punya produk di BPOM ada berapa?
+  assert_contains:
+  - '1.367'
+  - besar
+  note: 'UAT-SKALA-2 — m_trader_rba skala_industri_id=4 (Besar) = 1.367. Dictionary: SKALA_INDUSTRI dan SKALA_INDUSTRI_ID kode 4.'

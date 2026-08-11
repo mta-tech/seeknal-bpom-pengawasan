@@ -1,0 +1,15 @@
+name: nie_total_2023
+prompt: berapa total NIE pangan olahan di sistem ERBA yang terbit tahun 2023?
+sql: |
+  SELECT COUNT(DISTINCT nomor) AS jumlah_nie
+  FROM warehouse.public.t_produk_3_erba
+  WHERE tanggal >= '2023-01-01' AND tanggal < '2024-01-01'
+    AND trader_id NOT IN (5, 17, 50, 85)
+    AND status IN ('0999','0906','9999')
+    AND jenis_permohonan IN ('301','305')
+assertions:
+  answer_contains:
+    - "ERBA"
+    - "2023"
+    - "30.276"
+  expected_values: false

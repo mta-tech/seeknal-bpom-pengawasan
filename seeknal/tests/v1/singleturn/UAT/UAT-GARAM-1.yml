@@ -1,0 +1,12 @@
+name: UAT_GARAM_NIE_2023
+scenario_id: UAT-GARAM-1
+description: 'UAT-GARAM-1 — NIE Garam Beryodium ERBA tahun 2023. DB verified 2026-06-17: parent jenis_pangan=1204 → 199. Sub-kode kategori_pangan=120101000001 → 190 (salah). RC-3.'
+turns:
+- prompt: kalau Garam Beryodium, berapa NIE-nya di tahun 2023?
+  assert_contains:
+  - Garam Beryodium
+  - '199'
+  assert_not_contains:
+  - '189'
+  - '190'
+  note: 'UAT-GARAM-1 — RC-3: harus pakai jenis_pangan=1204 (parent code). Sub-kode 120101000001 menghasilkan 190 (salah). Benar=199.'

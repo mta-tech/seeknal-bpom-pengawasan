@@ -1,0 +1,10 @@
+name: UAT_Draft_Pemenuhan_Komitmen_MR
+scenario_id: UAT-DRAFT-1
+description: 'UAT-DRAFT-1 — Produk MR dengan status komitmen Draft Pemenuhan Komitmen (kode 0). DB verified 2026-06-17: 28.720'
+turns:
+- prompt: berapa jumlah produk menengah rendah yang statusnya draft pemenuhan komitmen?
+  assert_contains:
+  - '28.720'
+  - Draft Pemenuhan Komitmen
+  - Menengah Rendah
+  note: 'UAT-DRAFT-1 — status_komitmen kode 0 = Draft Pemenuhan Komitmen. Tanpa NIE status filter (banyak yang masih proses). DB 28.720.'

@@ -1,0 +1,10 @@
+name: NIE_per_kategori_risiko_ERBA_2023
+scenario_id: NIE-14a
+description: 'NIE-14a — Expected: NIE per kategori risiko 2023. DB verified 2026-06-09: Tinggi:17.504, Menengah Tinggi:3.077, Menengah Rendah:9.649'
+turns:
+- prompt: Berapa jumlah NIE per kategori risiko di ERBA tahun 2023?
+  assert_contains:
+  - NIE
+  - kategori
+  - 2023
+  note: 'NIE-14a — DB aktual: Tinggi(301)=17.504, Menengah Tinggi(302)=3.077, Menengah Rendah(303)=9.649. Tolerance ±5%.'

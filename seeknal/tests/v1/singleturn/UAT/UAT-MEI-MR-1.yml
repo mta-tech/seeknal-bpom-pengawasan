@@ -1,0 +1,10 @@
+name: UAT_NIE_MR_Bulan_Mei_AllYears
+scenario_id: UAT-MEI-MR-1
+description: 'UAT-MEI-MR-1 — NIE Menengah Rendah yang terbit bulan Mei semua tahun, ERBA+ERLA. DB verified 2026-06-17: ERBA 3.261 + ERLA 7.295 = 10.556'
+turns:
+- prompt: berapa jumlah NIE yang terbit pada bulan Mei untuk kategori risiko Menengah Rendah
+  assert_contains:
+  - Menengah Rendah
+  - Mei
+  - '10.556'
+  note: 'UAT-MEI-MR-1 — EXTRACT(MONTH)=5, semua tahun. ERBA 3.261 + ERLA 7.295 = 10.556.'

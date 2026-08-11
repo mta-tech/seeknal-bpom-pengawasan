@@ -1,0 +1,10 @@
+name: 10_Tren jumlah izin edar produk bahan tambahan pangan per tahun
+scenario_id: CB-10
+description: 'CB-10 — Expected: Tren tahunan BTP'
+turns:
+- prompt: Tren jumlah izin edar produk bahan tambahan pangan per tahun
+  assert_contains:
+  - BTP
+  - tren
+  - per tahun
+  note: 'CB-10 — Expected: Tren tahunan BTP'

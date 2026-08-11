@@ -1,0 +1,14 @@
+name: nie_btp_erla_2023
+prompt: berapa jumlah NIE produk BTP di sistem ERLA tahun 2023?
+sql: |
+  SELECT COUNT(DISTINCT nomor) AS jumlah_nie_btp_erla
+  FROM warehouse.public.t_btp_3_erla
+  WHERE tanggal >= '2023-01-01' AND tanggal < '2024-01-01'
+    AND status IN ('0099','0999','0906','9999')
+    AND jenis_permohonan IN ('301','304','305')
+assertions:
+  answer_contains:
+    - "BTP"
+    - "ERLA"
+    - "2023"
+  expected_values: true

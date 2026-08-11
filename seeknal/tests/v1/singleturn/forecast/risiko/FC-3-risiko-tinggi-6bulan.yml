@@ -1,0 +1,10 @@
+name: FC_Risiko_Tinggi_6Bulan
+scenario_id: FC-RISIKO-3
+description: 'Forecast natural — risiko Tinggi (kategori_dokumen IN (301,304)), 6 bulan ke depan.'
+turns:
+- prompt: Prediksi permohonan risiko tinggi untuk 6 bulan ke depan
+  assert_contains:
+  - Tinggi
+  - Juli
+  - Desember
+  note: 'DB Jun2026 Tinggi(301+304, produk_id) = 3.298; Mei=3.538, Apr=4.090 — histori 47 bulan penuh, volume besar & stabil (kandidat kualitas terbaik dari 5 series risiko yang diuji). Assert bulan awal (Juli) dan akhir (Desember) jendela 6 bulan.'

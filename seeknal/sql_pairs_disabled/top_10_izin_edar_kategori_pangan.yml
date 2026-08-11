@@ -1,0 +1,36 @@
+name: top_10_izin_edar_kategori_pangan
+prompt: Top 10 jumlah izin edar berdasarkan kategori pangan
+intent: Top 10 food categories by number of distinct NIEs (izin edar).
+sql: |
+  SELECT
+    COALESCE(dd.deskripsi, 'KP ' || sub.kp) AS kategori_pangan,
+    sub.jumlah_produk
+  FROM (
+    SELECT LEFT(kategori_pangan, 2) AS kp,
+           COUNT(DISTINCT nomor) AS jumlah_produk
+    FROM (
+      SELECT kategori_pangan, nomor
+      FROM warehouse.public.t_produk_3_erba
+      WHERE tanggal IS NOT NULL
+        AND status IN ('0999','0906','9999')
+        AND jenis_permohonan IN ('301','305')
+      UNION ALL
+      SELECT kategori_pangan, nomor
+      FROM warehouse.public.t_produk_3_rilis_erla
+      WHERE tanggal IS NOT NULL
+        AND status IN ('0099','0999','0906','9999')
+        AND jenis_permohonan IN ('301','304','305')
+    ) AS data_produk
+    GROUP BY LEFT(kategori_pangan, 2)
+  ) AS sub
+  LEFT JOIN warehouse.public.data_dictionary dd
+    ON dd.kategori = 'AKRONIM'
+    AND dd.kode = 'KP ' || sub.kp
+  ORDER BY sub.jumlah_produk DESC
+  LIMIT 10
+notes:
+  - PostgreSQL uses LIMIT instead of TOP.
+  - Groups by first 2 characters of kategori_pangan for broad category level.
+  - Uses COUNT(DISTINCT nomor) to count unique NIEs, not product rows.
+  - Filters: tanggal IS NOT NULL, approved statuses, specific jenis_permohonan.
+  - Resolves KP codes via data_dictionary kategori='AKRONIM', kode='KP XX'.

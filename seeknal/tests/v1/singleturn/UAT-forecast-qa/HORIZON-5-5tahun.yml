@@ -1,0 +1,8 @@
+name: HORIZON_5_5Tahun_ERBA
+scenario_id: HORIZON-5Y
+description: 'Matriks horizon #5/5 — 5 tahun ke depan, series ERBA total permohonan. Melebihi cap teknis 36 bulan.'
+turns:
+- prompt: Prediksi permohonan ERBA untuk 5 tahun ke depan
+  assert_contains:
+  - '36'
+  note: 'Ekspektasi: periods diminta 60, dipotong ke 36 (cap _MAX_HORIZON), target riil Jul2026-Jun2029 (BUKAN 2031). Cap 36 WAJIB dinyatakan eksplisit di jawaban (bpom-forecaster hard rule).'

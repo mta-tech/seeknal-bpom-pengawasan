@@ -1,0 +1,10 @@
+name: 43_Berapa NIE BTP ERLA tahun 2023
+scenario_id: NIE-5
+description: NIE-5
+turns:
+- prompt: Berapa NIE BTP ERLA tahun 2023?
+  assert_contains:
+  - BTP
+  - ERLA
+  - '2023'
+  note: NIE-5

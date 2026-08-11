@@ -1,0 +1,10 @@
+name: UAT_MT_MINOR_MEI26_1
+scenario_id: UAT-MT-MINOR-MEI26-1
+description: 'UAT-MT-MINOR-MEI26-1 — single-scope (by-design).'
+turns:
+- prompt: variasi minor untuk produk menengah tinggi yang terbit bulan Mei 2026 berapa?
+  assert_contains:
+  - '17 NIE'
+  - 'Menengah Tinggi'
+  - 'minor'
+  note: 'UAT-MT-MINOR-MEI26-1 — ERBA kategori_dokumen=302 AND jenis_permohonan=303 AND tanggal Mei 2026, NIE aktif = 17.'

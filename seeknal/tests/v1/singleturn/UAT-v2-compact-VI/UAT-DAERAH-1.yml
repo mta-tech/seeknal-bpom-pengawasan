@@ -1,0 +1,19 @@
+name: UAT_DAERAH_1
+scenario_id: UAT-DAERAH-1
+verification_date: '2026-07-27'
+description: 'UAT-DAERAH-1 — scope-agnostic. Format kode wilayah di dictionary (31.75) berbeda dari format di data (3175); harus diprobe, tidak bisa disalin mentah.'
+turns:
+- prompt: berapa produk pangan olahan yang terdaftar dari perusahaan di Jakarta Timur?
+  assert_contains:
+  - 'Jakarta Timur'
+  assert_any_of:
+  -
+    - '40.779'
+  -
+    - '18.051'
+    - 'ERBA'
+  -
+    - '22.728'
+    - 'ERLA'
+  tolerance_pct: 5
+  note: 'SQL ERBA: SELECT COUNT(DISTINCT nomor) FROM t_produk_3_erba WHERE daerah_trader=''3175'' AND status IN (''0999'',''0906'',''9999'') AND trader_id::bigint NOT IN (5,17,50,85) AND nomor<>''''. SQL ERLA: SELECT COUNT(DISTINCT nomor) FROM t_produk_3_rilis_erla WHERE daerah_trader=''3175'' AND status IN (''0099'',''0999'',''0906'',''9999'') AND trader_id<>3384 AND nomor<>''''. GABUNGAN: SELECT COUNT(DISTINCT nomor) atas UNION ALL kedua query di atas — bukan penjumlahan dua angka. DB 27Jul2026: ERBA=18.051 · ERLA=22.728 · gabungan=40.779. KODE: dictionary menyimpan "31.75" (pakai titik) untuk Kota Administrasi Jakarta Timur, tapi kolom daerah_trader di KEDUA tabel menyimpan "3175" tanpa titik — menyalin kode dictionary apa adanya menghasilkan nol baris. Berlaku umum untuk seluruh keluarga kode wilayah: probe satu baris contoh dulu. Kode wilayahnya sendiri sama di kedua sistem. ENTITY: nomor. Pembanding produk_id: ERBA=25.137 · ERLA=44.050 — nilai lama (ERBA 17.544 mendekati hitungan nomor, ERLA 44.050 persis hitungan produk_id) mencampur dua satuan, itu sebab total lama 61.594. KOLOM: daerah_trader = domisili pemohon, sesuai frasa "dari perusahaan di"; berbeda dari daerah_pabrik/daerah_produsen (lokasi produksi) yang memberi angka lain — sebut kolom yang dipakai. Bila membuat agregasi seluruh wilayah, saring daerah_* yang NULL, teks ''NULL'', atau ''9999''. Nilai lama 61.594/17.544/44.050.'

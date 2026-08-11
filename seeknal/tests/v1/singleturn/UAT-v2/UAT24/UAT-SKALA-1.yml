@@ -1,0 +1,9 @@
+name: UAT_SKALA_1
+scenario_id: UAT-SKALA-1
+description: 'UAT-SKALA-1 — single-scope (by-design).'
+turns:
+- prompt: ada berapa perusahaan dengan skala industri mikro yang terdaftar di BPOM?
+  assert_contains:
+  - '8.943'
+  - 'mikro'
+  note: 'UAT-SKALA-1 — m_trader_rba skala_industri_id=1 (Mikro) = 8.943. Dictionary: SKALA_INDUSTRI dan SKALA_INDUSTRI_ID kode 1.'

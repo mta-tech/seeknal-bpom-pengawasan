@@ -1,0 +1,11 @@
+name: Jumlah_NIE_Risiko_Menengah_Tinggi_ERBA_2023
+scenario_id: NIE-13a
+description: 'NIE-13a — Expected: NIE MT ERBA 2023. DB verified 2026-06-09: 3.077'
+turns:
+- prompt: Berapa jumlah NIE Risiko Menengah Tinggi di ERBA tahun 2023?
+  assert_contains:
+  - NIE
+  - Menengah Tinggi
+  - ERBA
+  - 2023
+  note: 'NIE-13a — DB aktual 3.077 (t_produk_3_erba, kategori_dokumen=302, tanggal 2023). Tolerance ±5%.'

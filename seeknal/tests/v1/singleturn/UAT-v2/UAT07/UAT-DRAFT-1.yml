@@ -1,0 +1,10 @@
+name: UAT_DRAFT_1
+scenario_id: UAT-DRAFT-1
+description: 'UAT-DRAFT-1 — single-scope (by-design).'
+turns:
+- prompt: berapa jumlah produk menengah rendah yang statusnya draft pemenuhan komitmen?
+  assert_contains:
+  - '28.720'
+  - 'Draft Pemenuhan Komitmen'
+  - 'Menengah Rendah'
+  note: 'UAT-DRAFT-1 — status_komitmen kode 0 = Draft Pemenuhan Komitmen. Tanpa NIE status filter (banyak yang masih proses). DB 28.720.'

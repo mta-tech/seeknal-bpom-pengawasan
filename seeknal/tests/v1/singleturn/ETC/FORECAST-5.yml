@@ -1,0 +1,28 @@
+name: FORECAST_KondisiData_Checklist_No_Raw_Stats
+scenario_id: FORECAST-5
+description: >
+  FORECAST-5 — Blok Kondisi Data harus hadir dengan format ✓/⚠ checklist.
+  Tidak boleh ada angka teknis mentah (rasio, CV, avg_recent, sigma).
+  Test ini memvalidasi bahwa boundary internal/user-facing dijaga dengan benar.
+turns:
+- prompt: Proyeksikan jumlah NIE yang akan terbit bulan depan di sistem ERBA
+  assert_contains:
+  - Kondisi Data
+  - Metodologi
+  - Rentang Realistis
+  - Tingkat Keyakinan
+  - Ringkasan
+  assert_not_contains:
+  - avg_recent
+  - avg_prior
+  - break_ratio
+  - cv =
+  - sigma =
+  - 0.70
+  - 1.30
+  note: >
+    FORECAST-5 — Kondisi Data boundary test. Blok Kondisi Data harus menggunakan
+    ✓/⚠ format checklist saja, tidak boleh ada angka atau istilah teknis internal.
+    Tidak boleh tampil: avg_recent, avg_prior, break_ratio, cv, sigma, threshold values.
+    Blok Metodologi harus hadir (MAPE % dan komposisi metode).
+    Blok Ringkasan harus hadir dengan perbandingan 3 bulan historis vs proyeksi.

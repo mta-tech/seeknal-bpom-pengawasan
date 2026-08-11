@@ -1,0 +1,19 @@
+name: UAT_MEI26_1
+scenario_id: UAT-MEI26-1
+description: 'UAT-MEI26-1 — Scope-agnostic (ERBA/ERLA/UNION valid via assert_any_of). DB ref catatan (BUKAN standar kebenaran).'
+turns:
+- prompt: berapa total izin edar yang terbit tahun 2026 bulan mei
+  assert_contains:
+  - 'Mei'
+  - '2026'
+  assert_any_of:
+  -
+    - '5.277'
+  -
+    - '5.085'
+    - 'ERBA'
+  -
+    - '192'
+    - 'ERLA'
+  tolerance_pct: 0
+  note: 'UAT-MEI26-1 — Scope-agnostic. Nilai kanonik note asli. UAT-MEI26-1 — ERBA Mei 2026=5.085, ERLA=192. Total=5.277.'

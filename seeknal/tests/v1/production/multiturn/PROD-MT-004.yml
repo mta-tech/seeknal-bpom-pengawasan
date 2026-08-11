@@ -1,0 +1,25 @@
+name: nie_per_risiko_followup
+scenario_id: "PROD-MT-004"
+description: "Breakdown NIE per risiko, porsentase, tren, dan drilldown kategori"
+turns:
+  - prompt: "berapa jumlah NIE pangan olahan per kategori risiko di ERBA tahun 2024?"
+    assert_contains:
+      - "Risiko Tinggi"
+      - "Risiko Menengah"
+      - "2024"
+    note: "Baseline breakdown risiko ERBA 2024"
+  - prompt: "risiko tinggi itu berapa persen dari total?"
+    assert_contains:
+      - "persen"
+    note: "Kalkulasi persentase dari data T1"
+  - prompt: "risiko mana yang paling banyak?"
+    assert_contains:
+      - "Risiko Tinggi"
+    note: "Ranking kategori risiko — Risiko Tinggi umumnya terbanyak"
+  - prompt: "bagaimana tren jumlah risiko tinggi dari 2022 ke 2024?"
+    assert_contains:
+      - "2022"
+      - "2023"
+      - "2024"
+      - "Risiko Tinggi"
+    note: "Tren historis — masih retain ERBA + Risiko Tinggi"

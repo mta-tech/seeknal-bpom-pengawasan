@@ -1,0 +1,19 @@
+name: UAT_LC_EXP_RISIKO_1
+scenario_id: UAT-LC-EXP-RISIKO-1
+description: 'UAT-LC-EXP-RISIKO-1 — Scope-agnostic (ERBA/ERLA/UNION valid via assert_any_of). DB ref catatan (BUKAN standar kebenaran).'
+turns:
+- prompt: dari izin edar yang akan habis tahun 2027, kategori risiko mana yang paling banyak?
+  assert_contains:
+  - 'Menengah Rendah'
+  - '2027'
+  assert_any_of:
+  -
+    - '11.444'
+  -
+    - '1.048'
+    - 'ERBA'
+  -
+    - '10.396'
+    - 'ERLA'
+  tolerance_pct: 5
+  note: 'UAT-LC-EXP-RISIKO-1 — Scope-agnostic. ERBA=note kanonik 1.048; ERLA=live 10.396. SQL ERBA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_erba WHERE kategori_dokumen=''303'' AND tanggal_exp::text LIKE ''2027%'' AND status IN (''0999'',''0906'',''9999''). SQL ERLA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_rilis_erla WHERE jenis_dokumen=''301'' AND tanggal_exp::text LIKE ''2027%'' AND status IN (''0999'',''0906'',''9999''). UAT-LC-EXP-RISIKO-1 — exp 2027: MR=1.048, MT=209, Tinggi=166. MR dominan karena volumenya paling besar. Domain: Early Warning Lifecycle.'

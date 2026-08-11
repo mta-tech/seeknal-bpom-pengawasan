@@ -1,0 +1,13 @@
+name: UAT_SKALA_1
+scenario_id: UAT-SKALA-1
+verification_date: '2026-07-18'
+description: 'UAT-SKALA-1 — single-scope by-design (skala industri = m_trader_rba / ERBA).'
+turns:
+- prompt: ada berapa perusahaan dengan skala industri mikro yang terdaftar di BPOM?
+  assert_contains:
+  - 'mikro'
+  assert_any_of:
+  -
+    - '9.057'
+  tolerance_pct: 5
+  note: 'SQL path: SELECT COUNT(*) FROM m_trader_rba WHERE TRIM(skala_industri_id)=''1'' — kolom TEXT (kode ''1''=Mikro, ''2''=Kecil, ''3''=Menengah, ''4''=Besar; 883 baris kosong = Importir per aturan COALESCE reference §4b). DB 18Jul2026 = 9.057. Dictionary: SKALA_INDUSTRI dan SKALA_INDUSTRI_ID kode 1. Nilai lama: 8.943.'

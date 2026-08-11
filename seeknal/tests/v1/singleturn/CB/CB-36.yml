@@ -1,0 +1,9 @@
+name: 36_Alasan pembatalan terbanyak pada izin edar
+scenario_id: CB-36
+description: 'CB-36 — Expected: Alasan + jumlah terbanyak'
+turns:
+- prompt: Alasan pembatalan terbanyak pada izin edar
+  assert_contains:
+  - pembatalan
+  - izin edar
+  note: 'CB-36 — Expected: Alasan + jumlah terbanyak'

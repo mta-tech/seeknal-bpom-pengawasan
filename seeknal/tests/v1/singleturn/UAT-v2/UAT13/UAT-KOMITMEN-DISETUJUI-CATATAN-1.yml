@@ -1,0 +1,10 @@
+name: UAT_KOMITMEN_DISETUJUI_CATATAN_1
+scenario_id: UAT-KOMITMEN-DISETUJUI-CATATAN-1
+description: 'UAT-KOMITMEN-DISETUJUI-CATATAN-1 — single-scope (by-design).'
+turns:
+- prompt: berapa produk MR yang komitmennya disetujui tapi dengan catatan?
+  assert_contains:
+  - '11.688'
+  - 'catatan'
+  - 'disetujui'
+  note: 'UAT-KOMITMEN-DISETUJUI-CATATAN-1 — status_komitmen=7 (Komitmen Disetujui Dengan Catatan) MR ERBA = 11.688. Ini produk yang NIE-nya keluar tapi ada catatan perbaikan.'

@@ -1,0 +1,26 @@
+name: Clarification_Gate_Impor_vs_NegaraPabrik
+scenario_id: "CLARIF-NEGARA-IMPORT-1"
+description: "Uji clarification gate CONCEPT_TYPE: 'produk impor dari China' ambigu antara status perusahaan importir dan negara pabrik produk."
+turns:
+  - prompt: "berapa produk impor dari China yang terdaftar di BPOM?"
+    assert_contains:
+      - "China"
+    note: "Material ambiguity CONCEPT_TYPE: 'impor dari China' bisa berarti produk dari pabrik di China atau produk yang diajukan oleh perusahaan importir. Agent HARUS tanya."
+  - prompt: "maksud saya yang diproduksi di pabrik China"
+    assert_contains:
+      - "10.805"
+      - "China"
+    note: "Setelah klarifikasi, agent harus lock negara_pabrik=CN dan hasilkan 10.805."
+  - prompt: "kalau perusahaan importir total ada berapa?"
+    assert_contains:
+      - "1.300"
+      - "importir"
+    note: "Topik bergeser ke master-data perusahaan importir. Agent harus jawab 1.300 tanpa mencampur dengan produk dari China."
+  - prompt: "ringkaskan bedanya dua konsep itu"
+    assert_contains:
+      - "10.805"
+      - "1.300"
+      - "China"
+      - "importir"
+    note: "Ringkasan harus menjaga pemisahan antara negara pabrik produk dan status perusahaan importir."
+

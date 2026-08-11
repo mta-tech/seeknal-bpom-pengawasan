@@ -1,0 +1,40 @@
+name: Multi_Ambiguity_Three_Topics
+scenario_id: "CLARIF-MULTI-TOPIC-1"
+description: >
+  Verifikasi bahwa sistem bertanya balik LEBIH DARI SATU KALI dalam satu conversation —
+  satu kali per topik ambigu yang berbeda. Budget klarifikasi reset setelah setiap final answer.
+  Tiga topik: (1) izin aktif = BUSINESS_EVENT ambiguity,
+  (2) permohonan masuk = ENTITY ambiguity, (3) komitmen selesai = EXACT_VS_FAMILY ambiguity.
+turns:
+  - prompt: "berapa izin edar yang masih aktif?"
+    assert_contains:
+      - "aktif"
+    note: >
+      Topik 1. Ambiguitas BUSINESS_EVENT: 'aktif' bisa berarti status 0999 saja,
+      0999+0906+9999, atau yang belum expired. Sistem HARUS tanya balik.
+      Ini adalah clarification ke-1 dari conversation.
+
+  - prompt: "pertanyaan berbeda sekarang: berapa permohonan yang masuk tahun 2024?"
+    assert_contains:
+      - "2024"
+    note: >
+      Topik 2. Ambiguitas ENTITY: 'permohonan yang masuk' tidak spesifik jenis_permohonan —
+      bisa semua jenis (301,302,303,304,305), hanya baru (301,305), atau termasuk revisi (302).
+      Topik ini sepenuhnya berbeda dari izin aktif. Clarification budget sudah reset.
+      Sistem HARUS tanya balik lagi (clarification ke-2 dalam conversation yang sama).
+
+  - prompt: "satu lagi topik terakhir: berapa produk MR yang komitmennya sudah selesai?"
+    assert_contains:
+      - "komitmen"
+    note: >
+      Topik 3. Ambiguitas EXACT_VS_FAMILY: 'selesai' untuk komitmen bisa berarti
+      status_komitmen=4 saja, 7 saja, 4+7, atau bahkan 5 (dibatalkan).
+      Topik berbeda lagi — bukan lanjutan dari turn sebelumnya.
+      Sistem HARUS tanya balik lagi (clarification ke-3 dalam conversation yang sama).
+
+  - prompt: "ringkaskan ketiga jawaban dari pertanyaan tadi dalam satu paragraf"
+    assert_contains:
+      - "aktif"
+    note: >
+      Follow-up eksplisit tanpa ambiguitas baru. Sistem cukup rangkum 3 jawaban
+      dari Conversation Ledger. Tidak perlu tanya balik lagi.

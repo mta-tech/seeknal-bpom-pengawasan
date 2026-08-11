@@ -1,0 +1,9 @@
+name: NIE_Per_Bulan_2025
+scenario_id: PROD-016
+description: "PROD-016 — Jumlah NIE yang diterbitkan per bulan di tahun 2025"
+turns:
+- prompt: "Berapa jumlah NIE yang diterbitkan per bulan di tahun 2025?"
+  assert_contains:
+  - "2025"
+  - "NIE"
+  note: "PROD-016 — Monthly breakdown for 2025, expects 12-month data or available months"

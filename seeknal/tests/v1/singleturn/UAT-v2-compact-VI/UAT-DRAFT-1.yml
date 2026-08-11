@@ -1,0 +1,16 @@
+name: UAT_DRAFT_1
+scenario_id: UAT-DRAFT-1
+verification_date: '2026-07-27'
+description: 'UAT-DRAFT-1 — ERBA-only (status_komitmen tidak ada di ERLA). Kembar dengan UAT-KOMITMEN-DRAFT-MR-1 (compact-I). Jangan tertukar dengan draft PIPELINE (status 0910/0912) yang kolomnya lain.'
+turns:
+- prompt: berapa jumlah produk menengah rendah yang statusnya draft pemenuhan komitmen?
+  assert_contains:
+  - 'Draft Pemenuhan Komitmen'
+  - 'Menengah Rendah'
+  assert_any_of:
+  -
+    - '29.777'
+  -
+    - '30.232'
+  tolerance_pct: 10
+  note: 'SQL ERBA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_erba WHERE kategori_dokumen=''303'' AND ROUND(status_komitmen::numeric)::int::text=''0'' AND trader_id::bigint NOT IN (5,17,50,85). SQL ERLA / GABUNGAN: tidak ada — kolom status_komitmen tidak ada di t_produk_3_rilis_erla. DB 27Jul2026 = 29.777 dgn eksklusi trader · 30.232 tanpa eksklusi; keduanya disahkan karena berkas kembarnya memakai konvensi tanpa eksklusi. KODE: dictionary STATUS_KOMITMEN sumber=ERBA, 0 = "Draft Pemenuhan Komitmen". Ini kode komitmen terbesar — pembanding sekeluarga: 7 Disetujui Dengan Catatan · 1 Proses Penilaian Kembali=10.015 · 5 Dibatalkan=5.666 · 9 Variasi=4.931 · 4 Disetujui · 8 Validasi Pembatalan=37. DUA "DRAFT" YANG BERBEDA — jangan tertukar: draft KOMITMEN ada di kolom status_komitmen (berkas ini, khusus Menengah Rendah, 29.777) sedangkan draft PIPELINE ada di kolom status kode 0910/0912 (seluruh kelas risiko, 26.401 — lihat UAT-DRAFT-PROSES-1). Kolom beda, populasi beda, angka beda. MR = Menengah Rendah = kategori_dokumen ''303''. ENTITY: produk_id. TANPA FILTER STATUS NIE: draft komitmen justru populasi yang belum terbit; menumpuk filter status sah akan memangkasnya drastis. FORMAT GANDA: status_komitmen menyimpan ''0'' dan ''0.0'' untuk nilai sama — tanpa normalisasi ROUND kehilangan sekitar 2.000 baris. TRANSIENT dua arah (menyusut saat diproses, bertambah saat ada pengajuan baru) sehingga toleransi 10%; nilai lama 28.720 (26Jun) · 29.848 (17Jul) · 30.026 (23Jul, tanpa eksklusi).'

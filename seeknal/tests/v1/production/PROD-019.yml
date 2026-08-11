@@ -1,0 +1,9 @@
+name: Top5_Trader_ERBA
+scenario_id: PROD-019
+description: "PROD-019 — Top 5 trader dengan produk terbanyak di ERBA"
+turns:
+- prompt: "Siapa 5 trader dengan jumlah produk terbanyak di ERBA?"
+  assert_contains:
+  - "trader"
+  - "ERBA"
+  note: "PROD-019 — Ranking query on trader table, expects trader names with counts"

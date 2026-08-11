@@ -1,0 +1,320 @@
+name: stress_test_50_turn
+scenario_id: "MT-013"
+description: "Stress test percakapan 50 turn: topic switching, context restoration bertingkat, cross-turn reasoning, SQL transparency — kompresi pola MT-012 + MT-002 + MT-003 + MT-005 + MT-007 + MT-008 + singleturn CB/NIE"
+turns:
+  - prompt: "apa itu NIE?"
+    assert_contains:
+      - "Nomor Izin Edar"
+      - "izin edar"
+    note: "T1: Definisi dasar NIE — baseline definisi"
+
+  - prompt: "berapa total NIE pangan olahan di sistem ERBA yang terbit tahun 2023?"
+    assert_contains:
+      - "30.230"
+      - "2023"
+      - "ERBA"
+    note: "T2: Baseline angka utama — pakai tanggal (terbit)"
+
+  - prompt: "kalau per kategori risiko bagaimana?"
+    assert_contains:
+      - "Risiko Tinggi"
+      - "Risiko Menengah Tinggi"
+      - "Risiko Menengah Rendah"
+      - "17.504"
+    note: "T3: Retain ERBA + 2023 — follow-up tanpa ulang konteks"
+
+  - prompt: "kalau per skala industri?"
+    assert_contains:
+      - "Besar"
+      - "Menengah"
+      - "Kecil"
+      - "Mikro"
+    note: "T4: Ganti dimensi dari risiko ke skala — masih retain ERBA + 2023"
+
+  - prompt: "dari situ, yang UMKM berapa?"
+    assert_contains:
+      - "UMKM"
+      - "12.295"
+    note: "T5: 'Dari situ' = referensi implisit ke data skala T4"
+
+  - prompt: "berapa jumlah NIE Risiko Menengah Rendah di ERBA tahun 2023?"
+    assert_contains:
+      - "9.649"
+      - "Menengah Rendah"
+      - "2023"
+    note: "T6: Drill-down eksplisit ke MR — ulangi angka spesifik"
+
+  - prompt: "dari MR itu, berapa yang disetujui komitmen?"
+    assert_contains:
+      - "6.236"
+      - "disetujui"
+      - "komitmen"
+    note: "T7: 'MR itu' = referensi implisit ke T6 — nested context"
+
+  - prompt: "yang dibatalkan komitmen berapa?"
+    assert_contains:
+      - "dibatalkan"
+    note: "T8: Retain MR + ERBA + 2023 — user tidak ulang konteks. Nilai aktual: 2"
+
+  - prompt: "berarti lebih banyak yang disetujui atau dibatalkan?"
+    assert_contains:
+      - "disetujui"
+      - "dibatalkan"
+    note: "T9: Cross-turn reasoning dari T7 dan T8 — 6.236 vs 2"
+
+  - prompt: "kalau tahun 2022?"
+    assert_contains:
+      - "1.414"
+      - "2022"
+    note: "T10: Retain ERBA, ganti tahun — user cuma ubah tahun tanpa ulang sistem"
+
+  - prompt: "naik atau turun dari 2022 ke 2023?"
+    assert_contains:
+      - "2022"
+      - "2023"
+      - "1.414"
+      - "30.230"
+    note: "T11: Cross-turn comparison — agent harus pakai data T2 dan T10, bukan query ulang"
+
+  - prompt: "bagaimana tren dari 2020 sampai 2023?"
+    assert_contains:
+      - "2020"
+      - "2021"
+      - "2022"
+      - "2023"
+    note: "T12: Perluas ke tren multi-tahun — masih domain NIE ERBA"
+
+  - prompt: "Tren jumlah izin edar pangan olahan per tahun"
+    assert_contains:
+      - "tren"
+      - "per tahun"
+    note: "T13: Tren tahunan — agent tampilkan data longitudinal"
+
+  - prompt: "Tampilkan gabungan NIE tahun 2022"
+    assert_contains:
+      - "NIE"
+      - "2022"
+      - "gabungan"
+    note: "T14: Scope switching ke gabungan ERBA+ERLA — tahun 2022"
+
+  - prompt: "berapa jumlah permohonan pangan olahan di sistem ERBA tahun 2023?"
+    assert_contains:
+      - "42.329"
+      - "permohonan"
+      - "2023"
+    note: "T15: Topic switching NIE → Permohonan — domain berganti total"
+
+  - prompt: "per jenis permohonannya bagaimana?"
+    assert_contains:
+      - "Permohonan Baru"
+      - "Perubahan"
+    note: "T16: Retain permohonan + ERBA + 2023 — resolusi kode ke nama jenis"
+
+  - prompt: "kalau total permohonan dari semua sistem registrasi?"
+    assert_contains:
+      - "61.217"
+    note: "T17: Scope switching ERBA → semua sistem — masih domain permohonan"
+
+  - prompt: "jelaskan perbedaan permohonan dan NIE"
+    assert_contains:
+      - "izin edar"
+      - "permohonan"
+      - "pengajuan"
+    note: "T18: Conceptual reasoning — jangan samakan dua metrik berbeda"
+
+  - prompt: "Berapa NIE BTP tahun 2023?"
+    assert_contains:
+      - "BTP"
+      - "2023"
+    note: "T19: Topic switching dari permohonan ke produk BTP — ganti domain"
+
+  - prompt: "kalau di sistem ERLA tahun yang sama?"
+    assert_contains:
+      - "ERLA"
+      - "2023"
+      - "BTP"
+    note: "T20: 'Tahun yang sama' = 2023 — agent switch sistem ke ERLA, produk BTP tetap"
+
+  - prompt: "selisih ERBA dan ERLA berapa?"
+    assert_contains:
+      - "ERBA"
+      - "ERLA"
+    note: "T21: Cross-turn calculation — agent harus hitung dari T19 dan T20"
+
+  - prompt: "kembali ke MR tadi, yang dibatalkan komitmen berapa?"
+    assert_contains:
+      - "dibatalkan"
+    note: "T22: Context restoration — recall angka dari T8 setelah 13 turn diselingi topik berbeda. Nilai aktual: 2"
+
+  - prompt: "berarti yang belum ada statusnya berapa?"
+    assert_contains:
+      - "3.411"
+    note: "T23: Cross-turn calculation — agent harus hitung 9.649 - 6.236 - 2 = 3.411 dari T6+T7+T22"
+
+  - prompt: "Tampilkan NIE per risiko tahun 2023"
+    assert_contains:
+      - "NIE"
+      - "risiko"
+      - "2023"
+    note: "T24: Refresh risiko breakdown — setelah konteks MR, tampilkan semua kategori risiko"
+
+  - prompt: "Apa itu NIE MR?"
+    assert_contains:
+      - "NIE MR"
+    note: "T25: Definisi NIE MR — konseptual, setelah diskusi risiko selesai"
+
+  - prompt: "berapa jumlah NIE produk BTP di ERBA tahun 2023?"
+    assert_contains:
+      - "950"
+      - "BTP"
+      - "2023"
+    note: "T26: Baseline BTP ERBA 2023 — produk spesifik"
+
+  - prompt: "kalau Garam Beryodium?"
+    assert_contains:
+      - "189"
+      - "Garam Beryodium"
+    note: "T27: Retain ERBA + 2023 — user cuma ganti produk"
+
+  - prompt: "kalau AMDK?"
+    assert_contains:
+      - "1.743"
+      - "AMDK"
+    note: "T28: Retain ERBA + 2023 — user cuma ganti produk lagi"
+
+  - prompt: "dari tiga produk itu, mana yang paling banyak?"
+    assert_contains:
+      - "AMDK"
+      - "1.743"
+    note: "T29: Cross-turn comparison T26+T27+T28 — AMDK (1.743) > BTP (950) > Garam (189)"
+
+  - prompt: "Jumlah produk pangan fortifikasi (MGS, Tepung Terigu, Garam Konsumsi Beryodium)"
+    assert_contains:
+      - "fortifikasi"
+      - "MGS"
+      - "Tepung Terigu"
+      - "Garam"
+    note: "T30: Multi-produk fortifikasi — cari tiga jenis produk sekaligus"
+
+  - prompt: "Tren Air Minum Dalam Kemasan"
+    assert_contains:
+      - "AMDK"
+      - "tren"
+    note: "T31: Tren AMDK per tahun — longitudinal untuk produk spesifik"
+
+  - prompt: "Tren produk Garam Beryodium pada tahun tertentu"
+    assert_contains:
+      - "Garam Beryodium"
+      - "tren"
+    note: "T32: Tren Garam Beryodium — follow-up tren produk"
+
+  - prompt: "Tren registrasi pangan olahan berdasarkan lokasi pabrik tahun 2025"
+    assert_contains:
+      - "registrasi"
+      - "lokasi pabrik"
+      - "2025"
+    note: "T33: Tren registrasi per lokasi — kombinasi lokasi + tahun 2025"
+
+  - prompt: "Berapa NIE ERBA tahun 2022?"
+    assert_contains:
+      - "ERBA"
+      - "2022"
+    note: "T34: Refresh angka dasar NIE ERBA 2022 setelah banyak topik diselingi"
+
+  - prompt: "Tampilkan gabungan NIE tahun 2023"
+    assert_contains:
+      - "NIE"
+      - "2023"
+      - "gabungan"
+    note: "T35: Gabungan NIE 2023 — pembanding tahun setelah diskusi tren produk"
+
+  - prompt: "kembali ke MR tadi, yang dibatalkan komitmen berapa?"
+    assert_contains:
+      - "dibatalkan"
+    note: "T36: Context restoration berat — recall angka dari T8 setelah 27 turn diselingi banyak topik. Nilai aktual: 2"
+
+  - prompt: "dari MR itu, berapa yang disetujui komitmen?"
+    assert_contains:
+      - "6.236"
+      - "disetujui"
+      - "komitmen"
+    note: "T37: Follow-up dari T36 — MR context baru saja di-restore, ganti status ke disetujui"
+
+  - prompt: "berarti lebih banyak yang disetujui atau dibatalkan?"
+    assert_contains:
+      - "disetujui"
+      - "dibatalkan"
+    note: "T38: Cross-turn reasoning dari T36 dan T37 — bandingkan 6.236 vs 2"
+
+  - prompt: "berarti yang belum ada statusnya berapa?"
+    assert_contains:
+      - "3.411"
+    note: "T39: Cross-turn calculation — agent harus hitung 9.649 - 6.236 - 2 = 3.411 dari T6+T37+T36"
+
+  - prompt: "dibanding total permohonan ERBA 2023, jumlah MR itu lebih besar atau kecil?"
+    assert_contains:
+      - "9.649"
+      - "42.329"
+      - "permohonan"
+    note: "T40: Cross-topic reasoning — hubungkan MR total (T6) dengan permohonan (T15) setelah 25 turn"
+
+  - prompt: "Wilayah yang banyak memproduksi produk AMDK"
+    assert_contains:
+      - "AMDK"
+      - "wilayah"
+    note: "T41: Domain wilayah — cari daerah produsen AMDK"
+
+  - prompt: "Wilayah yang banyak memproduksi produk Garam"
+    assert_contains:
+      - "Garam"
+      - "wilayah"
+    note: "T42: Follow-up wilayah — ganti produk ke Garam"
+
+  - prompt: "Wilayah dengan perusahaan UMKM terbanyak"
+    assert_contains:
+      - "UMKM"
+      - "wilayah"
+      - "terbanyak"
+    note: "T43: Ranking wilayah UMKM — kombinasi wilayan + skala usaha"
+
+  - prompt: "3 daerah dengan proporsi pabrik produk risiko tinggi terbesar"
+    assert_contains:
+      - "daerah"
+      - "risiko tinggi"
+    note: "T44: Multi-kriteria — 3 daerah + proporsi risiko tinggi"
+
+  - prompt: "Skala usaha perusahaan dengan kategori produk olahan ikan"
+    assert_contains:
+      - "skala usaha"
+      - "olahan ikan"
+    note: "T45: Skala usaha berdasarkan kategori produk — kombinasi skala + jenis produk"
+
+  - prompt: "tampilkan query SQL yang digunakan untuk menghitung total NIE pangan olahan di ERBA tahun 2023"
+    assert_contains:
+      - "SELECT"
+      - "COUNT"
+      - "nomor"
+      - "tanggal"
+    note: "T46: SQL transparency — query harus pakai tanggal terbit"
+
+  - prompt: "apakah query itu memakai tanggal terbit atau tanggal bayar?"
+    assert_contains:
+      - "tanggal"
+    note: "T47: Validasi SQL business logic — field 'tanggal' bukan tanggal_bayar"
+
+  - prompt: "Apakah sistem menampilkan SQL transparency?"
+    assert_contains:
+      - "SQL"
+      - "transparency"
+    note: "T48: Konseptual SQL transparency — fitur sistem"
+
+  - prompt: "NIE produk olahan baru, dokumen tinggi, diproduksi sendiri, industri besar, 2024"
+    assert_contains:
+      - "NIE"
+      - "2024"
+    note: "T49: Multi-kriteria filter — 5 filter dalam satu pertanyaan"
+
+  - prompt: "Apa itu NIE T?"
+    assert_contains:
+      - "NIE T"
+    note: "T50: Definisi NIE T — penutup siklus, kembali ke definisi dasar"

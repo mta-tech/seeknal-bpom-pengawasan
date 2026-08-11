@@ -1,0 +1,8 @@
+name: Daerah_Pabrik_Terbanyak
+scenario_id: PROD-008
+description: "PROD-008 — Daerah dengan pabrik terbanyak yang memiliki izin edar"
+turns:
+- prompt: "Daerah mana yang memiliki pabrik dengan izin edar terbanyak?"
+  assert_contains:
+  - "daerah"
+  note: "PROD-008 — Geographic ranking query, expects list of regions with counts"

@@ -1,0 +1,10 @@
+name: QA_C3_Refusal_Yearly_Ineligible
+scenario_id: QA-C3
+description: 'Peta QA C.3 (refusal forecast tahunan, P0, status QA: passed with notes — catatan bug UX "kata ditolak menghapus pertanyaan sebelumnya", di luar scope kita, dicatat saja). forecast_guide.md hanya mendukung grain bulanan — permintaan "per tahun" harus ditolak/diklarifikasi, bukan diagregasi paksa jadi tahunan.'
+turns:
+- prompt: Ramalkan permohonan per tahun untuk 5 tahun ke depan
+  assert_contains:
+  - bulan
+  assert_not_contains:
+  - Engine belum dikonfigurasi
+  note: 'Ekspektasi: sistem menjelaskan grain forecast hanya bulanan (bukan agregat tahunan langsung) dan/atau menawarkan 60 titik bulanan (dipotong ke 36 sesuai cap) yang bisa dijumlah per tahun oleh user — TIDAK boleh mengarang angka tahunan langsung tanpa dasar bulanan. Note QA asli: ada bug UX "ketika kata ditolak muncul, pertanyaan sebelumnya hilang" — ini di luar test single-turn kita, catat sebagai known issue terpisah untuk tim UI.'

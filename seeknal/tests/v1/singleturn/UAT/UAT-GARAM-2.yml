@@ -1,0 +1,9 @@
+name: UAT_GARAM_NIE_AllTime
+scenario_id: UAT-GARAM-2
+description: 'UAT-GARAM-2 — NIE Garam Beryodium ERBA all-time. DB verified 2026-06-17: jenis_pangan=1204 → 1.241'
+turns:
+- prompt: garam beryodium punya berapa NIE yang aktif di BPOM?
+  assert_contains:
+  - Garam Beryodium
+  - '1.241'
+  note: 'UAT-GARAM-2 — all-time ERBA, parent code jenis_pangan=1204 → 1.241.'

@@ -1,0 +1,8 @@
+name: tool_capture_forecast
+scenario_id: "TOOL-CAPTURE-3"
+description: "Forecast — harus trigger run_forecast"
+turns:
+  - prompt: "Berapa prediksi jumlah registrasi ERBA total untuk3 bulan ke depan?"
+    assert_contains:
+      - "prediksi"
+    note: "Pertanyaan forecast — agent harus build SQL 2 kolom dan panggil run_forecast. Tool yang diharapkan: run_forecast. Jika MAPE>25%, anomaly otomatis ter-attach."

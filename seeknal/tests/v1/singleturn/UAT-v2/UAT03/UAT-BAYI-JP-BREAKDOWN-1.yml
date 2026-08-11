@@ -1,0 +1,9 @@
+name: UAT_BAYI_JP_BREAKDOWN_1
+scenario_id: UAT-BAYI-JP-BREAKDOWN-1
+description: 'UAT-BAYI-JP-BREAKDOWN-1 — single-scope (by-design).'
+turns:
+- prompt: dari izin edar formula bayi yang masih berlaku, apakah semuanya permohonan baru atau ada yang perubahan dan daftar ulang?
+  assert_contains:
+  - 'formula bayi'
+  - 'permohonan baru'
+  note: 'UAT-BAYI-JP-BREAKDOWN-1 — dari UAT JSON sesi nyata. Sistem harus bisa breakdown JP untuk entitas spesifik (formula bayi) yang aktif. Ada campuran baru, perubahan, daftar ulang.'

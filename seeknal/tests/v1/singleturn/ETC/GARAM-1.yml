@@ -1,0 +1,10 @@
+name: Garam_Beryodium_Trend
+scenario_id: GARAM-1
+description: 'GARAM-1 — Trend Garam Beryodium. DB verified 2026-06-10: 2022=7, 2023=189, 2024=411, 2025=436'
+turns:
+- prompt: Tren jumlah izin edar produk Garam Beryodium dari tahun ke tahun
+  assert_contains:
+  - Garam Beryodium
+  - tren
+  - per tahun
+  note: 'GARAM-1 — DB aktual (t_produk_3_erba, kategori_pangan=120101000001): 2022=7, 2023=189, 2024=411, 2025=436. Pertumbuhan signifikan. Tolerance ±5%.'

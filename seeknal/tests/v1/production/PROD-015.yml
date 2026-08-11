@@ -1,0 +1,8 @@
+name: Distribusi_Skala_Industri
+scenario_id: PROD-015
+description: "PROD-015 — Distribusi produk berdasarkan skala industri"
+turns:
+- prompt: "Bagaimana distribusi produk berdasarkan skala industri?"
+  assert_contains:
+  - "skala"
+  note: "PROD-015 — Industrial scale distribution, expects breakdown by scale category"

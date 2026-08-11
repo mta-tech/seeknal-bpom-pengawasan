@@ -1,0 +1,10 @@
+name: FC_Risiko_TinggiNotifikasi_Semester
+scenario_id: FC-RISIKO-4
+description: 'Forecast natural — risiko Tinggi Notifikasi (kategori_dokumen=304 saja, subset dari Tinggi), semester depan.'
+turns:
+- prompt: Prediksi permohonan tinggi notifikasi untuk semester depan
+  assert_contains:
+  - Notifikasi
+  - Juli
+  - Desember
+  note: 'DB Jun2026 Tinggi Notifikasi (kd304 saja, produk_id) = 375; Mei=320, Apr=477 — histori 47 bulan penuh. PENTING: kd304 eksplisit diminta (bukan gabungan 301+304 seperti FC-RISIKO-3) — cek SQL tool_trace TIDAK melebar ke kd301 (kanon predikat.md §12-B: "never widen one asked class to its neighbours silently").'

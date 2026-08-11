@@ -1,0 +1,18 @@
+name: Year_Switch_Subject_Retention
+scenario_id: BUGFIX-6
+description: "Bug fix: ganti tahun harus retain subject sebelumnya. Bug lama: agent lose MR+ERBA scope saat ganti tahun."
+turns:
+- prompt: Berapa jumlah NIE Risiko Menengah Rendah di ERBA tahun 2023?
+  assert_contains:
+  - '9.649'
+  - Risiko Menengah Rendah
+  - ERBA
+  note: 'BUGFIX-6 T1 — Baseline: MR + ERBA + 2023'
+- prompt: kalau tahun 2022?
+  assert_contains:
+  - ERBA
+  - Risiko Menengah Rendah
+  note: "BUGFIX-6 T2 — FIX: harus retain MR + ERBA, hanya ganti tahun. Harus ada query baru (sqls>0)."
+  assert_not_contains:
+  - BTP
+  - ERLA

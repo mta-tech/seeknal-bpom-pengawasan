@@ -1,0 +1,8 @@
+name: 48_Apa itu NIE MR
+scenario_id: NIE-10
+description: 'NIE-10 — Expected: Sistem menampilkan definisi/data NIE MR'
+turns:
+- prompt: Apa itu NIE MR?
+  assert_contains:
+  - NIE MR
+  note: 'NIE-10 — Expected: Sistem menampilkan definisi/data NIE MR'

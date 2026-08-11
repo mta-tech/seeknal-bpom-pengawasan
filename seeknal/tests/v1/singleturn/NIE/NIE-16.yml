@@ -1,0 +1,8 @@
+name: 54_Apa itu NIE T
+scenario_id: NIE-16
+description: 'NIE-16 — Expected: Sistem menampilkan definisi/data NIE T'
+turns:
+- prompt: Apa itu NIE T?
+  assert_contains:
+  - NIE T
+  note: 'NIE-16 — Expected: Sistem menampilkan definisi/data NIE T'

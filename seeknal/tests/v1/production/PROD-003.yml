@@ -1,0 +1,9 @@
+name: Tren_Permohonan_2020_2025
+scenario_id: PROD-003
+description: "PROD-003 — Tren jumlah permohonan dari tahun 2020 sampai 2025"
+turns:
+- prompt: "Tren jumlah permohonan dari tahun 2020 sampai 2025"
+  assert_contains:
+  - "tren"
+  - "permohonan"
+  note: "PROD-003 — Time-series query on permohonan table, expects yearly breakdown"

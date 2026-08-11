@@ -1,0 +1,26 @@
+name: UAT_RISK_1
+scenario_id: UAT-RISK-1
+verification_date: '2026-07-23'
+description: 'UAT-RISK-1 — jebakan taksonomi: "Risiko Rendah" TIDAK ada di ERBA kategori_dokumen; perbandingan Rendah-vs-Tinggi hanya koheren lewat jenis_dokumen (lintas sistem). Angka di-refresh 23Jul2026 + SQL literal ditambahkan.'
+turns:
+- prompt: Bagaimana perbandingan jumlah NIE untuk kategori Risiko Rendah dan Risiko Tinggi?
+  assert_contains:
+  - 'Risiko Tinggi'
+  - 'Risiko Rendah'
+  assert_any_of:
+  -
+    - '122.715'
+    - '107.122'
+  -
+    - '44.608'
+    - '84.520'
+    - 'ERBA'
+  -
+    - '78.107'
+    - '22.602'
+    - 'ERLA'
+  -
+    - '86.976'
+    - 'ERBA'
+  tolerance_pct: 5
+  note: 'SQL ERBA (per kelas): SELECT jenis_dokumen, COUNT(DISTINCT nomor) FROM t_produk_3_erba WHERE jenis_dokumen IN (''301'',''302'') AND status IN (''0999'',''0906'',''9999'') AND trader_id::bigint NOT IN (5,17,50,85) AND nomor<>'''' GROUP BY 1. SQL ERLA: SELECT jenis_dokumen, COUNT(DISTINCT nomor) FROM t_produk_3_rilis_erla WHERE jenis_dokumen IN (''301'',''302'') AND status IN (''0099'',''0999'',''0906'',''9999'') AND trader_id<>3384 AND nomor<>'''' GROUP BY 1. SQL GABUNGAN per kelas: COUNT(DISTINCT nomor) atas UNION ALL kedua sisi untuk kode yang sama. SQL varian ERBA-kd: SELECT COUNT(DISTINCT nomor) FROM t_produk_3_erba WHERE kategori_dokumen IN (''301'',''304'') AND <filter ERBA> → 86.976. DB 23Jul2026: ERBA Low(301)=44.608 · ERBA High(302)=84.520 · ERLA Low(301)=78.107 · ERLA High(302)=22.602 · GABUNGAN Low=122.715 · High=107.122. JEBAKAN TAKSONOMI (inti kasus): dictionary KATEGORI_DOKUMEN (sumber=ERBA saja) hanya punya Tinggi(301)/Menengah Tinggi(302)/Menengah Rendah(303)/Tinggi Notifikasi(304) — TIDAK ADA kelas "Rendah". Maka perbandingan Rendah-vs-Tinggi hanya koheren lewat JENIS_DOKUMEN (dictionary sumber="ERLA dan ERBA": 301=Pangan Low Risk · 302=Pangan High Risk · 303=Pangan Medium Risk) — kolom BERBEDA dengan makna BERBEDA meski angka kodenya bertabrakan (301/302 di kedua kategori artinya tidak sama). JANGAN mencampur dua kolom itu dalam satu query. Grup 4 menerima jawaban yang memakai kategori_dokumen ERBA sambil menjelaskan bahwa "Rendah" tidak ada dan Tinggi(301+304)=86.976. ENTITY: nomor (predikat §1). Nilai lama 18Jul: 44.301/83.961/78.117/22.605/122.418/106.566 (ERBA tumbuh, ERLA beku).'

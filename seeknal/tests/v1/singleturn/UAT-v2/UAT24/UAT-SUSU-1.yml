@@ -1,0 +1,9 @@
+name: UAT_SUSU_1
+scenario_id: UAT-SUSU-1
+description: 'UAT-SUSU-1 — single-scope (by-design).'
+turns:
+- prompt: Jumlah produk susu merk sekolah yang disetujui selama periode bulan Mei 2026
+  assert_contains:
+  - 'tidak ditemukan'
+  - 'susu'
+  note: 'UAT-SUSU-1 — regression. Filter merk/nama ILIKE sekolah + susu Mei 2026 = 0. Sistem tidak boleh mengarang angka.'

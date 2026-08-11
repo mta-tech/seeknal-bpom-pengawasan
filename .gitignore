@@ -1,0 +1,29 @@
+# Seeknal
+profiles.yml
+.env
+.env.worker
+.env.backup-*
+target/
+.seeknal/
+*.duckdb
+*.duckdb.wal
+
+# Claude Code
+.claude/
+.omc/
+
+# Test outputs
+seeknal/tests/outputs/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+
+# Local credentials vault — never commit
+credential/
+
+# Windows/WSL & Office artifacts
+*:Zone.Identifier
+~$*

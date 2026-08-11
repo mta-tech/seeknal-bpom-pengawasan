@@ -1,0 +1,9 @@
+name: 47_Berapa NIE garam beryodium tahun 2023
+scenario_id: NIE-9
+description: NIE-9
+turns:
+- prompt: Berapa NIE garam beryodium tahun 2023?
+  assert_contains:
+  - garam beryodium
+  - '2023'
+  note: NIE-9

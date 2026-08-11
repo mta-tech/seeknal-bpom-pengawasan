@@ -1,0 +1,10 @@
+name: 04_Jumlah izin edar risiko menengah rendah yang disetujui komitmen
+scenario_id: CB-4
+description: 'CB-4 — MR disetujui komitmen ERBA all-time. DB verified 2026-06-03: 14.190'
+turns:
+- prompt: Jumlah izin edar risiko menengah rendah yang disetujui komitmen
+  assert_contains:
+  - '14'
+  - disetujui
+  - komitmen
+  note: 'CB-4 — DB aktual 14.190 (ERBA, kategori_dokumen=303, status_komitmen IN 4/7, dengan NIE filter wajib). Oracle lama 13.691 = stale, data tumbuh +499 sejak oracle ditulis.'

@@ -1,0 +1,14 @@
+name: UAT_NIE25_2
+scenario_id: UAT-NIE25-2
+verification_date: '2026-07-23'
+description: 'UAT-NIE25-2 — single-scope by-design (prompt menyebut "aplikasi ereg RBA" = ERBA saja), jadi assert_contains WAJIB memuat ''ERBA''.'
+turns:
+- prompt: Berapa NIE yang terbit di tahun 2025 untuk aplikasi ereg RBA?
+  assert_contains:
+  - '2025'
+  - 'ERBA'
+  assert_any_of:
+  -
+    - '53.447'
+  tolerance_pct: 5
+  note: 'SQL: SELECT COUNT(DISTINCT nomor) FROM t_produk_3_erba WHERE tanggal::timestamp>=''2025-01-01'' AND tanggal::timestamp<''2026-01-01'' AND status IN (''0999'',''0906'',''9999'') AND trader_id::bigint NOT IN (5,17,50,85) AND nomor<>''''. DB 23Jul2026 = 53.447. "ereg RBA" = ERBA (sistem risk-based); pembanding ERLA tahun sama = 3.671 tapi DI LUAR scope pertanyaan. TANPA filter JP (predikat §4). Nilai lama 53.535 = snapshot 26Jun.'

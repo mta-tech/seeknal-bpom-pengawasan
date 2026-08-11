@@ -1,0 +1,18 @@
+name: UAT_PIPE_DRAFT_TOTAL_1
+scenario_id: UAT-PIPE-DRAFT-TOTAL-1
+verification_date: '2026-07-27'
+description: 'UAT-PIPE-DRAFT-TOTAL-1 — ERBA-only untuk tabel produk. Bucket yang sama dengan UAT-DRAFT-PROSES-1, jadi angkanya wajib sama. TRANSIENT.'
+turns:
+- prompt: total permohonan yang masih nyangkut di tahap draft berapa?
+  assert_contains:
+  - 'draft'
+  assert_any_of:
+  -
+    - '26.401'
+  -
+    - '27.942'
+  -
+    - '27.251'
+    - 'BTP'
+  tolerance_pct: 10
+  note: 'SQL ERBA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_erba WHERE status IN (''0910'',''0912'') AND trader_id::bigint NOT IN (5,17,50,85). SQL ERLA / GABUNGAN: tidak berlaku — status di t_produk_3_rilis_erla hanya {0000, 0009, 0099, 0501, 0906, 0999, 9999}, tidak ada kode draft. SQL produk+BTP: UNION ALL dengan t_btp_3_erba dan t_btp_3_erla pada kode yang sama. DB 27Jul2026: produk ERBA=26.401 (0912=21.271 · 0910=5.130) · produk+BTP=27.251 · tanpa eksklusi trader=27.942. KODE: dictionary STATUS sumber=ERBA memberi deskripsi identik untuk 0910 dan 0912 ("Pendaftar - Draft") — keduanya wajib dipakai; memakai 0912 saja menghilangkan 5.130 permohonan. EKSKLUSI TRADER PALING BERPENGARUH DI TAHAP INI: trader 5/17/50/85 hampir seluruh barisnya mengendap di draft, selisihnya 1.541 (5,5%). Sebagai pembanding, pada hitungan NIE eksklusi yang sama hanya menggeser 18 dari 141 ribu — jadi keputusan eksklusi material untuk pipeline, nyaris tidak untuk NIE. Kedua angka disahkan; bentuk kanonik = dengan eksklusi. ENTITY: produk_id. TANPA FILTER STATUS NIE SAH. KEMBARAN: UAT-DRAFT-PROSES-1 memakai bucket yang sama persis dan menampilkan 26.401 juga. Berkas UAT-OPS-BOTTLENECK-1 (compact-IV) menempatkan Draft sebagai juara ranking dengan 27.911 karena dihitung 23Jul TANPA eksklusi trader — bedanya konvensi + drift, bukan bucket yang berbeda. PEMBANDING: draft adalah antrian sisi PENDAFTAR, bukan beban kerja petugas; jangan disamakan dengan "sedang diproses". TRANSIENT dua arah, toleransi 10%. Nilai lama 24.959 (tanpa eksklusi, snapshot lebih awal).'

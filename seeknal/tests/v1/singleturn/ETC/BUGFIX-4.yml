@@ -1,0 +1,10 @@
+name: Semua_Sistem_Tanpa_BTP
+scenario_id: BUGFIX-4
+description: "Bug fix: 'semua sistem registrasi' untuk permohonan = ERBA+ERLA product only, BUKAN +BTP. DB verified 2026-06-12: 61.217"
+turns:
+- prompt: Berapa total permohonan pangan olahan tahun 2023 dari semua sistem registrasi?
+  assert_contains:
+  - '61.217'
+  note: "FIX-4 — 'semua sistem' = ERBA(42.329) + ERLA(18.888) = 61.217. BUKAN + BTP."
+  assert_not_contains:
+  - BTP

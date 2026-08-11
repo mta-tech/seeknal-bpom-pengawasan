@@ -1,0 +1,9 @@
+name: UAT_Pipeline_Sedang_Evaluasi
+scenario_id: UAT-PIPELINE-EVAL-1
+description: 'UAT-PIPELINE-EVAL-1 — Produk ERBA yang sedang di tahap evaluasi (status 03xx). DB verified 2026-06-17: 5.469. Uji kemampuan membaca status workflow bukan hanya NIE aktif.'
+turns:
+- prompt: berapa produk yang sedang diproses oleh evaluator BPOM saat ini?
+  assert_contains:
+  - '5.469'
+  - evaluasi
+  note: 'UAT-PIPELINE-EVAL-1 — status 03xx (Evaluator - Proses Penilaian, Data Tambahan, dll) = 5.469. Penting: bukan NIE aktif, ini yang masih dalam antrian.'

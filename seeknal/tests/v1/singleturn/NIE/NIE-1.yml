@@ -1,0 +1,9 @@
+name: 39_Apa itu NIE
+scenario_id: NIE-1
+description: NIE-1
+turns:
+- prompt: Apa itu NIE?
+  assert_contains:
+  - Nomor Izin Edar
+  - izin edar
+  note: NIE-1

@@ -1,0 +1,18 @@
+name: UAT_LC_AKTIF_1
+scenario_id: UAT-LC-AKTIF-1
+description: 'UAT-LC-AKTIF-1 — Scope-agnostic (ERBA/ERLA/UNION valid via assert_any_of). DB ref catatan (BUKAN standar kebenaran).'
+turns:
+- prompt: berapa izin edar yang masih berlaku saat ini?
+  assert_contains:
+  - 'berlaku'
+  assert_any_of:
+  -
+    - '323.943'
+  -
+    - '140.082'
+    - 'ERBA'
+  -
+    - '183.861'
+    - 'ERLA'
+  tolerance_pct: 5
+  note: 'UAT-LC-AKTIF-1 — Scope-agnostic. ERBA=note kanonik 140.082; ERLA=live 183.861. SQL ERBA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_erba WHERE status=''0999''. SQL ERLA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_rilis_erla WHERE status=''0999''. UAT-LC-AKTIF-1 — status 0999 (Perizinan Berusaha Terbit) ERBA = 140.082. Berbeda dari "aktif" termasuk 0906+9999 = 182.630. Domain: Lifecycle Izin Edar.'

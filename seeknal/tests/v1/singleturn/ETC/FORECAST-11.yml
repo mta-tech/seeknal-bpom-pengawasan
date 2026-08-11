@@ -1,0 +1,25 @@
+name: FORECAST_BTP_Kualitas_CUKUP_Volume_Caveat
+scenario_id: FORECAST-11
+description: >
+  FORECAST-11 — Proyeksi BTP Permohonan ERBA. Volume kecil (~127/bulan) → harus ada catatan
+  interpretasi hati-hati. Backtest MAPE ~24.4% → label CUKUP.
+  Test ini memvalidasi small-volume caveat dan label CUKUP muncul dengan benar.
+turns:
+- prompt: Proyeksikan jumlah permohonan BTP ERBA untuk 3 bulan ke depan
+  assert_contains:
+  - BTP
+  - CUKUP
+  - Rentang Realistis
+  - Apa Artinya
+  - Metodologi
+  assert_not_contains:
+  - BAIK
+  - LEMAH
+  - sigma
+  - p10
+  note: >
+    FORECAST-11 — BTP Permohonan ERBA. Sumber: t_btp_3_erba (native timestamp, tanpa cast).
+    Backtest MAPE ~24.4% → label CUKUP (setelah volume adjustment, avg ~127 < 300 → potensi downgrade).
+    Blok "Apa Artinya?" harus memuat catatan bahwa proyeksi bersifat indikatif.
+    Sistem harus mengambil data dari t_btp_3_erba bukan t_produk_3_erba.
+    Output 7-blok format lengkap.

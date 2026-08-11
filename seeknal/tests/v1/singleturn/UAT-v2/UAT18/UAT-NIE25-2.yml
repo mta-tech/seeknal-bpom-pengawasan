@@ -1,0 +1,10 @@
+name: UAT_NIE25_2
+scenario_id: UAT-NIE25-2
+description: 'UAT-NIE25-2 — single-scope (by-design).'
+turns:
+- prompt: Berapa NIE yang terbit di tahun 2025 untuk aplikasi ereg RBA?
+  assert_contains:
+  - '53.535'
+  - '2025'
+  - 'ERBA'
+  note: 'UAT-NIE25-2 — ERBA 2025, status valid, no JP filter = 53.535. "ereg RBA" = ERBA.'

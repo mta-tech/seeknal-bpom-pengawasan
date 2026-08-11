@@ -1,0 +1,25 @@
+name: UAT_TREN_RISK_1
+scenario_id: UAT-TREN-RISK-1
+description: 'UAT-TREN-RISK-1 — Scope-agnostic (ERBA/ERLA/UNION valid via assert_any_of). DB ref catatan (BUKAN standar kebenaran).'
+turns:
+- prompt: Bagaimana tren jumlah NIE risiko menengah rendah dari tahun ke tahun?
+  assert_contains:
+  - 'Menengah Rendah'
+  - 'tren'
+  assert_any_of:
+  -
+    - '16.772'
+    - '16.197'
+    - '17.503'
+  -
+    - '12.310'
+    - '13.552'
+    - '16.458'
+    - 'ERBA'
+  -
+    - '4.462'
+    - '2.645'
+    - '1.045'
+    - 'ERLA'
+  tolerance_pct: 5
+  note: 'UAT-TREN-RISK-1 — Scope-agnostic multi-value. ERBA=note kanonik; ERLA=live. UAT-TREN-RISK-1 — ERBA kategori_dokumen=303 per tahun terbit: 2022=1.048, 2023=9.649, 2024=10.636, 2025=13.729, 2026=6.377.'

@@ -1,0 +1,9 @@
+name: 42_Berapa NIE BTP tahun 2023
+scenario_id: NIE-4
+description: NIE-4
+turns:
+- prompt: Berapa NIE BTP tahun 2023?
+  assert_contains:
+  - BTP
+  - '2023'
+  note: NIE-4

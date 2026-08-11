@@ -1,0 +1,21 @@
+name: sql_transparency
+scenario_id: "MT-010"
+description: "Agent bisa tunjukkan query SQL yang dipakai dan jelasin field-nya"
+turns:
+  - prompt: "berapa total NIE pangan olahan di sistem ERBA yang terbit tahun 2023?"
+    assert_contains:
+      - "30.276"
+      - "2023"
+      - "ERBA"
+    note: "Baseline angka — turn pembuka sebelum minta SQL"
+  - prompt: "tampilkan query SQL yang digunakan untuk menghitung total NIE ERBA 2023 itu"
+    assert_contains:
+      - "SELECT"
+      - "COUNT"
+      - "nomor"
+      - "tanggal"
+    note: "SQL transparency — query harus pakai tanggal (terbit), bukan tanggal_bayar"
+  - prompt: "query itu pake field tanggal apa?"
+    assert_contains:
+      - "tanggal"
+    note: "Validasi logic query — agent harus konfirmasi field 'tanggal', bukan tanggal_bayar"

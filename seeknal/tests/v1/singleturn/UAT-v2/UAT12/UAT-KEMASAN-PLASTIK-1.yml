@@ -1,0 +1,18 @@
+name: UAT_KEMASAN_PLASTIK_1
+scenario_id: UAT-KEMASAN-PLASTIK-1
+description: 'UAT-KEMASAN-PLASTIK-1 — Scope-agnostic (ERBA/ERLA/UNION valid via assert_any_of). DB ref catatan (BUKAN standar kebenaran).'
+turns:
+- prompt: berapa produk BPOM yang menggunakan kemasan plastik?
+  assert_contains:
+  - 'plastik'
+  assert_any_of:
+  -
+    - '292.657'
+  -
+    - '44.631'
+    - 'ERBA'
+  -
+    - '248.026'
+    - 'ERLA'
+  tolerance_pct: 5
+  note: 'UAT-KEMASAN-PLASTIK-1 — Scope-agnostic. ERBA=note kanonik 44.631; ERLA=live 248.026. SQL ERBA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_erba WHERE kemasan_id=''2'' AND status IN (''0999'',''0906'',''9999''). SQL ERLA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_rilis_erla WHERE kemasan_id=''32'' AND status IN (''0999'',''0906'',''9999''). UAT-KEMASAN-PLASTIK-1 — t_produk_3_erba kemasan_id=2 (Plastik tunggal/monolayer), sumber=ERBA, NIE aktif = 44.631. Dictionary: KEMASAN_ID kode 2.'

@@ -1,0 +1,9 @@
+name: 44_Berapa NIE ERBA tahun 2022
+scenario_id: NIE-6
+description: NIE-6
+turns:
+- prompt: Berapa NIE ERBA tahun 2022?
+  assert_contains:
+  - ERBA
+  - '2022'
+  note: NIE-6

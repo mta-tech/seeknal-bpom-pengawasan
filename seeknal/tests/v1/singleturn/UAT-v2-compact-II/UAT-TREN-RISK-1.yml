@@ -1,0 +1,24 @@
+name: UAT_TREN_RISK_1
+scenario_id: UAT-TREN-RISK-1
+verification_date: '2026-07-18'
+description: 'UAT-TREN-RISK-1 — Scope-agnostic (ERBA/ERLA/UNION via assert_any_of). Redefined 18Jul2026 — grup assert lama tercampur-aduk (unreproducible).'
+turns:
+- prompt: Bagaimana tren jumlah NIE risiko menengah rendah dari tahun ke tahun?
+  assert_contains:
+  - 'Menengah Rendah'
+  assert_any_of:
+  -
+    - '13.500'
+    - '13.038'
+    - '16.529'
+  -
+    - '9.689'
+    - '10.963'
+    - '15.644'
+  -
+    - '3.811'
+    - '2.075'
+    - '885'
+    - 'ERLA'
+  tolerance_pct: 5
+  note: 'SQL path ERBA (grup 2): SELECT date_trunc(''year'', NULLIF(tanggal,'''')::timestamp), COUNT(DISTINCT nomor) FROM t_produk_3_erba WHERE kategori_dokumen=''303'' AND status IN (''0999'',''0906'',''9999'') GROUP BY 1 → 2022=1.045, 2023=9.689, 2024=10.963, 2025=15.644, 2026 BERJALAN=8.407 (jangan di-assert). SQL path ERLA (grup 3; MR setara = jenis_dokumen=''301'' Low, per UAT-MR-1): status IN (''0099'',''0999'',''0906'',''9999'') → 2023=3.811, 2024=2.075, 2025=885. GABUNGAN per tahun (grup 1) = ERBA+ERLA: 2023=13.500, 2024=13.038, 2025=16.529 (nomor tak overlap). Jangkar assert = 2023/2024/2025; tahun lampau tetap bergeser (revisi historis) — toleransi wajib. KOREKSI TOTAL: grup assert lama (16.772/16.197/17.503; 12.310/13.552/16.458; 4.462/2.645/1.045) TIDAK tereproduksi query koheren mana pun — token ''1.045'' di grup "ERLA" lama sebenarnya nilai ERBA-2022; dibuang. Note lama (1.048/9.649/10.636/13.729/6.377) = snapshot lama metode ERBA yang sama.'

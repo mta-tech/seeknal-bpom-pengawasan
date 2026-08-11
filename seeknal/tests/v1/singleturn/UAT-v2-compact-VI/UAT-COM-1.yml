@@ -1,0 +1,16 @@
+name: UAT_COM_1
+scenario_id: UAT-COM-1
+verification_date: '2026-07-27'
+description: 'UAT-COM-1 — ERBA-only: kolom status_komitmen tidak ada di t_produk_3_rilis_erla. Konsepnya kembar dengan UAT-KOMITMEN-DIBATALKAN-1 (compact-I) — angkanya wajib sama. TRANSIENT.'
+turns:
+- prompt: Berapa jumlah produk MR yang dibatalkan komitmennya sampai dengan tahun 2026?
+  assert_contains:
+  - 'Dibatalkan'
+  - 'Menengah Rendah'
+  assert_any_of:
+  -
+    - '5.666'
+  -
+    - '5.667'
+  tolerance_pct: 5
+  note: 'SQL ERBA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_erba WHERE kategori_dokumen=''303'' AND ROUND(status_komitmen::numeric)::int::text=''5'' AND trader_id::bigint NOT IN (5,17,50,85). SQL ERLA / GABUNGAN: tidak ada — kolom status_komitmen tidak ada di t_produk_3_rilis_erla (dicek di information_schema); angka gabungan berarti mengarang. DB 27Jul2026 = 5.666 (tanpa eksklusi trader = 5.667, selisih 1). KODE: dictionary STATUS_KOMITMEN sumber=ERBA, 5 = "Komitmen Dibatalkan". Kode 8 "Validasi Pembatalan" (=37) adalah tahap transien MENUJU 5 — jangan digabung. MR = Menengah Rendah = kategori_dokumen ''303''. ENTITY: produk_id (yang dihitung berkas pengajuan, bukan NIE). TANPA FILTER STATUS NIE — ini yang paling menentukan: menambah status IN (''0999'',''0906'',''9999'') memangkas 5.666 jadi ~254, karena mayoritas pembatalan komitmen terjadi sebelum NIE terbit. FORMAT GANDA: status_komitmen bertipe TEXT dan menyimpan ''5'' maupun ''5.0'' untuk nilai yang sama, jadi equality polos kehilangan baris — normalisasi ROUND wajib; terlihat pada kode 0,1,4,5,7,9. "SAMPAI DENGAN TAHUN 2026" bukan filter tanggal: status komitmen adalah keadaan saat ini dan tidak punya kolom tanggal pembatalan — jangan menambah filter tanggal, cukup stempel tanggal as-of. KEMBARAN: UAT-KOMITMEN-DIBATALKAN-1 (compact-I) memakai kode yang sama tanpa eksklusi trader dan mencatat 5.667 (23Jul); perbarui berpasangan. TRANSIENT: 5.198 (17Jun) · 5.258 (26Jun) · 5.457 (17Jul) · 5.667 (23Jul).'

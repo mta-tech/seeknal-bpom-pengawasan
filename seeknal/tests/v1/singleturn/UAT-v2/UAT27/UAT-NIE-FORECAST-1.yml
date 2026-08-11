@@ -1,0 +1,10 @@
+name: UAT_NIE_FORECAST_1
+scenario_id: UAT-NIE-FORECAST-1
+description: 'UAT-NIE-FORECAST-1 — Prediksi forecast tahun 2027. Test basic forecast request.'
+turns:
+- prompt: Prediksi forecast tahun 2027
+  assert_contains:
+  - '2027'
+  - forecast
+  - prediksi
+  note: 'UAT-NIE-FORECAST-1 — Test basic forecast request untuk tahun 2027.'

@@ -1,0 +1,10 @@
+name: Jumlah_NIE_Garam_Beryodium_ERBA_2023
+scenario_id: NIE-9a
+description: 'NIE-9a — Expected: NIE Garam Beryodium ERBA 2023. DB verified 2026-06-09: 189'
+turns:
+- prompt: Berapa jumlah NIE produk Garam Beryodium di ERBA tahun 2023?
+  assert_contains:
+  - NIE
+  - Garam
+  - 2023
+  note: 'NIE-9a — DB aktual 189 (t_produk_3_erba, jenis_pangan=1502, tanggal 2023). Tolerance ±5%.'

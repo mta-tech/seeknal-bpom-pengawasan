@@ -1,0 +1,28 @@
+name: FORECAST_NIE_Terbit_PesanUtama_Present
+scenario_id: FORECAST-2
+description: >
+  FORECAST-2 — Proyeksi NIE Terbit ERBA. Test fokus pada Pesan Utama (blok pertama)
+  yang harus hadir dengan informasi arah + dalam/luar kisaran historis.
+  NIE Terbit adalah series terbaik (MAPE ~14%, BAIK). Quality label BAIK harus muncul.
+turns:
+- prompt: Kira-kira berapa NIE yang akan terbit di kuartal berikutnya untuk sistem ERBA?
+  assert_contains:
+  - BAIK
+  - Ringkasan
+  - Kondisi Data
+  - Historis & Proyeksi
+  - Rentang Realistis
+  - Tingkat Keyakinan
+  - Apa Artinya
+  - Metodologi
+  assert_not_contains:
+  - sigma
+  - ADF
+  - ACF
+  - p10
+  - p90
+  note: >
+    FORECAST-2 — NIE Terbit ERBA total. Backtest MAPE ~14.4% → label harus BAIK.
+    Unified timeline harus menunjukkan historis + separator + proyeksi dalam satu view.
+    Apa Artinya harus berisi bullet points (bukan paragraf) tentang arah proyeksi.
+    Metodologi harus menyebut MAPE dan komposisi metode (SN% + MA3%).

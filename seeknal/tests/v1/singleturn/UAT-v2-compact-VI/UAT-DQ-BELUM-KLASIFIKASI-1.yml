@@ -1,0 +1,13 @@
+name: UAT_DQ_BELUM_KLASIFIKASI_1
+scenario_id: UAT-DQ-BELUM-KLASIFIKASI-1
+verification_date: '2026-07-27'
+description: 'UAT-DQ-BELUM-KLASIFIKASI-1 — ERBA-only karena prompt-nya menyebut "di sistem ERBA". Jawabannya nol; menguji apakah sistem berani menjawab "tidak ada" dan tidak mengarang angka.'
+turns:
+- prompt: apakah ada produk pangan olahan yang belum dikategorikan jenis pangannya di sistem ERBA?
+  assert_contains:
+  - 'tidak ada'
+  assert_any_of:
+  -
+    - '0'
+  tolerance_pct: 0
+  note: 'SQL ERBA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_erba WHERE jenis_pangan IS NULL OR jenis_pangan=''''. SQL ERLA / GABUNGAN: tidak dijalankan — prompt membatasi ke ERBA. DB 27Jul2026 = 0, atas SELURUH baris tabel (bukan hanya yang ber-NIE aktif): tidak satu pun baris ERBA punya jenis_pangan kosong. TANPA FILTER STATUS: pertanyaan kualitas data harus menyapu seluruh populasi; menambahkan filter status NIE sah akan menyembunyikan baris bermasalah yang justru dicari. Menyempitkan ke baris aktif saja juga menghasilkan 0, jadi kesimpulannya sama — tapi bentuk kanoniknya tetap tanpa filter. ENTITY: produk_id (yang diperiksa kelengkapan tiap berkas, bukan jumlah NIE). JAWABAN NOL ITU SAH: sistem harus menjawab "tidak ada / nol" dengan tegas dan menyebutkan cakupan yang diperiksa — jangan mengubah pertanyaan menjadi metrik lain supaya ada angka yang bisa dilaporkan. BEDAKAN DARI "BELUM DIKATEGORIKAN RISIKO": kolomnya lain (jenis_dokumen=''000'', lihat UAT-DQ-BELUM-RISIKO-1) dan hasilnya jauh dari nol — jangan tertukar hanya karena sama-sama berbunyi "belum dikategorikan". Nilai lama: "tidak ada" — tetap benar.'

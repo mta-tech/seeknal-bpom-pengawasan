@@ -1,0 +1,11 @@
+name: UAT_OFF_Formula_Bayi_Breakdown_Sistem
+scenario_id: UAT-OFF-8
+verification_date: '2026-06-26'
+description: 'Rincian jumlah izin edar formula bayi yang masih berlaku per sistem. DB 26Jun2026: sistem baru (ERBA)=60, sistem lama (ERLA)=225.'
+turns:
+- prompt: berikan rincian jumlahnya izin edar formula bayi yang masih berlaku untuk di sistem lama dan sistem baru
+  assert_contains:
+  - '60'
+  - '225'
+  - sistem
+  note: 'Dari 285 aktif: sistem baru (ERBA)=60, sistem lama (ERLA)=225.'

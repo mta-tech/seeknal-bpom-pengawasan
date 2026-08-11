@@ -1,0 +1,22 @@
+name: UAT_BTP_CAMPURAN_1
+scenario_id: UAT-BTP-CAMPURAN-1
+description: 'UAT-BTP-CAMPURAN-1 — Scope-agnostic (ERBA/ERLA/UNION valid via assert_any_of). DB ref catatan (BUKAN standar kebenaran).'
+turns:
+- prompt: perbandingan jumlah BTP campuran dengan BTP tunggal berapa?
+  assert_contains:
+  - 'campuran'
+  - 'tunggal'
+  assert_any_of:
+  -
+    - '8.249'
+    - '1.980'
+  -
+    - '2.788'
+    - '695'
+    - 'ERBA'
+  -
+    - '5.461'
+    - '1.285'
+    - 'ERLA'
+  tolerance_pct: 5
+  note: 'UAT-BTP-CAMPURAN-1 — Scope-agnostic multi-value. ERBA=note kanonik; ERLA=live. UAT-BTP-CAMPURAN-1 — t_btp_3_erba jenis_produk_btp: Campuran(302)=2.788, Tunggal(301)=695, Perisa(303)=592. Dictionary: JENIS_PRODUK_BTP.'

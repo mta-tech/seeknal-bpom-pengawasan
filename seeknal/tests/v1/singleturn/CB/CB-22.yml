@@ -1,0 +1,10 @@
+name: 22_Tren registrasi pangan olahan berdasarkan lokasi pabrik tahun 2025
+scenario_id: CB-22
+description: 'CB-22 — Expected: Tren per lokasi 2025'
+turns:
+- prompt: Tren registrasi pangan olahan berdasarkan lokasi pabrik tahun 2025
+  assert_contains:
+  - registrasi
+  - lokasi pabrik
+  - '2025'
+  note: 'CB-22 — Expected: Tren per lokasi 2025'

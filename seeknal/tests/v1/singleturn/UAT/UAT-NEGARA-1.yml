@@ -1,0 +1,9 @@
+name: UAT_Produk_Dari_China_ERBA
+scenario_id: UAT-NEGARA-1
+description: 'UAT-NEGARA-1 — NIE ERBA aktif produk dari pabrik di China (negara_pabrik=CN). DB verified 2026-06-17: 10.805. Uji terjemahan kode negara ke label "Tiongkok / China". Kode CN vs Indonesia (ID)=92.573.'
+turns:
+- prompt: berapa jumlah produk BPOM yang diproduksi dari pabrik di China?
+  assert_contains:
+  - '10.805'
+  - China
+  note: 'UAT-NEGARA-1 — negara_pabrik=CN → 10.805. Dictionary: NEGARA_PABRIK dan NEGARA_PRODUSEN kode CN = "Tiongkok / China".'

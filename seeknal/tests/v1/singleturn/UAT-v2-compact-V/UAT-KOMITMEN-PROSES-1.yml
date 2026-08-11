@@ -1,0 +1,14 @@
+name: UAT_KOMITMEN_PROSES_1
+scenario_id: UAT-KOMITMEN-PROSES-1
+verification_date: '2026-07-27'
+description: 'UAT-KOMITMEN-PROSES-1 — SCOPE: ERBA-ONLY struktural (kolom status_komitmen TIDAK ADA di tabel ERLA). Re-verified 27Jul2026. Versi lama memakai kode telanjang sehingga membuang baris berformat desimal (predikat §6). TRANSIENT.'
+turns:
+- prompt: berapa produk menengah rendah yang komitmennya sedang dalam proses penilaian kembali?
+  assert_contains:
+  - 'penilaian'
+  - 'Menengah Rendah'
+  assert_any_of:
+  -
+    - '10.015'
+  tolerance_pct: 10
+  note: 'SCOPE = ERBA SAJA dan ini STRUKTURAL: query information_schema per 27Jul2026 menunjukkan kolom status_komitmen (dan jenis_penolakan_komitmen) TIDAK ADA di t_produk_3_rilis_erla. Tidak ada SQL ERLA dan tidak ada SQL GABUNGAN yang mungkin ditulis; menyajikan angka gabungan berarti mengarang. SQL ERBA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_erba WHERE kategori_dokumen=''303'' AND ROUND(status_komitmen::numeric)::int::text=''1'' AND trader_id::bigint NOT IN (5,17,50,85). DB 27Jul2026 = 10.015. FORMAT GANDA status_komitmen (predikat §6 — sumber kesalahan versi lama): kolomnya TEXT dan menyimpan dua bentuk untuk nilai logis yang sama. Untuk kode 1: bentuk polos ''1'' = 9.065 permohonan, bentuk desimal ''1.0'' = 950 permohonan, total 10.015. Menulis status_komitmen=''1'' saja diam-diam membuang 950 baris (9,5%). WAJIB normalisasi ROUND(status_komitmen::numeric)::int::text pada SETIAP filter status_komitmen. Format ganda ini terverifikasi pada kode 0, 1, 4, 5, 7, dan 9 (kode 8 kebetulan hanya punya bentuk polos). KODE + DESKRIPSI (dictionary STATUS_KOMITMEN sumber=ERBA): 1 = "Proses Penilaian Kembali Komitmen". Sekeluarga untuk konteks jawaban: 0 Draft Pemenuhan Komitmen=29.804 · 7 Disetujui Dengan Catatan=12.450 · 5 Komitmen Dibatalkan=5.666 · 9 Variasi Komitmen=4.931 · 4 Komitmen Disetujui=2.934 · 8 Validasi Pembatalan=37. Kode 2 (Verifikasi Pemenuhan Komitmen) terdaftar di dictionary tapi NOL baris — sebutkan bila menampilkan seluruh keluarga kode. LINGKUP MR: "Menengah Rendah" = kategori_dokumen=''303'' (filter_code §3) — jangan dilebarkan ke kelas risiko tetangga, dan tulis kepanjangannya (Menengah Rendah), bukan hanya MR atau "Medium Risk" (predikat §12-B). CASE A vs CASE B (predikat §5): ini CASE B — subjeknya siklus hidup komitmen, jadi filter status NIE sah TIDAK dipakai; menumpuknya akan menghapus mayoritas populasi karena banyak komitmen bergerak sebelum NIE terbit. ENTITY: COUNT(DISTINCT produk_id). TRANSIENT: status komitmen berpindah terus, toleransi 10% dan jawaban wajib menstempel tanggal. Nilai lama 10.233 (kode telanjang, snapshot lebih awal).'

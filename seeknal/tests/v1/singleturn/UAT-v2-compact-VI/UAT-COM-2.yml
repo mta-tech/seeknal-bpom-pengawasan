@@ -1,0 +1,13 @@
+name: UAT_COM_2
+scenario_id: UAT-COM-2
+verification_date: '2026-07-27'
+description: 'UAT-COM-2 — ERBA-only (status_komitmen tidak ada di ERLA). Populasi dua digit dan transien: kode 8 adalah tahap antara menuju kode 5.'
+turns:
+- prompt: Berapa jumlah produk MR dengan status komitmen Validasi Pembatalan?
+  assert_contains:
+  - 'Validasi Pembatalan'
+  assert_any_of:
+  -
+    - '37'
+  tolerance_pct: 10
+  note: 'SQL ERBA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_erba WHERE kategori_dokumen=''303'' AND ROUND(status_komitmen::numeric)::int::text=''8'' AND trader_id::bigint NOT IN (5,17,50,85). SQL ERLA / GABUNGAN: tidak ada (kolom status_komitmen tidak ada di ERLA). DB 27Jul2026 = 37; sama dengan/tanpa eksklusi trader. KODE: dictionary STATUS_KOMITMEN sumber=ERBA, 8 = "Validasi Pembatalan" — tahap antara menuju 5 "Komitmen Dibatalkan" (=5.666, lihat UAT-COM-1). ENTITY: produk_id. FILTER STATUS NIE TIDAK DIPAKAI. Catatan: di tanggal ini menambahkannya juga menghasilkan 37 karena kebetulan semua baris kode 8 sudah ber-NIE — itu kebetulan, bukan izin; pada kode 5 bedanya sekitar 20x. FORMAT GANDA: per 27Jul2026 kode 8 hanya punya bentuk ''8'' tanpa varian ''8.0'', tapi normalisasi ROUND tetap ditulis karena varian desimal muncul di kode 0,1,4,5,7,9 dan bisa muncul di sini kapan saja. TRANSIEN + ANGKA KECIL: toleransi 10% dan jawaban wajib menstempel tanggal — satu-dua perpindahan sudah menggeser persentase besar. Nilai lama 42 (turun, wajar untuk keadaan transien).'

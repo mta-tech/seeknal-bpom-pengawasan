@@ -1,0 +1,11 @@
+name: UAT_FORECAST_8
+scenario_id: UAT-FORECAST-8
+description: 'UAT-FORECAST-8 — TinggiNotif (304) with ~24 months history (since Aug 2024). Engine eligibility floor is now 10 periods, so system should produce a real forecast with low quality label (LEMAH or TOLAK).'
+turns:
+- prompt: Prediksi permohonan tinggi notifikasi untuk semester depan
+  assert_contains:
+  - TinggiNotif
+  - Kualitas Proyeksi
+  - Tingkat Keyakinan
+  assert_not_contains: []
+  note: 'UAT-FORECAST-8 — TinggiNotif eligibility test under the new floor. Data since Aug 2024 (~24 months) now clears the >=10-period floor. Expect Kualitas Proyeksi to likely be LEMAH or TOLAK. If MAPE > 25%, an Anomali block should also appear automatically.'

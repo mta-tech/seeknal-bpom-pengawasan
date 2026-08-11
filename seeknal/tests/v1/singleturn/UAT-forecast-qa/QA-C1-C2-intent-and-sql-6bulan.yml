@@ -1,0 +1,11 @@
+name: QA_C1_C2_Forecast_Intent_And_SQL_6Bulan
+scenario_id: QA-C1-C2
+description: 'Peta QA C.1 (auto-detect intent forecast) + C.2 (SQL & hasil benar, P0, status QA: FAILED). Series: permohonan ERBA bulanan, >=12 bulan data (47 bulan tersedia, DB-verified nol gap).'
+turns:
+- prompt: Ramalkan jumlah permohonan untuk 6 bulan ke depan
+  assert_contains:
+  - Proyeksi
+  - Kualitas
+  assert_not_contains:
+  - Engine belum dikonfigurasi
+  note: 'C.1: verifikasi tool run_forecast dipanggil (cek tool_trace, bukan execute_sql biasa) — bukti intent forecast dikenali. C.2: cek SQL di tool_trace = agregasi BULANAN (date_trunc(''month'',...)) atas t_produk_3_erba, horizon periods=6 diterapkan (bukan default 3), hasil 6 titik proyeksi dgn tren wajar (bandingkan ke histori DB). DB Jun2026 (bulan lengkap terakhir)=4.691; rata-rata 6 bulan terakhir dari DB harus dekat dgn rata-rata proyeksi.'

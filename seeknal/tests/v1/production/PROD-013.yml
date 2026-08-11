@@ -1,0 +1,9 @@
+name: Tren_NIE_Kosmetik
+scenario_id: PROD-013
+description: "PROD-013 — Tren NIE produk kosmetik dari tahun ke tahun"
+turns:
+- prompt: "Tren jumlah NIE produk kosmetik dari tahun ke tahun"
+  assert_contains:
+  - "kosmetik"
+  - "tren"
+  note: "PROD-013 — Time-series for cosmetics category, expects yearly breakdown"

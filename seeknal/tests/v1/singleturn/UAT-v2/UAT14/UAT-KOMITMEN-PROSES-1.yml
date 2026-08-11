@@ -1,0 +1,10 @@
+name: UAT_KOMITMEN_PROSES_1
+scenario_id: UAT-KOMITMEN-PROSES-1
+description: 'UAT-KOMITMEN-PROSES-1 — single-scope (by-design).'
+turns:
+- prompt: berapa produk menengah rendah yang komitmennya sedang dalam proses penilaian kembali?
+  assert_contains:
+  - '10.233'
+  - 'penilaian'
+  - 'Menengah Rendah'
+  note: 'UAT-KOMITMEN-PROSES-1 — status_komitmen=1 (Proses Penilaian Kembali Komitmen) MR ERBA = 10.233. Ke-2 terbanyak setelah Draft (28.720).'

@@ -1,0 +1,10 @@
+name: Total_NIE_pangan_olahan_ERBA_2023
+scenario_id: NIE-17a
+description: 'NIE-17a — Expected: Total NIE ERBA 2023. DB verified 2026-06-09: 30.230'
+turns:
+- prompt: Berapa total NIE pangan olahan di sistem ERBA yang terbit tahun 2023?
+  assert_contains:
+  - NIE
+  - ERBA
+  - 2023
+  note: 'NIE-17a — DB aktual 30.230 (t_produk_3_erba, tanggal 2023). Tolerance ±5%.'

@@ -1,0 +1,23 @@
+name: nie_erba_vs_gabungan
+scenario_id: "PROD-MT-003"
+description: "Bandingkan NIE sistem ERBA dengan gabungan semua sistem registrasi"
+turns:
+  - prompt: "berapa total NIE pangan olahan di sistem ERBA tahun 2024?"
+    assert_contains:
+      - "ERBA"
+      - "2024"
+    note: "Baseline ERBA — turn pembuka"
+  - prompt: "kalau total NIE dari semua sistem registrasi tahun yang sama?"
+    assert_contains:
+      - "ERBA"
+      - "ERLA"
+    note: "Switch scope ke gabungan sistem — tahun tetap 2024"
+  - prompt: "berapa selisihnya?"
+    assert_contains:
+      - "ERBA"
+      - "ERLA"
+    note: "Cross-turn calculation dari T1 dan T2"
+  - prompt: "sistem mana yang kontribusinya paling besar?"
+    assert_contains:
+      - "ERBA"
+    note: "Ranking sistem registrasi — ERBA mendominasi pangan olahan"

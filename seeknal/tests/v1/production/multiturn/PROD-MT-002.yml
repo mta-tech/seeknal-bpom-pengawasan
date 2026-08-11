@@ -1,0 +1,25 @@
+name: nie_perbandingan_tahun
+scenario_id: "PROD-MT-002"
+description: "Bandingin total NIE ERBA antar tahun dan lihat tren 2021-2024"
+turns:
+  - prompt: "berapa total NIE pangan olahan di sistem ERBA yang terbit tahun 2024?"
+    assert_contains:
+      - "ERBA"
+      - "2024"
+    note: "Baseline NIE ERBA 2024 — turn pembuka"
+  - prompt: "kalau tahun 2023?"
+    assert_contains:
+      - "2023"
+    note: "Retain ERBA, ganti tahun — user cuma ubah tahun tanpa ulang sistem"
+  - prompt: "naik atau turun dari 2023 ke 2024?"
+    assert_contains:
+      - "2023"
+      - "2024"
+    note: "Cross-turn comparison — agent harus pakai data T1 dan T2"
+  - prompt: "bagaimana tren dari 2021 sampai 2024?"
+    assert_contains:
+      - "2021"
+      - "2022"
+      - "2023"
+      - "2024"
+    note: "Perluas ke tren multi-tahun — masih domain NIE ERBA"

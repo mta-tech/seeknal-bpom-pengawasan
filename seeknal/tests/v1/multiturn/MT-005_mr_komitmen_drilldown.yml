@@ -1,0 +1,24 @@
+name: mr_komitmen_drilldown
+scenario_id: "MT-005"
+description: "Dari total MR masuk ke status komitmen: disetujui, dibatalkan, belum"
+turns:
+  - prompt: "berapa jumlah NIE Risiko Menengah Rendah di ERBA tahun 2023?"
+    assert_contains:
+      - "9.649"
+      - "Menengah Rendah"
+      - "2023"
+    note: "Baseline MR ERBA 2023"
+  - prompt: "dari MR itu, berapa yang disetujui komitmen?"
+    assert_contains:
+      - "6.236"
+      - "disetujui"
+      - "komitmen"
+    note: "'MR itu' = referensi implisit ke T1 — nested filter MR + status komitmen"
+  - prompt: "yang dibatalkan komitmen berapa?"
+    assert_contains:
+      - "dibatalkan"
+    note: "Retain MR + ERBA + 2023 — user tidak ulang konteks sama sekali. Nilai aktual: 2"
+  - prompt: "berarti yang belum ada statusnya berapa?"
+    assert_contains:
+      - "3.411"
+    note: "Cross-turn calculation — agent harus hitung 9.649 - 6.236 - 2 = 3.411, bukan query baru"

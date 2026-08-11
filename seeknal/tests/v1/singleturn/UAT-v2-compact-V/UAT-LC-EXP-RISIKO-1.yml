@@ -1,0 +1,15 @@
+name: UAT_LC_EXP_RISIKO_1
+scenario_id: UAT-LC-EXP-RISIKO-1
+verification_date: '2026-07-27'
+description: 'UAT-LC-EXP-RISIKO-1 — SCOPE: ERBA-ONLY untuk pembacaan RISIKO. Re-verified 27Jul2026. Versi lama MENCAMPUR DUA TAKSONOMI: sisi ERBA memakai kategori_dokumen (kelas risiko) sedangkan sisi ERLA memakai jenis_dokumen (penggolongan lain), lalu keduanya dijumlahkan seolah satu skala.'
+turns:
+- prompt: dari izin edar yang akan habis tahun 2027, kategori risiko mana yang paling banyak?
+  assert_contains:
+  - 'Menengah Rendah'
+  - '2027'
+  assert_any_of:
+  -
+    - '1.045'
+    - 'ERBA'
+  tolerance_pct: 5
+  note: 'SCOPE = ERBA SAJA untuk pertanyaan kelas risiko (filter_code §3: risiko adalah konsep ERBA, kolomnya kategori_dokumen). SQL ERBA: SELECT kategori_dokumen, COUNT(DISTINCT nomor) FROM t_produk_3_erba WHERE NULLIF(tanggal_exp,'''')::timestamp>=''2027-01-01'' AND NULLIF(tanggal_exp,'''')::timestamp<''2028-01-01'' AND status IN (''0999'',''0906'',''9999'') AND trader_id::bigint NOT IN (5,17,50,85) AND nomor<>'''' GROUP BY 1 ORDER BY 2 DESC. SQL ERLA: TIDAK ADA padanan risiko — lihat PERANGKAP di bawah. SQL GABUNGAN: tidak berlaku untuk pembacaan risiko. DB 27Jul2026 (ERBA, NIE kedaluwarsa 2027): Menengah Rendah (kategori_dokumen 303) = 1.045 · Menengah Tinggi (302) = 209 · Tinggi (301) = 166 · Tinggi Notifikasi (304) = 5; total ERBA yang kedaluwarsa 2027 = 1.412. Jawaban: Menengah Rendah paling banyak, sekitar 74% dari seluruh NIE ERBA yang jatuh tempo 2027. PERANGKAP DUA TAKSONOMI (ini cacat versi lama, dan aturannya umum): ERBA memakai kategori_dokumen sebagai kelas risiko (301 Tinggi · 302 Menengah Tinggi · 303 Menengah Rendah · 304 Tinggi Notifikasi). ERLA TIDAK punya kelas risiko; yang ada di ERLA adalah kolom jenis_dokumen dengan skala berbeda (filter_code §3: 301 Low · 302 High · 303 Medium · 000 belum dikategorikan). Nilai "303" berarti Menengah Rendah di kolom ERBA tapi Medium di kolom ERLA — nama mirip, skala dan cakupan tidak sama, dan kolomnya pun berbeda. Menjumlahkan keduanya menghasilkan angka tanpa makna; itulah asal nilai lama 11.444 (1.048 ERBA + 10.396 ERLA). Bila pengguna memang ingin gambaran ERLA, sajikan TERPISAH dan berlabel jelas sebagai penggolongan jenis_dokumen, bukan risiko — per 27Jul2026 NIE ERLA kedaluwarsa 2027 = 30.804, dengan jenis_dokumen 303=19.737 · 301=7.442 · 302=4.404 · 304=117. Catatan: kode 304 muncul di data ERLA tapi TIDAK terdaftar dalam empat kode jenis_dokumen yang terdokumentasi — laporkan apa adanya. KOLOM TANGGAL: tanggal_exp adalah kolom yang benar karena pertanyaannya soal berakhirnya masa berlaku (predikat §2), bukan kolom hitung. Cast wajib di sisi ERBA. ENTITY: "izin edar" → COUNT(DISTINCT nomor) (predikat §1); pembanding produk_id: MR=1.204 · total ERBA=1.792 — nilai lama 1.048 mendekati hitungan nomor snapshot lama. PENYAJIAN: sebut keempat kelas berlabel kodenya, jangan hanya pemenangnya (predikat §12-B), dan tulis "Menengah Rendah" bukan hanya MR. Nilai lama 11.444/1.048/10.396.'

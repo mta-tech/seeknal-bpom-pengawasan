@@ -1,0 +1,24 @@
+name: tren_izin_edar_per_tahun
+prompt: Tren Jumlah Izin Edar pangan olahan per tahun
+intent: Count distinct NIEs per year across ERBA and ERLA product tables.
+sql: |
+  SELECT EXTRACT(YEAR FROM tanggal) AS tahun_terbit,
+         COUNT(DISTINCT nomor) AS jumlah_produk
+  FROM (
+    SELECT nomor, tanggal
+    FROM warehouse.public.t_produk_3_erba
+    WHERE tanggal IS NOT NULL
+      AND status IN ('0999','0906','9999')
+      AND jenis_permohonan IN ('301','305')
+    UNION ALL
+    SELECT nomor, tanggal
+    FROM warehouse.public.t_produk_3_rilis_erla
+    WHERE tanggal IS NOT NULL
+      AND status IN ('0099','0999','0906','9999')
+      AND jenis_permohonan IN ('301','304','305')
+  ) AS gabungan
+  GROUP BY EXTRACT(YEAR FROM tanggal)
+  ORDER BY tahun_terbit
+notes:
+  - ERLA uses additional status '0099' compared to ERBA.
+  - ERLA includes jenis_permohonan '304' in addition to '301' and '305'.

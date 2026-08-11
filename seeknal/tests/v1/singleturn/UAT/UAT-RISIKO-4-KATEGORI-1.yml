@@ -1,0 +1,11 @@
+name: UAT_Risiko_Distribusi_4Kategori
+scenario_id: UAT-RISIKO-4-KATEGORI-1
+description: 'UAT-RISIKO-4-KATEGORI-1 — [Domain 4: Kategori Risiko] Distribusi NIE aktif ERBA semua 4 kategori risiko. DB verified 2026-06-17: Tinggi(301)=80.394, MR(303)=41.425, MT(302)=11.919, TinggiNotif(304)=3.500.'
+turns:
+- prompt: bisa tampilkan distribusi izin edar berdasarkan kategori risiko dari yang paling banyak?
+  assert_contains:
+  - '80.'
+  - Tinggi
+  - Menengah Rendah
+  - Menengah Tinggi
+  note: 'UAT-RISIKO-4-KATEGORI-1 — ERBA aktif: Tinggi=80.394, MR=41.425, MT=11.919, TinggiNotif=3.500. Tinggi dominan karena mencakup semua high risk termasuk notifikasi.'

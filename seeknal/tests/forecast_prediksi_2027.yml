@@ -1,0 +1,14 @@
+name: forecast_prediksi_2027
+prompt: berapa prediksi jumlah permohonan bulan Juni 2027?
+sql: |
+  SELECT prediction_value AS prediksi_permohonan
+  FROM warehouse.public.forecast_permohonan
+  WHERE bulan = '2027-06'
+assertions:
+  answer_contains:
+    - "2027"
+    - "3.052"
+  answer_not_contains:
+    - "t_produk"
+    - "t_btp"
+  expected_values: false

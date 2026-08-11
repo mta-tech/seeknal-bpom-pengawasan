@@ -1,0 +1,25 @@
+name: Clarification_Gate_Garam_Year_vs_AllTime
+scenario_id: "CLARIF-GARAM-1"
+description: "Uji clarification gate SCOPE: 'garam beryodium' ambigu antara tahun tertentu atau all-time, dan harus tetap memakai parent category yang benar."
+turns:
+  - prompt: "garam beryodium punya berapa izin edar?"
+    assert_contains:
+      - "Garam Beryodium"
+    note: "Material ambiguity SCOPE: user belum menyebut tahun atau all-time. Agent HARUS tanya scope waktu."
+  - prompt: "all-time"
+    assert_contains:
+      - "1.241"
+      - "Garam Beryodium"
+    note: "Setelah klarifikasi, agent harus lock all-time ERBA dan hasilkan 1.241."
+  - prompt: "kalau khusus tahun 2023?"
+    assert_contains:
+      - "199"
+      - "2023"
+      - "Garam Beryodium"
+    note: "Follow-up same topic: 2023 = 199. Harus tetap memakai parent code yang benar, bukan sub-code sempit."
+  - prompt: "jadi all-time lebih besar berapa dibanding 2023?"
+    assert_contains:
+      - "1.241"
+      - "199"
+    note: "Agent harus membandingkan hasil all-time vs 2023 dari ledger, bukan menghitung dengan scope baru yang berbeda."
+

@@ -1,0 +1,19 @@
+name: UAT_PANGAN_DIET_1
+scenario_id: UAT-PANGAN-DIET-1
+verification_date: '2026-07-23'
+description: 'UAT-PANGAN-DIET-1 — Scope-agnostic (ERBA/ERLA/UNION valid via assert_any_of). Kode klasifikasi SAMA di kedua sistem.'
+turns:
+- prompt: ada berapa izin edar produk pangan diet di BPOM?
+  assert_contains:
+  - 'diet'
+  assert_any_of:
+  -
+    - '854'
+  -
+    - '35'
+    - 'ERBA'
+  -
+    - '819'
+    - 'ERLA'
+  tolerance_pct: 5
+  note: 'SQL ERBA: SELECT COUNT(DISTINCT nomor) FROM t_produk_3_erba WHERE klasifikasi_id=''310'' AND status IN (''0999'',''0906'',''9999'') AND trader_id::bigint NOT IN (5,17,50,85) AND nomor<>''''. SQL ERLA: idem pada t_produk_3_rilis_erla dgn status ERLA + trader_id<>3384. GABUNGAN = COUNT(DISTINCT nomor) atas UNION ALL. DB 23Jul2026: ERBA=35 · ERLA=819 · gabungan=854. Dictionary: KLASIFIKASI_ID sumber="ERBA dan ERLA" kode 310=Pangan Diet — kode SAMA kedua sistem. Pembanding sekeluarga (klasifikasi_id): 305 Berklaim=8.947 · 311 Bayi & Anak · 312 Ibu Hamil & Menyusui — jangan tertukar. Angka ERBA kecil (35) — di bawah 2 digit signifikan toleransi masih berlaku, tapi jawaban sebaiknya menyebut angka apa adanya.'

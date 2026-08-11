@@ -1,0 +1,13 @@
+name: UAT_PENOLAKAN_1
+scenario_id: UAT-PENOLAKAN-1
+verification_date: '2026-07-23'
+description: 'UAT-PENOLAKAN-1 — single-scope by-design (jenis_penolakan_komitmen kolomnya TIDAK ADA di ERLA). Nilai multi-value dipisah pipe — wajib di-unnest, bukan equality.'
+turns:
+- prompt: apa alasan paling banyak komitmen ditolak BPOM?
+  assert_contains:
+  - 'Kemasan'
+  assert_any_of:
+  -
+    - '1.714'
+  tolerance_pct: 10
+  note: 'SQL: SELECT k, COUNT(DISTINCT produk_id) FROM (SELECT produk_id, unnest(string_to_array(jenis_penolakan_komitmen,''|'')) k FROM t_produk_3_erba WHERE jenis_penolakan_komitmen IS NOT NULL AND jenis_penolakan_komitmen<>'''') t GROUP BY 1 ORDER BY 2 DESC. DB 23Jul2026 (top-5): kode 1=1.714 · kode 4=1.140 · kode 3=1.108 · kode 5=817 · kode 7=613. Dictionary JENIS_PENOLAKAN_KOMITMEN sumber=ERBA: 1="Jenis Kemasan atau Data Pabrik yang dipilih tidak sesuai." (juara) · 4=bahan baku/BTP dgn batasan · 3=Kategori Pangan tidak sesuai · 5=Pencantuman Peruntukan/Klaim/Organik · 7=dokumen tidak diunggah. NILAI PIPE-COMBINED: satu baris bisa berisi ''1|3'' — WAJIB `unnest(string_to_array(col,''|''))` (atau `string_to_array(col,''|'') @> ARRAY[''<kode>'']`), equality biasa akan meng-undercount. SCOPE: ERBA-only bukan pilihan gaya — kolom jenis_penolakan_komitmen & status_komitmen memang TIDAK ADA di t_produk_3_rilis_erla (terverifikasi di information_schema). Nilai lama 1.251.'

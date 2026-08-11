@@ -1,0 +1,9 @@
+name: UAT_Produk_Makloon_StatusProduk
+scenario_id: UAT-MAKLOON-1
+description: 'UAT-MAKLOON-1 — NIE ERBA produk berdasarkan kontrak/makloon (status_produk=304). DB verified 2026-06-17: 2.133. Uji terjemahan kode status_produk ke label "Berdasarkan Kontrak".'
+turns:
+- prompt: berapa produk yang diproduksi secara makloon atau berdasarkan kontrak di BPOM?
+  assert_contains:
+  - '2.133'
+  - makloon
+  note: 'UAT-MAKLOON-1 — status_produk=304 (Berdasarkan Kontrak) ERBA NIE aktif = 2.133. Dictionary: STATUS_PRODUK kode 304.'

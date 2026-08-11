@@ -1,0 +1,9 @@
+name: UAT_PIPELINE_DIR_1
+scenario_id: UAT-PIPELINE-DIR-1
+description: 'UAT-PIPELINE-DIR-1 — single-scope (by-design).'
+turns:
+- prompt: berapa permohonan yang masih menunggu validasi dari direktur BPOM?
+  assert_contains:
+  - '872'
+  - 'direktur'
+  note: 'UAT-PIPELINE-DIR-1 — status 0600 (Direktur - Proses Validasi) = 872. Satu level sebelum terbit NIE.'

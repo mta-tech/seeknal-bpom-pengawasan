@@ -1,0 +1,11 @@
+name: UAT_Perusahaan_Produsen_vs_Importir
+scenario_id: UAT-PRODUSEN-1
+description: 'UAT-PRODUSEN-1 — Perbandingan jumlah perusahaan produsen vs importir di BPOM. DB verified 2026-06-17: Produsen=13.525, Importir=1.300. Uji terjemahan STATUS_USAHA ke label Produsen/Importir.'
+turns:
+- prompt: berapa banyak perusahaan produsen yang terdaftar di BPOM dibanding importir?
+  assert_contains:
+  - '13.525'
+  - '1.300'
+  - produsen
+  - importir
+  note: 'UAT-PRODUSEN-1 — m_trader_rba: Produsen (is_status_industri_produsen=t) = 13.525, Importir (is_status_industri_importir=t) = 1.300.'

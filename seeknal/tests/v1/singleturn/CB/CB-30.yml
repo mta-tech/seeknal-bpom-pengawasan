@@ -1,0 +1,10 @@
+name: 30_Wilayah dengan perusahaan UMKM terbanyak
+scenario_id: CB-30
+description: 'CB-30 — Expected: Ranking wilayah UMKM'
+turns:
+- prompt: Wilayah dengan perusahaan UMKM terbanyak
+  assert_contains:
+  - UMKM
+  - wilayah
+  - terbanyak
+  note: 'CB-30 — Expected: Ranking wilayah UMKM'

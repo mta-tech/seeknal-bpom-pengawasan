@@ -1,0 +1,14 @@
+name: UAT_FORECAST_12
+scenario_id: UAT-FORECAST-12
+description: 'UAT-FORECAST-12 — Ketika target mencakup bulan Maret, sistem harus menampilkan flag tentang variasi Maret yang lebih tinggi secara historis (March Effect).'
+turns:
+- prompt: Prediksi permohonan ERBA untuk Januari, Februari, Maret tahun depan
+  assert_contains:
+  - Maret
+  - Kondisi Data
+  - Rentang Realistis
+  - Apa Artinya
+  assert_not_contains:
+  - sigma
+  - ADF
+  note: 'UAT-FORECAST-12 — March Effect flag test. Target mencakup Maret sistem harus menampilkan catatan di Kondisi Data atau di blok Apa Artinya bahwa Maret memiliki karakteristik variasi lebih tinggi. Proyeksi tetap ditampilkan (tidak di-halt hanya karena Maret).'

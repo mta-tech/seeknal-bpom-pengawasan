@@ -1,0 +1,10 @@
+name: NIE_Susu_Fermentasi
+scenario_id: EDGE-3
+description: 'EDGE-3 — Susu fermentasi (segment tidak di glossary). Agent harus discovery query.'
+turns:
+- prompt: Berapa jumlah NIE untuk produk susu fermentasi tahun 2024?
+  assert_contains:
+  - susu
+  - fermentasi
+  - 2024
+  note: 'EDGE-3 — Segment "susu fermentasi" tidak ada di business_glossary.md. Agent harus jalankan discovery query via nama_kategori ILIKE. Tolerance ±5%.'

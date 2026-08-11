@@ -1,0 +1,15 @@
+name: UAT_DRAFT_PROSES_1
+scenario_id: UAT-DRAFT-PROSES-1
+verification_date: '2026-07-27'
+description: 'UAT-DRAFT-PROSES-1 — ERBA-only karena datanya memang begitu: t_produk_3_rilis_erla hanya menyimpan status final. Draft pipeline terdiri dari DUA kode; versi lama hanya memakai satu. TRANSIENT.'
+turns:
+- prompt: berapa produk yang masih dalam status draft dan belum diproses lebih lanjut?
+  assert_contains:
+  - 'draft'
+  assert_any_of:
+  -
+    - '26.401'
+  -
+    - '21.271'
+  tolerance_pct: 10
+  note: 'SQL ERBA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_erba WHERE status IN (''0910'',''0912'') AND trader_id::bigint NOT IN (5,17,50,85). SQL ERLA / GABUNGAN: tidak berlaku — seluruh nilai status di t_produk_3_rilis_erla hanya {0000, 0009, 0099, 0501, 0906, 0999, 9999}, semuanya keadaan final, dan satu-satunya kode pipeline (0501) cuma 1 baris nyasar. DB 27Jul2026 = 26.401, rincian 0912=21.271 · 0910=5.130. DUA KODE, BUKAN SATU: dictionary STATUS sumber=ERBA memberi deskripsi yang identik untuk 0910 dan 0912 ("Pendaftar - Draft"). Versi lama hanya memakai 0912 dan melaporkan 20.020, sehingga 5.130 permohonan draft hilang dari jawaban. Angka 0912 saja tetap disahkan sebagai bacaan sub-kelompok berlabel, bukan sebagai total. ENTITY: produk_id — yang dihitung pengajuan yang belum terbit, bukan NIE. TANPA FILTER STATUS NIE SAH: populasinya justru yang belum terbit. EKSKLUSI TRADER BERPENGARUH BESAR DI SINI: trader 5/17/50/85 hampir seluruh barisnya mengendap di draft, sehingga tanpa eksklusi angkanya 27.942 (selisih 1.541 / 5,5%). Bandingkan dgn hitungan NIE yang selisihnya cuma 18 — jadi keputusan eksklusi hanya material untuk pertanyaan pipeline. KEMBARAN: bucket yang sama dipakai UAT-PIPE-DRAFT-TOTAL-1 dan menjadi juara ranking di UAT-OPS-BOTTLENECK-1 — ketiganya wajib menunjukkan angka yang sama. BTP punya pipeline sendiri di kedua tabel BTP (draft = 635 ERBA + 213 ERLA); sebutkan bila scope diperluas. TRANSIENT dua arah, toleransi 10%. Nilai lama 20.020 (0912 saja, tanpa eksklusi).'

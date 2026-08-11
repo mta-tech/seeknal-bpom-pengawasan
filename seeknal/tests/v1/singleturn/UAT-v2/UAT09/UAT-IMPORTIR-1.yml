@@ -1,0 +1,9 @@
+name: UAT_IMPORTIR_1
+scenario_id: UAT-IMPORTIR-1
+description: 'UAT-IMPORTIR-1 — single-scope (by-design).'
+turns:
+- prompt: ada berapa perusahaan importir yang terdaftar di BPOM?
+  assert_contains:
+  - '1.300'
+  - 'importir'
+  note: 'UAT-IMPORTIR-1 — m_trader_rba is_status_industri_importir=true = 1.300 importir. Total produsen = 13.529.'

@@ -1,0 +1,12 @@
+name: UAT_Komitmen_Dibatalkan_MR
+scenario_id: UAT-KOMITMEN-DIBATALKAN-1
+description: 'UAT-KOMITMEN-DIBATALKAN-1 — [Domain 6: Compliance/Komitmen] Produk MR dengan komitmen dibatalkan (Case B: tanpa filter status NIE). DB verified 2026-06-17: 5.198. RC-4: sistem UAT lama menghasilkan 254 (salah, pakai filter status NIE).'
+turns:
+- prompt: berapa produk menengah rendah yang dibatalkan komitmennya oleh BPOM?
+  assert_contains:
+  - '5.198'
+  - Dibatalkan
+  - Menengah Rendah
+  assert_not_contains:
+  - '254'
+  note: 'UAT-KOMITMEN-DIBATALKAN-1 — RC-4: tanpa filter status NIE = 5.198. Dengan filter = 254 (salah). Domain: Compliance/Komitmen.'

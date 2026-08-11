@@ -1,0 +1,8 @@
+name: HORIZON_3_1Tahun_ERBA
+scenario_id: HORIZON-1Y
+description: 'Matriks horizon #3/5 — 1 tahun ke depan, series ERBA total permohonan.'
+turns:
+- prompt: Prediksi permohonan ERBA untuk 1 tahun ke depan
+  assert_contains:
+  - Proyeksi
+  note: 'Ekspektasi: periods=12, target Jul2026-Jun2027, 12 titik. Ini persis skenario yang gagal di percobaan sebelumnya (UAT-NIE-FORECAST-2 off-by-one periods=11 vs 12) — cek ulang apakah masih terjadi.'

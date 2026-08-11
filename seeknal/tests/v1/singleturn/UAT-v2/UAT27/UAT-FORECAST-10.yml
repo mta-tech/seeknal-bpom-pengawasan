@@ -1,0 +1,16 @@
+name: UAT_FORECAST_10
+scenario_id: UAT-FORECAST-10
+description: 'UAT-FORECAST-10 — Determinism test. Pertanyaan yang sama harus menghasilkan angka perkiraan yang identik di sesi berbeda.'
+turns:
+- prompt: Berapa proyeksi permohonan ERBA bulan depan saja?
+  assert_contains:
+  - Proyeksi Detail
+  - Perkiraan
+  - Rentang Realistis
+  - Tinggi
+  - Metodologi
+  assert_not_contains:
+  - sigma
+  - p10
+  - p90
+  note: 'UAT-FORECAST-10 — Determinism test. H=1 saja (bulan depan). Angka "Perkiraan" di Proyeksi Detail harus identik di run pertama dan run kedua. Cara verifikasi: catat angka dari run pertama, tanya pertanyaan yang sama di sesi baru, bandingkan.'

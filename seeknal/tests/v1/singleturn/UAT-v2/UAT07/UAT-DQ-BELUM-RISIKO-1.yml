@@ -1,0 +1,18 @@
+name: UAT_DQ_BELUM_RISIKO_1
+scenario_id: UAT-DQ-BELUM-RISIKO-1
+description: 'UAT-DQ-BELUM-RISIKO-1 — Scope-agnostic (ERBA/ERLA/UNION valid via assert_any_of). DB ref catatan (BUKAN standar kebenaran).'
+turns:
+- prompt: berapa produk pangan di ERBA yang belum ditetapkan kategori risikonya oleh BPOM?
+  assert_contains:
+  - 'belum'
+  assert_any_of:
+  -
+    - '189.436'
+  -
+    - '28.667'
+    - 'ERBA'
+  -
+    - '160.769'
+    - 'ERLA'
+  tolerance_pct: 5
+  note: 'UAT-DQ-BELUM-RISIKO-1 — Scope-agnostic. ERBA=note kanonik 28.667; ERLA=live 160.769. SQL ERBA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_erba WHERE kategori_dokumen IS NULL AND status IN (''0999'',''0906'',''9999''). SQL ERLA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_rilis_erla WHERE (kategori_dokumen IS NULL OR kategori_dokumen='''') AND status IN (''0999'',''0906'',''9999''). UAT-DQ-BELUM-RISIKO-1 — kategori_dokumen NULL di ERBA aktif = 28.667. Produk lama yang belum migrasi ke sistem RBA. Domain: Data Quality.'

@@ -1,0 +1,9 @@
+name: 49_Berapa NIE MR dibatalkan komitmen
+scenario_id: NIE-11
+description: NIE-11
+turns:
+- prompt: Berapa NIE MR dibatalkan komitmen?
+  assert_contains:
+  - NIE MR
+  - dibatalkan
+  note: NIE-11

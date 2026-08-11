@@ -1,0 +1,22 @@
+name: UAT_JP_MINOR_VS_MAYOR_1
+scenario_id: UAT-JP-MINOR-VS-MAYOR-1
+description: 'UAT-JP-MINOR-VS-MAYOR-1 — Scope-agnostic (ERBA/ERLA/UNION valid via assert_any_of). DB ref catatan (BUKAN standar kebenaran).'
+turns:
+- prompt: tahun 2025 lebih banyak perubahan minor atau perubahan mayor produk pangan?
+  assert_contains:
+  - 'minor'
+  - 'mayor'
+  assert_any_of:
+  -
+    - '9.923'
+    - '8.914'
+  -
+    - '6.935'
+    - '6.636'
+    - 'ERBA'
+  -
+    - '2.988'
+    - '2.278'
+    - 'ERLA'
+  tolerance_pct: 0
+  note: 'UAT-JP-MINOR-VS-MAYOR-1 — Scope-agnostic multi-value. ERBA=note kanonik; ERLA=live. UAT-JP-MINOR-VS-MAYOR-1 — 2025: Minor=6.935 vs Mayor=6.636, selisih 299. Minor lebih banyak tapi hampir sama. Ke-2 keduanya naik drastis dari 2023 (Minor=1.327, Mayor=881).'

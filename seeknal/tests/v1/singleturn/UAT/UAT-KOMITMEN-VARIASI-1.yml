@@ -1,0 +1,10 @@
+name: UAT_Komitmen_Variasi_MR
+scenario_id: UAT-KOMITMEN-VARIASI-1
+description: 'UAT-KOMITMEN-VARIASI-1 — Produk MR ERBA dengan status variasi komitmen (status_komitmen=9). DB verified 2026-06-17: 4.099. Uji terjemahan STATUS_KOMITMEN kode 9 ke "Variasi Komitmen".'
+turns:
+- prompt: ada berapa produk MR dengan status variasi komitmen di BPOM?
+  assert_contains:
+  - '4.099'
+  - variasi
+  - komitmen
+  note: 'UAT-KOMITMEN-VARIASI-1 — status_komitmen=9 (Variasi Komitmen, khusus MR) = 4.099. Hanya ada di MR, bukan MT/Tinggi.'

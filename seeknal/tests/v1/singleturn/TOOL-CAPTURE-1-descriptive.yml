@@ -1,0 +1,8 @@
+name: tool_capture_descriptive
+scenario_id: "TOOL-CAPTURE-1"
+description: "Pertanyaan umum deskriptif — harus trigger execute_sql saja"
+turns:
+  - prompt: "Berapa total produk ERBA yang terdaftar di sistem?"
+    assert_contains:
+      - "produk"
+    note: "Pertanyaan deskriptif sederhana — agent harus query database dan jawab. Tool yang diharapkan: execute_sql (describe_table mungkin, lalu SQL query). Tidak ada forecast/anomaly."

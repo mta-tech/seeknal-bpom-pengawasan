@@ -1,0 +1,22 @@
+name: data_dictionary_by_category
+prompt: Lookup kode dan deskripsi berdasarkan kategori di data dictionary
+intent: >
+  Resolve codes to human-readable labels for any category.
+  Replace KATEGORI_PLACEHOLDER with the actual category name
+  discovered from data_dictionary_categories.
+sql: |
+  SELECT kode, deskripsi
+  FROM warehouse.public.data_dictionary
+  WHERE kategori = 'KATEGORI_PLACEHOLDER'
+  ORDER BY kode
+notes:
+  - Replace KATEGORI_PLACEHOLDER with the actual kategori value.
+  - Example categories: 'SKALA_INDUSTRI dan SKALA_INDUSTRI_ID', 'JENIS_PERMOHONAN',
+    'KATEGORI_DOKUMEN', and others (run data_dictionary_categories to discover all).
+  - When joining with query results, match on kode = the coded column value.
+  - IMPORTANT for regional codes (kode daerah): the product tables store codes as
+    integers (e.g. '7271') but data_dictionary.kode stores them with a decimal point
+    (e.g. '72.71'). Always convert when joining:
+      dd.kode = (daerah_pabrik::numeric / 100)::text
+    Example: 7271 / 100 = '72.71' which matches data_dictionary.kode.
+  - If a code does not match any entry in data_dictionary, display the original code as-is.

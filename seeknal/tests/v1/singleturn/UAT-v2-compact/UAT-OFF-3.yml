@@ -1,0 +1,14 @@
+name: UAT_OFF_NIE_ERBA_2025
+scenario_id: UAT-OFF-3
+verification_date: '2026-07-23'
+description: 'UAT-OFF-3 — NIE terbit 2025 di ereg RBA (ERBA only). Menguji bahwa "terbit" TIDAK memicu filter jenis_permohonan.'
+turns:
+- prompt: berapa jumlah NIE yang terbit di tahun 2025 di aplikasi ereg RBA
+  assert_contains:
+  - '2025'
+  - 'ERBA'
+  assert_any_of:
+  -
+    - '53.447'
+  tolerance_pct: 3
+  note: 'SQL: SELECT COUNT(DISTINCT nomor) FROM t_produk_3_erba WHERE tanggal::timestamp>=''2025-01-01'' AND tanggal::timestamp<''2026-01-01'' AND status IN (''0999'',''0906'',''9999'') AND trader_id::bigint NOT IN (5,17,50,85) AND nomor<>''''. DB 23Jul2026 = 53.447. KANONIK: "terbit" BUKAN pemicu jenis_permohonan (predikat §4/RC-2) → SEMUA jenis permohonan dihitung, TANPA filter JP. KONFLIK YANG SENGAJA DIUJI: bila salah menambahkan filter JP "baru" (exclude 302 mayor → IN 301,303,305) hasilnya ≈49.3rb — itulah definisi di balik angka dashboard yang sering berbeda. Toleransi sengaja DIKETATKAN ke 3% supaya varian ber-filter-JP TIDAK ikut lolos. ENTITY: nomor; kolom `tanggal` (bukan tanggal_bayar). "ereg RBA" = ERBA; pembanding ERLA 2025 = 3.671 di luar scope. Nilai lama 26Jun=53.535.'

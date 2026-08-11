@@ -1,0 +1,22 @@
+name: UAT_KOPI_INSTAN_TERBIT_1
+scenario_id: UAT-KOPI-INSTAN-TERBIT-1
+verification_date: '2026-08-05'
+description: 'UAT-KOPI-INSTAN-TERBIT-1 — Scope-agnostic (ERBA/ERLA/UNION valid via assert_any_of). Menguji dimensi WAKTU TERBIT pada segmen produk yang sudah disaring negara asal. Perangkapnya: ada empat kolom tanggal dengan makna berbeda, dan ERLA berhenti menerbitkan kopi instan sejak 2025 sehingga jawaban gabungan tanpa pecahan per sistem menyembunyikan pergeseran itu.'
+turns:
+- prompt: kopi instan asal Indonesia itu izin edarnya terbit tahun berapa saja sejak 2023?
+  assert_contains:
+  - '2023'
+  - '2025'
+  assert_any_of:
+  -
+    - '27'
+    - '46'
+    - '48'
+  -
+    - '15'
+    - 'ERBA'
+  -
+    - '12'
+    - 'ERLA'
+  tolerance_pct: 5
+  note: 'SQL GABUNGAN: SELECT date_part(''year'', t)::int AS tahun, COUNT(DISTINCT nomor) FROM (SELECT NULLIF(tanggal,'''')::timestamp AS t, nomor FROM t_produk_3_erba WHERE nama_kategori=''Kopi Instan'' AND negara_pabrik=''ID'' AND status IN (''0999'',''0906'',''9999'') AND trader_id::bigint NOT IN (5,17,50,85) AND nomor<>'''' UNION ALL SELECT tanggal, nomor FROM t_produk_3_rilis_erla WHERE nama_kategori=''Kopi Instan'' AND negara_pabrik=''ID'' AND status IN (''0099'',''0999'',''0906'',''9999'') AND trader_id<>3384 AND nomor<>'''') x WHERE t>=''2023-01-01'' GROUP BY 1 ORDER BY 1. DB 05Agu2026 gabungan: 2023=27 · 2024=46 · 2025=48 · 2026=9 (2026 berjalan, data s.d. 03Agu2026). Pecahan per sistem: ERBA 2023=15 · 2024=43 · 2025=48 · 2026=9; ERLA 2023=12 · 2024=3 · 2025=0 · 2026=0. POLA YANG WAJIB DISAMPAIKAN: ERLA berhenti menyumbang sejak 2025 — seluruh penerbitan 2025 dan 2026 murni ERBA. Ini bukan penurunan minat pasar melainkan perpindahan sistem pendaftaran; jawaban yang hanya menyajikan deret gabungan (27/46/48/9) tanpa memecah per sistem akan salah dibaca sebagai tren bisnis. KOLOM TANGGAL — ADA EMPAT, PILIH YANG BENAR: tanggal = TERBIT NIE (terisi 201.603 dari 259.681 di ERBA) — inilah yang diminta prompt "izin edarnya terbit"; tanggal_aju = pengajuan (terisi 100%, 2022-09-19 s.d. 2026-08-05); tanggal_bayar = pembayaran (202.720); tanggal_exp = kedaluwarsa (201.613, s.d. 2031-08-04). Memakai tanggal_aju atau tanggal_bayar untuk pertanyaan "terbit" menggeser hasil dan mencampur permohonan yang belum terbit. TIDAK ADA KOLOM "TANGGAL RILIS" terpisah di kedua tabel — bila pengguna menanyakan rilis ke pasar, yang paling dekat adalah tanggal (terbit NIE); katakan keterbatasan ini apa adanya, jangan mengarang kolom. TIPE KOLOM BEDA ANTAR SISTEM: di ERBA tanggal bertipe TEXT sehingga wajib NULLIF(tanggal,'''')::timestamp; di ERLA sudah timestamp asli dan TIDAK boleh di-cast dengan pola yang sama — UNION keduanya harus menyamakan tipe di sisi ERBA (data_architecture, tabel asimetri tipe). Seluruh nilai tanggal ERBA berformat ISO dan nol baris kosong, jadi cast aman. RENTANG PENUH: bila lingkup dilebarkan tanpa batas 2023, terbit paling awal 2012-04-25 dan paling akhir 2026-08-03. ENTITY: COUNT(DISTINCT nomor) per tahun (predikat §1). Jumlah seluruh tahun sejak 2023 = 130 NIE, lebih kecil dari 309 di UAT-KOPI-INSTAN-ID-1 karena sisanya terbit sebelum 2023 — jangan sajikan 130 sebagai total kopi instan Indonesia.'

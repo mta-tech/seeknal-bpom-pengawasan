@@ -1,0 +1,10 @@
+name: UAT_COM_1
+scenario_id: UAT-COM-1
+description: 'UAT-COM-1 — single-scope (by-design).'
+turns:
+- prompt: Berapa jumlah produk MR yang dibatalkan komitmennya sampai dengan tahun 2026?
+  assert_contains:
+  - '5.198'
+  - 'Dibatalkan'
+  - 'Menengah Rendah'
+  note: 'UAT-COM-1 — RC-4 Case B. status_komitmen=5 (Komitmen Dibatalkan), tanpa filter status NIE. 5.198 vs 254 (salah, Case A dengan NIE filter).'

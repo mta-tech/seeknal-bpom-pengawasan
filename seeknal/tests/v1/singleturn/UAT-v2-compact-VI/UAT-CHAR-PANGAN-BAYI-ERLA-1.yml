@@ -1,0 +1,14 @@
+name: UAT_CHAR_PANGAN_BAYI_ERLA_1
+scenario_id: UAT-CHAR-PANGAN-BAYI-ERLA-1
+verification_date: '2026-07-27'
+description: 'UAT-CHAR-PANGAN-BAYI-ERLA-1 — ERLA-only karena prompt-nya membatasi ("sistem ERLA atau sistem lama"), bukan karena datanya terbatas. Note lama menyebut kolom `klasifikasi_pangan` yang tidak ada di skema.'
+turns:
+- prompt: berapa produk pangan bayi yang terdaftar di sistem ERLA atau sistem lama BPOM?
+  assert_contains:
+  - 'pangan bayi'
+  - 'ERLA'
+  assert_any_of:
+  -
+    - '81'
+  tolerance_pct: 5
+  note: 'SQL ERLA: SELECT COUNT(DISTINCT nomor) FROM t_produk_3_rilis_erla WHERE klasifikasi_id=''311'' AND status IN (''0099'',''0999'',''0906'',''9999'') AND trader_id<>3384 AND nomor<>''''. SQL ERBA: tidak dijalankan sebagai jawaban (prompt membatasi ke ERLA); bila diminta pembanding, query yang sama pada t_produk_3_erba dgn status IN (''0999'',''0906'',''9999'') = 9. GABUNGAN: tidak berlaku. DB 27Jul2026 = 81. KODE: dictionary KLASIFIKASI_ID kode 311 = "Pangan Bayi & Anak", sumber "ERBA dan ERLA" — kode sama di kedua tabel. ENTITY: nomor=81 · produk_id=224; angka 81 hanya reproducible dengan nomor. KOLOM: nama kolom yang benar `klasifikasi_id`; `klasifikasi_pangan` yang ditulis note lama TIDAK ADA di kedua tabel dan akan error. JANGAN TERTUKAR: "pangan bayi & anak" = klasifikasi_id 311 (luas, berkas ini) berbeda dari "formula bayi" = jenis_pangan IN (''1301'',''1302'') di ERBA (sempit, dipakai UAT-BAYI-1) — dua kolom, dua angka; bila prompt hanya bilang "bayi" dan keduanya masuk akal, tanyakan. STATUS ERLA memakai 4 kode: ''0099'' (Tidak Berlaku) menyumbang 2.704 NIE nyata di ERLA sehingga ikut dihitung sebagai pernah-terbit. Nilai lama 81 — angkanya kebetulan sama, tapi note-nya menyesatkan.'

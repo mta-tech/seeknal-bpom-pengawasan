@@ -1,0 +1,19 @@
+name: UAT_BTP_CAIR_1
+scenario_id: UAT-BTP-CAIR-1
+description: 'UAT-BTP-CAIR-1 — Scope-agnostic (ERBA/ERLA/UNION valid via assert_any_of). DB ref catatan (BUKAN standar kebenaran).'
+turns:
+- prompt: berapa BTP yang tersedia dalam bentuk cair di BPOM?
+  assert_contains:
+  - 'cair'
+  - 'BTP'
+  assert_any_of:
+  -
+    - '6.456'
+  -
+    - '2.274'
+    - 'ERBA'
+  -
+    - '4.182'
+    - 'ERLA'
+  tolerance_pct: 5
+  note: 'UAT-BTP-CAIR-1 — Scope-agnostic. ERBA=note kanonik 2.274; ERLA=live 4.182. SQL ERBA: SELECT COUNT(DISTINCT produk_id) FROM t_btp_3_erba WHERE bentuk_sediaan=''101'' AND status IN (''0999'',''0906'',''9999''). SQL ERLA: SELECT COUNT(DISTINCT produk_id) FROM t_btp_3_erla WHERE bentuk_sediaan=''101'' AND status IN (''0999'',''0906'',''9999''). UAT-BTP-CAIR-1 — t_btp_3_erba bentuk_sediaan=101 (Cair/Pasta) status aktif = 2.274. Serbuk(102)=1.796, Padat(105)=4. Dictionary: BENTUK_SEDIAAN kode 101.'

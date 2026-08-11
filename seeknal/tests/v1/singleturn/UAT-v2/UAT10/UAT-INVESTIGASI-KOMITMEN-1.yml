@@ -1,0 +1,12 @@
+name: UAT_INVESTIGASI_KOMITMEN_1
+scenario_id: UAT-INVESTIGASI-KOMITMEN-1
+description: 'UAT-INVESTIGASI-KOMITMEN-1 — single-scope (by-design).'
+turns:
+- prompt: bisa kasih ringkasan status komitmen untuk produk menengah rendah secara keseluruhan?
+  assert_contains:
+  - '28.720'
+  - '11.688'
+  - '10.233'
+  - '5.198'
+  - 'komitmen'
+  note: 'UAT-INVESTIGASI-KOMITMEN-1 — full breakdown STATUS_KOMITMEN MR: Draft=28.720, Disetujui Catatan=11.688, Proses Penilaian=10.233, Dibatalkan=5.198, Variasi=4.099, Disetujui=2.717, Validasi Pembatalan=42.'

@@ -1,0 +1,15 @@
+name: UAT_PIPELINE_TOTAL_1
+scenario_id: UAT-PIPELINE-TOTAL-1
+verification_date: '2026-07-20'
+description: 'UAT-PIPELINE-TOTAL-1 — single-scope by-design (pipeline = ERBA only). TRANSIENT antrian. Transparansi dua bacaan: "belum selesai (total NOT-IN)" ATAU "sedang diproses (petugas)" — keduanya sah, jawaban kanonik memuat keduanya berlabel.'
+turns:
+- prompt: total permohonan yang masih dalam antrian proses di BPOM ada berapa?
+  assert_contains:
+  - 'proses'
+  assert_any_of:
+  -
+    - '60.169'
+  -
+    - '6.977'
+  tolerance_pct: 10
+  note: 'DUA bacaan sah per 20Jul2026 (kanon reference §2: headline petugas + pendamping NOT-IN, keduanya tampil berlabel — grup mana pun match): (a) BELUM SELESAI (total): SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_erba WHERE status NOT IN (''0999'',''0906'',''9999'',''0000'',''0009'',''0099'') = 60.169 — termasuk draft/bayar/ditolak-sistem sisi pendaftar; NOT IN menyerap kode langka. (b) SEDANG DIPROSES (petugas): status IN (03xx evaluator, 04xx verifikator1, 0500/0502/0504 verifikator2, 0600/0601/0666 direktur, 0700 deputi, 0800 KB) = 6.977 produk ERBA (gabungan +BTP ±7.141; data-tambahan pendaftar TIDAK termasuk bacaan ini). KEPUTUSAN BISNIS 20Jul2026: keduanya diakomodasi — transparansi diutamakan, sistem wajib melampirkan kedua angka berlabel. TRANSIENT dua arah — toleransi 10%. Nilai lama: 58.339 (17Jun), 60.624 (18Jul).'

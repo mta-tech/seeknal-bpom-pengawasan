@@ -1,0 +1,12 @@
+name: UAT_Tren_NIE_MR_PerTahun
+scenario_id: UAT-TREN-RISK-1
+description: 'UAT-TREN-RISK-1 — Tren NIE Menengah Rendah ERBA per tahun. DB verified 2026-06-17: 2022=1.048, 2023=9.649, 2024=10.636, 2025=13.729, 2026=6.377'
+turns:
+- prompt: Bagaimana tren jumlah NIE risiko menengah rendah dari tahun ke tahun?
+  assert_contains:
+  - Menengah Rendah
+  - '9.649'
+  - '10.636'
+  - '13.729'
+  - tren
+  note: 'UAT-TREN-RISK-1 — ERBA kategori_dokumen=303 per tahun terbit: 2022=1.048, 2023=9.649, 2024=10.636, 2025=13.729, 2026=6.377.'

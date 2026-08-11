@@ -1,0 +1,9 @@
+name: NIE_Risiko_Tinggi_AllTime_ERLA_Code
+scenario_id: BUGFIX-5
+description: "Bug fix: NIE risiko tinggi all-time harus pakai ERLA jenis_dokumen=302 (bukan 301). DB verified 2026-06-12: ~103.698"
+turns:
+- prompt: Berapa total NIE risiko tinggi pangan olahan dari semua sistem registrasi?
+  assert_contains:
+  - '103'
+  - risiko tinggi
+  note: 'FIX-5 — ERBA(83.143) + ERLA(jenis_dokumen=302, 20.555) = 103.698. ERLA 301 = Low Risk, BUKAN High Risk.'

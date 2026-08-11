@@ -1,0 +1,12 @@
+name: UAT_AMDK_3
+scenario_id: UAT-AMDK-3
+description: 'UAT-AMDK-3 — single-scope (by-design).'
+turns:
+- prompt: Tampilkan jumlah persetujuan produk AMDK pada tahun 2024 sampai 2025 dari database ereg RBA dan ereg lama
+  assert_contains:
+  - 'AMDK'
+  - '2024'
+  - '2025'
+  - '2.514'
+  - '2.140'
+  note: 'UAT-AMDK-3 — AMDK = jenis_pangan IN (1401,1402). ERBA 2024=2.667(produk_id)/2.329(nomor), 2025=2.571(produk_id)/2.102(nomor). ERLA 2024=260(produk_id)/208(nomor), 2025=108(produk_id)/94(nomor). KOREKSI: filter sebelumnya hanya 1401, seharusnya 1401+1402. Expected lama: ERBA 2024=2.301, 2025=2.049 (dengan 1401 only, nomor).'

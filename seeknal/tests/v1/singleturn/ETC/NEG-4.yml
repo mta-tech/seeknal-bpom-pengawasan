@@ -1,0 +1,10 @@
+name: Top_5_Negara_Pabrik_NIE_All_Time
+scenario_id: NEG-4
+description: 'NEG-4 — Top 5 negara pabrik NIE all-time. DB verified 2026-06-10: ID=92.036, CN=10.760, MY=4.801, IT=3.027, KR=2.935'
+turns:
+- prompt: 5 negara dengan pabrik yang paling banyak memiliki izin edar sepanjang masa
+  assert_contains:
+  - Indonesia
+  - China
+  - Malaysia
+  note: 'NEG-4 — DB aktual (t_produk_3_erba, negara_pabrik, all-time): ID=92.036, CN=10.760, MY=4.801, IT=3.027, KR=2.935. Tolerance ±5%.'

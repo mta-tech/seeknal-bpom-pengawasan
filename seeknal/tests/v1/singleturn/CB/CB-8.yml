@@ -1,0 +1,10 @@
+name: 08_Tren jumlah izin edar berdasarkan tahun dan daerah pabrik
+scenario_id: CB-8
+description: 'CB-8 — Expected: Tren per daerah & tahun'
+turns:
+- prompt: Tren jumlah izin edar berdasarkan tahun dan daerah pabrik
+  assert_contains:
+  - daerah
+  - tren
+  - tahun
+  note: 'CB-8 — Expected: Tren per daerah & tahun'

@@ -1,0 +1,23 @@
+name: UAT_JP_MINOR_VS_MAYOR_1
+scenario_id: UAT-JP-MINOR-VS-MAYOR-1
+verification_date: '2026-07-27'
+description: 'UAT-JP-MINOR-VS-MAYOR-1 — SCOPE: scope-agnostic, multi-value (dua angka harus muncul: minor DAN mayor). Re-verified 27Jul2026. Pertanyaan perbandingan: kesimpulan mana-yang-lebih-banyak harus tetap benar di ketiga scope.'
+turns:
+- prompt: tahun 2025 lebih banyak perubahan minor atau perubahan mayor produk pangan?
+  assert_contains:
+  - 'minor'
+  - 'mayor'
+  assert_any_of:
+  -
+    - '12.246'
+    - '10.460'
+  -
+    - '9.258'
+    - '8.182'
+    - 'ERBA'
+  -
+    - '2.988'
+    - '2.278'
+    - 'ERLA'
+  tolerance_pct: 5
+  note: 'SCOPE = scope-agnostic; kesimpulannya SAMA di ketiga scope (minor selalu lebih banyak), jadi tidak ada risiko jawaban berbalik arah. SQL ERBA SAJA (jalankan dua kali, ganti kode JP): SELECT jenis_permohonan, COUNT(DISTINCT produk_id) FROM t_produk_3_erba WHERE jenis_permohonan IN (''302'',''303'') AND NULLIF(tanggal_bayar,'''')::timestamp>=''2025-01-01'' AND NULLIF(tanggal_bayar,'''')::timestamp<''2026-01-01'' AND status IN (''0999'',''0906'',''9999'') AND trader_id::bigint NOT IN (5,17,50,85) GROUP BY 1. SQL ERLA SAJA: SELECT jenis_permohonan, COUNT(DISTINCT produk_id) FROM t_produk_3_rilis_erla WHERE jenis_permohonan IN (''302'',''303'') AND tanggal_bayar>=''2025-01-01'' AND tanggal_bayar<''2026-01-01'' AND status IN (''0099'',''0999'',''0906'',''9999'') AND trader_id<>3384 GROUP BY 1. SQL GABUNGAN: SELECT jenis_permohonan, COUNT(DISTINCT produk_id) FROM (SELECT jenis_permohonan, produk_id FROM t_produk_3_erba WHERE jenis_permohonan IN (''302'',''303'') AND NULLIF(tanggal_bayar,'''')::timestamp>=''2025-01-01'' AND NULLIF(tanggal_bayar,'''')::timestamp<''2026-01-01'' AND status IN (''0999'',''0906'',''9999'') AND trader_id::bigint NOT IN (5,17,50,85) UNION ALL SELECT jenis_permohonan, produk_id FROM t_produk_3_rilis_erla WHERE jenis_permohonan IN (''302'',''303'') AND tanggal_bayar>=''2025-01-01'' AND tanggal_bayar<''2026-01-01'' AND status IN (''0099'',''0999'',''0906'',''9999'') AND trader_id<>3384) x GROUP BY 1. DB 27Jul2026 — MINOR (303): ERBA=9.258 · ERLA=2.988 · gabungan=12.246; MAYOR (302): ERBA=8.182 · ERLA=2.278 · gabungan=10.460. Jawaban: MINOR lebih banyak, selisih gabungan 1.786 (17%). Selisih ini jauh lebih lebar dari versi lama (299) karena entity dikoreksi ke produk_id di kedua sisi. KODE (dictionary JENIS_PERMOHONAN, sumber "ERBA dan ERLA", SAMA di kedua sistem): 302 = Perubahan Mayor · 303 = Perubahan Minor. Jangan tertukar — berkas serumpun UAT-JP-MINOR-1 versi lama salah menuliskan pasangan ini di prosa note-nya. ENTITY: "perubahan ... produk pangan" dalam konteks jenis permohonan → COUNT(DISTINCT produk_id) (predikat §1). Pembanding entity nomor: minor ERBA=6.934 · mayor ERBA=6.831 — dengan nomor selisihnya menyusut jadi 103 dan kesimpulan jadi rapuh; itulah sebabnya entity harus dikunci ke produk_id dan disebut di jawaban. PENYAJIAN (predikat §12-B): tampilkan KEDUA angka berlabel kodenya, jangan hanya menyebut pemenangnya. Nilai lama 9.923/8.914 gabungan, 6.935/6.636 ERBA, 2.988/2.278 ERLA (tol 0) — sisi ERBA lama memakai nomor, sisi ERLA memakai produk_id.'

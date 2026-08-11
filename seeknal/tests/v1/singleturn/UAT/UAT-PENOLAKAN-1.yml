@@ -1,0 +1,9 @@
+name: UAT_Alasan_Penolakan_Komitmen_Terbanyak
+scenario_id: UAT-PENOLAKAN-1
+description: 'UAT-PENOLAKAN-1 — Alasan penolakan komitmen ERBA terbanyak. DB verified 2026-06-17: Jenis kemasan/data pabrik=1.251, Bahan baku dilarang=808, Kategori pangan salah=713. Uji terjemahan kode JENIS_PENOLAKAN_KOMITMEN.'
+turns:
+- prompt: apa alasan paling banyak komitmen ditolak BPOM?
+  assert_contains:
+  - kemasan
+  - '1.251'
+  note: 'UAT-PENOLAKAN-1 — top alasan: "Jenis Kemasan atau Data Pabrik tidak sesuai" = 1.251 produk. Ke-2: bahan baku = 808. Dictionary: JENIS_PENOLAKAN_KOMITMEN.'

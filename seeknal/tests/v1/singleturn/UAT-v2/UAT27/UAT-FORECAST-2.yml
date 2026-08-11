@@ -1,0 +1,21 @@
+name: UAT_FORECAST_2
+scenario_id: UAT-FORECAST-2
+description: 'UAT-FORECAST-2 — Proyeksi NIE Terbit ERBA. Test fokus pada Pesan Utama (blok pertama) yang harus hadir dengan informasi arah + dalam/luar kisaran historis.'
+turns:
+- prompt: Kira-kira berapa NIE yang akan terbit di kuartal berikutnya untuk sistem ERBA?
+  assert_contains:
+  - BAIK
+  - Ringkasan
+  - Kondisi Data
+  - Historis & Proyeksi
+  - Rentang Realistis
+  - Tingkat Keyakinan
+  - Apa Artinya
+  - Metodologi
+  assert_not_contains:
+  - sigma
+  - ADF
+  - ACF
+  - p10
+  - p90
+  note: 'UAT-FORECAST-2 — NIE Terbit ERBA total; historically a strong series. Quality label BAIK harus muncul. Unified timeline harus menunjukkan historis + separator + proyeksi dalam satu view. Apa Artinya harus berisi bullet points (bukan paragraf) tentang arah proyeksi.'

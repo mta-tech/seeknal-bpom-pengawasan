@@ -1,0 +1,18 @@
+name: UAT_ORGANIK_1
+scenario_id: UAT-ORGANIK-1
+description: 'UAT-ORGANIK-1 — Scope-agnostic (ERBA/ERLA/UNION valid via assert_any_of). DB ref catatan (BUKAN standar kebenaran).'
+turns:
+- prompt: ada berapa produk organik yang punya izin edar di BPOM?
+  assert_contains:
+  - 'organik'
+  assert_any_of:
+  -
+    - '983'
+  -
+    - '202'
+    - 'ERBA'
+  -
+    - '781'
+    - 'ERLA'
+  tolerance_pct: 5
+  note: 'UAT-ORGANIK-1 — Scope-agnostic. ERBA=note kanonik 202; ERLA=live 781. SQL ERBA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_erba WHERE pemrosesan=''301'' AND status IN (''0999'',''0906'',''9999''). SQL ERLA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_rilis_erla WHERE pemrosesan=''301'' AND status IN (''0999'',''0906'',''9999''). UAT-ORGANIK-1 — pemrosesan=301 (Organik) ERBA NIE aktif = 202. Dictionary: PEMROSESAN kode 301. GMO (302) = 1, Iradiasi (304) = 0.'

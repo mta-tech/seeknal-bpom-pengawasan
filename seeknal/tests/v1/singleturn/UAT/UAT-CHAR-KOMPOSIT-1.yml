@@ -1,0 +1,9 @@
+name: UAT_Char_Kemasan_Komposit_Laminat
+scenario_id: UAT-CHAR-KOMPOSIT-1
+description: 'UAT-CHAR-KOMPOSIT-1 — [Domain 8: Karakteristik Produk] NIE ERBA aktif dengan kemasan komposit atau laminat. DB verified 2026-06-17: 40.683.'
+turns:
+- prompt: berapa produk pangan olahan yang menggunakan kemasan komposit atau laminat?
+  assert_contains:
+  - '40.'
+  - komposit
+  note: 'UAT-CHAR-KOMPOSIT-1 — ERBA aktif kemasan jenis komposit/laminat = 40.683. Domain: Karakteristik Produk.'

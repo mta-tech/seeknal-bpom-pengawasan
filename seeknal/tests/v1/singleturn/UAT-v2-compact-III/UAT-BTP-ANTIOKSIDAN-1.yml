@@ -1,0 +1,15 @@
+name: UAT_BTP_ANTIOKSIDAN_1
+scenario_id: UAT-BTP-ANTIOKSIDAN-1
+verification_date: '2026-07-23'
+description: 'UAT-BTP-ANTIOKSIDAN-1 — prompt menyebut "di ERBA" (single-scope), jadi assert_contains WAJIB memuat ''ERBA''. KOREKSI 23Jul2026: klaim lama "ERLA=0 karena tidak ada data" KELIRU (lihat note).'
+turns:
+- prompt: berapa izin edar BTP antioksidan yang ada di ERBA?
+  assert_contains:
+  - 'antioksidan'
+  - 'BTP'
+  - 'ERBA'
+  assert_any_of:
+  -
+    - '979'
+  tolerance_pct: 5
+  note: 'SQL: SELECT COUNT(DISTINCT nomor) FROM t_btp_3_erba WHERE jenis_btp=''48'' AND status IN (''0999'',''0906'',''9999'') AND nomor<>''''. DB 23Jul2026 = 979 (nilai lama 1.135 memakai produk_id). Dictionary: JENIS_BTP kode 48="Antioksidan", sumber tertulis "ERLA dan ERBA". KOREKSI (filter_code §4d): filter yang sama pada t_btp_3_erla = 0, TAPI itu BUKAN bukti ketiadaan — ERLA memakai rentang kode jenis_btp 777–805 yang tidak terdaftar di dictionary manapun, sehingga kode ERBA tidak berlaku di sana dan konsep "Antioksidan" tidak dapat dipetakan secara sahih ke ERLA. KODE ERBA TAK TERDAFTAR: selain 13–52 yang terdaftar, ERBA juga memakai jenis_btp 21/22/24/25 yang TIDAK ada di dictionary (kode 21 saja ~1.5k NIE) — bucket "lainnya" bisa menyerapnya diam-diam.'

@@ -1,0 +1,18 @@
+name: UAT_GARAM_2
+scenario_id: UAT-GARAM-2
+description: 'UAT-GARAM-2 — Scope-agnostic (ERBA/ERLA/UNION valid via assert_any_of). DB ref catatan (BUKAN standar kebenaran).'
+turns:
+- prompt: garam beryodium punya berapa NIE yang aktif di BPOM?
+  assert_contains:
+  - 'Garam Beryodium'
+  assert_any_of:
+  -
+    - '3.571'
+  -
+    - '1.241'
+    - 'ERBA'
+  -
+    - '2.330'
+    - 'ERLA'
+  tolerance_pct: 5
+  note: 'UAT-GARAM-2 — Scope-agnostic. ERBA=note kanonik 1.241; ERLA=live 2.330. SQL ERBA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_erba WHERE jenis_pangan LIKE ''1204%'' AND status IN (''0999'',''0906'',''9999''). SQL ERLA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_rilis_erla WHERE (jenis_pangan LIKE ''1204%'' OR nama_kategori ILIKE ''%garam%'') AND status IN (''0999'',''0906'',''9999''). UAT-GARAM-2 — all-time ERBA, parent code jenis_pangan=1204 → 1.241.'

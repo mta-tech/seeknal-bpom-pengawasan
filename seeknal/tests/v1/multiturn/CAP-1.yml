@@ -1,0 +1,13 @@
+name: Month_Level_Permohonan_Mei
+scenario_id: CAP-1
+description: "New capability: 'permohonan bulan Mei' harus dijawab per tahun (bukan total tahunan). DB verified 2026-06-12: Mei 2023=1.700, 2024=4.087, 2025=5.174"
+turns:
+- prompt: Berapa jumlah permohonan pangan olahan di ERBA bulan Mei?
+  assert_contains:
+  - Mei
+  - '2023'
+  - '2024'
+  - '2025'
+  note: "CAP-1 — Harus tampilkan data Mei per tahun: 2023=1.700, 2024=4.087, 2025=5.174. BUKAN total tahunan."
+  assert_not_contains:
+  - total

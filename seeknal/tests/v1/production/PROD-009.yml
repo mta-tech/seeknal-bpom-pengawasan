@@ -1,0 +1,8 @@
+name: UMKM_Izin_Edar_Aktif
+scenario_id: PROD-009
+description: "PROD-009 — Berapa UMKM yang memiliki izin edar aktif"
+turns:
+- prompt: "Berapa UMKM yang memiliki izin edar aktif?"
+  assert_contains:
+  - "UMKM"
+  note: "PROD-009 — UMKM count with active NIE, expects numeric result"

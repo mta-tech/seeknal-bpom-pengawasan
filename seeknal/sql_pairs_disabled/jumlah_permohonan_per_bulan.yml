@@ -1,0 +1,27 @@
+name: jumlah_permohonan_per_bulan
+prompt: Berapa jumlah permohonan per bulan
+intent: Count unique applications grouped by month of payment.
+sql: |
+  SELECT COALESCE(TO_CHAR(DATE_TRUNC('month', tanggal_bayar), 'YYYY-MM'), 'TOTAL') AS bulan,
+         COUNT(DISTINCT produk_id) AS jumlah_permohonan
+  FROM (
+    SELECT produk_id, tanggal_bayar, jenis_permohonan FROM warehouse.public.t_produk_3_erba
+    UNION
+    SELECT produk_id, tanggal_bayar, jenis_permohonan FROM warehouse.public.t_btp_3_erba
+    UNION
+    SELECT produk_id, tanggal_bayar, jenis_permohonan FROM warehouse.public.t_produk_3_rilis_erla
+    UNION
+    SELECT produk_id, tanggal_bayar, jenis_permohonan FROM warehouse.public.t_btp_3_erla
+  ) AS a
+  WHERE jenis_permohonan IN ('301','302','303','304','305')
+    AND tanggal_bayar IS NOT NULL
+  GROUP BY GROUPING SETS (
+    (DATE_TRUNC('month', tanggal_bayar)),
+    ()
+  )
+  ORDER BY bulan
+notes:
+  - Counts unique produk_id across all product and BTP tables.
+  - Uses tanggal_bayar as the date filter; excludes records with null tanggal_bayar.
+  - GROUPING SETS produces monthly rows plus a TOTAL row.
+  - Adjust date range as needed for the specific question.

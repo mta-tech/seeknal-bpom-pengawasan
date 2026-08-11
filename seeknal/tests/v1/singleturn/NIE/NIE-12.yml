@@ -1,0 +1,9 @@
+name: 50_Berapa NIE MR disetujui komitmen
+scenario_id: NIE-12
+description: NIE-12
+turns:
+- prompt: Berapa NIE MR disetujui komitmen?
+  assert_contains:
+  - NIE MR
+  - disetujui
+  note: NIE-12

@@ -1,0 +1,10 @@
+name: UAT_BAYI_DICABUT_1
+scenario_id: UAT-BAYI-DICABUT-1
+verification_date: '2026-07-23'
+description: 'UAT-BAYI-DICABUT-1 — single-scope by-design, regression anti-fabrikasi (hasil harus NOL di kedua sistem).'
+turns:
+- prompt: apakah ada izin edar formula bayi yang dicabut atau dibatalkan BPOM?
+  assert_contains:
+  - 'formula bayi'
+  - 'tidak ditemukan'
+  note: 'SQL ERBA: SELECT COUNT(DISTINCT nomor) FROM t_produk_3_erba WHERE jenis_pangan IN (''1301'',''1302'') AND status=''0009''  → 0. SQL ERLA: SELECT COUNT(DISTINCT nomor) FROM t_produk_3_rilis_erla WHERE nama_kategori ILIKE ''Formula Bayi%'' AND status=''0009''  → 0. DB 23Jul2026: kedua sisi = 0, klaim "tidak ditemukan" TERKONFIRMASI. Dictionary STATUS: ERBA kode 0009 = "Dicabut/Dibatalkan"; ERLA dictionary mencatat kode 9 (tanpa zero-pad) = "Dicabut/Dibatalkan" sedangkan data tersimpan ''0009'' — beda representasi dictionary vs data antar sistem. CATATAN SCOPE: bila memakai definisi ERLA yang lebih longgar (jenis_pangan IN 604/622/624 — kode yang dipakai bersama kategori non-formula-bayi) hasilnya 10, BUKAN 0; itu leakage dari Formula Pertumbuhan/MP ASI/PKMK, bukan formula bayi. Sistem tidak boleh mengarang angka bila hasilnya nol.'

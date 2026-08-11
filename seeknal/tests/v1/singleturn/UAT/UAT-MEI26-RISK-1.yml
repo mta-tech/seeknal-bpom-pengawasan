@@ -1,0 +1,13 @@
+name: UAT_NIE_PerRisiko_Mei2026
+scenario_id: UAT-MEI26-RISK-1
+description: 'UAT-MEI26-RISK-1 — Breakdown NIE per risiko Mei 2026, ERBA. DB verified 2026-06-17: MR=1.335, MT=165, Tinggi=3.298, Tinggi Notifikasi=296, total ERBA=5.085'
+turns:
+- prompt: Berapa NIE yang terbit selama bulan Mei 2026 per kategori risiko?
+  assert_contains:
+  - '1.335'
+  - '165'
+  - '3.298'
+  - Menengah Rendah
+  - Menengah Tinggi
+  - Tinggi
+  note: 'UAT-MEI26-RISK-1 — ERBA Mei 2026: MR=1.335, MT=165, Tinggi=3.298, Tinggi Notifikasi=296.'

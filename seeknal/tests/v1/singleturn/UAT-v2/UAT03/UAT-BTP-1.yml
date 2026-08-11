@@ -1,0 +1,10 @@
+name: UAT_BTP_1
+scenario_id: UAT-BTP-1
+description: 'UAT-BTP-1 — single-scope (by-design).'
+turns:
+- prompt: berapa jumlah NIE produk BTP di ERBA tahun 2023?
+  assert_contains:
+  - 'BTP'
+  - '950'
+  - '2023'
+  note: 'UAT-BTP-1 — regression. t_btp_3_erba, status valid, JP 301+305, 2023. DB 950. Tolerance ±5%.'

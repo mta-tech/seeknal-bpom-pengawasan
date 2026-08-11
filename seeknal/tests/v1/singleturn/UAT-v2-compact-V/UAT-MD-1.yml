@@ -1,0 +1,20 @@
+name: UAT_MD_1
+scenario_id: UAT-MD-1
+verification_date: '2026-07-27'
+description: 'UAT-MD-1 — SCOPE: scope-agnostic. Re-verified 27Jul2026. Kasus filter berbasis POLA TEKS pada kolom nomor, bukan kode dictionary — formatnya harus diprobe dulu, dan ada baris menyimpang yang lolos/tertinggal dari pola.'
+turns:
+- prompt: Berapa jumlah produk MD tahun 2025?
+  assert_contains:
+  - '2025'
+  - 'MD'
+  assert_any_of:
+  -
+    - '39.319'
+  -
+    - '36.636'
+    - 'ERBA'
+  -
+    - '2.683'
+    - 'ERLA'
+  tolerance_pct: 5
+  note: 'SCOPE = scope-agnostic. SQL ERBA SAJA: SELECT COUNT(DISTINCT nomor) FROM t_produk_3_erba WHERE nomor LIKE ''MD %'' AND NULLIF(tanggal,'''')::timestamp>=''2025-01-01'' AND NULLIF(tanggal,'''')::timestamp<''2026-01-01'' AND status IN (''0999'',''0906'',''9999'') AND trader_id::bigint NOT IN (5,17,50,85). SQL ERLA SAJA: SELECT COUNT(DISTINCT nomor) FROM t_produk_3_rilis_erla WHERE nomor LIKE ''MD %'' AND tanggal>=''2025-01-01'' AND tanggal<''2026-01-01'' AND status IN (''0099'',''0999'',''0906'',''9999'') AND trader_id<>3384. SQL GABUNGAN: SELECT COUNT(DISTINCT nomor) FROM (SELECT nomor FROM t_produk_3_erba WHERE nomor LIKE ''MD %'' AND NULLIF(tanggal,'''')::timestamp>=''2025-01-01'' AND NULLIF(tanggal,'''')::timestamp<''2026-01-01'' AND status IN (''0999'',''0906'',''9999'') AND trader_id::bigint NOT IN (5,17,50,85) UNION ALL SELECT nomor FROM t_produk_3_rilis_erla WHERE nomor LIKE ''MD %'' AND tanggal>=''2025-01-01'' AND tanggal<''2026-01-01'' AND status IN (''0099'',''0999'',''0906'',''9999'') AND trader_id<>3384) x. DB 27Jul2026: ERBA=36.636 · ERLA=2.683 · gabungan=39.319. FORMAT NOMOR — WAJIB DIPROBE, BUKAN DITEBAK (filter_code §4c): format tersimpan adalah "MD " + digit (contoh "MD 220935002300027"), dengan SATU spasi. Pola "BPOM RI MD" TIDAK ada di database — itu format cetak label, dan memakainya sebagai filter menghasilkan nol (kesalahan yang tercatat di berkas versi lama). Prefiks: MD = produksi dalam negeri · ML = impor · awalan ER... = id pengajuan internal yang NIE-nya belum terbit. BARIS MENYIMPANG YANG HARUS DISEBUT: ada nomor tanpa spasi ("MD273182029200081") dan nomor yang mengandung carriage return ("MD\r+803113041071") — keduanya TIDAK tertangkap LIKE ''MD %''. Jumlahnya kecil (belasan baris di seluruh tabel) tapi laporkan sebagai keterbatasan bila angka disajikan sebagai cacah MD yang lengkap. KODE FILTER ERBA vs ERLA: pola teks ''MD %'' SAMA di kedua sistem — ini bukan kode dictionary melainkan konvensi penomoran yang seragam. Yang tetap berbeda: set status sah, akun uji, dan cast tanggal (ERBA TEXT, ERLA TIMESTAMP). KOLOM TANGGAL: `tanggal` = tanggal terbit NIE (predikat §2), karena yang ditanya produk ber-NIE MD pada tahun 2025; bukan tanggal_bayar (itu untuk permohonan) atau tanggal_aju. ENTITY: COUNT(DISTINCT nomor) (predikat §1). PEMBANDING: NIE berawalan ML (impor) pada 2025 = 17.799 gabungan — sebutkan bila pengguna ingin komposisi dalam negeri vs impor. Nilai lama 39.389/36.706/2.683 (tol 0) — sisi ERLA sudah tepat sejak awal, sisi ERBA bergeser karena drift; toleransi dinaikkan ke 5%.'

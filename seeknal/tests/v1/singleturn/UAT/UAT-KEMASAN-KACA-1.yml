@@ -1,0 +1,9 @@
+name: UAT_Kemasan_Kaca_ERBA
+scenario_id: UAT-KEMASAN-KACA-1
+description: 'UAT-KEMASAN-KACA-1 — NIE ERBA aktif dengan kemasan kaca/keramik (kemasan_id=1, ERBA). DB verified 2026-06-17: 14.154. Uji terjemahan kode KEMASAN_ID sumber ERBA ke label "Kaca atau Keramik".'
+turns:
+- prompt: berapa produk yang pakai kemasan kaca atau keramik di BPOM?
+  assert_contains:
+  - '14.154'
+  - kaca
+  note: 'UAT-KEMASAN-KACA-1 — t_produk_3_erba kemasan_id=1 (Kaca atau Keramik), sumber=ERBA, NIE aktif = 14.154. Dictionary: KEMASAN_ID kode 1.'

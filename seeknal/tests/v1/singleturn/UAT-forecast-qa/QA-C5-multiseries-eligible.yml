@@ -1,0 +1,9 @@
+name: QA_C5_Multiseries_Eligible
+scenario_id: QA-C5
+description: 'Peta QA C.5 (multi-series forecasting, P1, status QA: passed). Dua series sama-sama eligible (ERBA): permohonan total vs persetujuan (status issued). SQL harus terpisah jelas per series, tidak dicampur jadi satu angka gabungan.'
+turns:
+- prompt: Ramalkan permohonan dan persetujuan produk ERBA untuk 6 bulan ke depan
+  assert_contains:
+  - permohonan
+  - persetujuan
+  note: 'Dua series: (a) permohonan = semua tanggal_bayar, tanpa filter status; (b) persetujuan = status issued (0999,0906,9999). Ekspektasi: dua run_forecast terpisah (atau satu SQL berlabel series jika didukung), label series jelas di jawaban, TIDAK digabung jadi satu angka tunggal. DB Jun2026: permohonan=4.691, persetujuan issued jauh lebih kecil (subset) — dua angka harus BEDA signifikan, bukan sama.'

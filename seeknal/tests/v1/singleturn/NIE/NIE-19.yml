@@ -1,0 +1,10 @@
+name: 57_Tampilkan permohonan gabungan tahun 2023
+scenario_id: NIE-19
+description: NIE-19
+turns:
+- prompt: Tampilkan permohonan gabungan tahun 2023
+  assert_contains:
+  - permohonan
+  - gabungan
+  - '2023'
+  note: NIE-19

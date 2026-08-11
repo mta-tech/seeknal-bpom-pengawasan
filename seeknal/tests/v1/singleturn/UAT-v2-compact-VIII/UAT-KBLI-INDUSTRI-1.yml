@@ -1,0 +1,19 @@
+name: UAT_KBLI_INDUSTRI_1
+scenario_id: UAT-KBLI-INDUSTRI-1
+verification_date: '2026-08-05'
+description: 'UAT-KBLI-INDUSTRI-1 — ERBA-ONLY struktural (kolom kode_kbli tidak ada di t_produk_3_rilis_erla). Menguji dimensi JENIS INDUSTRI (KBLI) yang belum pernah disentuh 105 test compact I-VII. Jebakannya sentinel: nilai ''0'' adalah penanda belum-diisi tetapi jumlahnya TERBESAR, sehingga peringkat naif menempatkannya di puncak sebagai kalau itu sebuah industri.'
+turns:
+- prompt: industri apa yang paling banyak mendaftarkan produk pangan ke BPOM?
+  assert_contains:
+  - 'Roti'
+  assert_any_of:
+  -
+    - '15.324'
+  -
+    - '10.410'
+    - 'Minuman Ringan'
+  -
+    - '6.855'
+    - 'AMDK'
+  tolerance_pct: 5
+  note: 'SQL ERBA: SELECT p.kode_kbli, d.deskripsi, COUNT(DISTINCT p.nomor) FROM t_produk_3_erba p LEFT JOIN data_dictionary d ON d.kategori=''KODE_KBLI'' AND d.kode=p.kode_kbli WHERE p.status IN (''0999'',''0906'',''9999'') AND p.trader_id::bigint NOT IN (5,17,50,85) AND p.nomor<>'''' AND p.kode_kbli NOT IN ('''',''0'') GROUP BY 1,2 ORDER BY 3 DESC. SQL ERLA: TIDAK ADA — kolom kode_kbli tidak eksis di t_produk_3_rilis_erla (dicek di information_schema, 0 kolom); pertanyaan ini ERBA-only secara struktural. DB 05Agu2026: 10710 "Industri Produk Roti Dan Kue"=15.324 · 11040 "Industri Minuman Ringan (Soft Drink)"=10.410 · 11051 "Industri Air Minum Dalam Kemasan (AMDK)"=6.855 · 10130 "Industri Pengolahan Dan Pengawetan Produk Daging Dan Daging Unggas"=5.680. SENTINEL ''0'' — INI JEBAKAN UTAMANYA: 45.743 NIE memakai kode_kbli=''0'', tiga kali lipat lebih banyak daripada industri teratas yang sesungguhnya. Nilai ''0'' TIDAK terdaftar di dictionary dan bukan sebuah bidang usaha — itu penanda KBLI belum diisi. Peringkat yang dibuat tanpa mengecualikannya akan melaporkan "kode 0" sebagai industri nomor satu, sebuah jawaban yang tidak berarti apa-apa. Kecualikan ''0'' dan '''' dari peringkat; boleh menyebutnya terpisah sebagai catatan kualitas data (45.743 NIE tanpa KBLI, ~19% dari populasi ERBA yang sah). KODE HARUS DITERJEMAHKAN: dictionary kategori KODE_KBLI sumber=ERBA berisi 95 kode dengan deskripsi lengkap (mis. 01493="Pembibitan Dan Budidaya Burung Walet", 10772="Industri Bumbu Masak Dan Penyedap Masakan"). Jawaban wajib menuliskan NAMA industri, bukan kode lima digit — pengguna bertanya "industri apa", bukan "kode berapa". KODE TAK TERDAFTAR: kolom memuat 129 nilai unik sedangkan dictionary hanya mendaftarkan 95, jadi ada ~34 kode tanpa deskripsi. Pakai LEFT JOIN (bukan INNER) supaya kode tak terdaftar tidak diam-diam hilang dari peringkat, dan tandai barisnya sebagai tidak terdeskripsi alih-alih membuang atau mengarang artinya. ENTITY: COUNT(DISTINCT nomor) (predikat §1) — pertanyaan tentang produk terdaftar, bukan jumlah pengajuan. BENTUK JAWABAN: sajikan tabel industri x jumlah NIE terurut menurun, dan nyatakan bahwa data KBLI hanya tersedia di ERBA sehingga angka ini bukan gambaran seluruh BPOM.'

@@ -1,0 +1,9 @@
+name: 07_Top 10 jumlah izin edar berdasarkan kategori pangan
+scenario_id: CB-7
+description: 'CB-7 — Expected: 10 kategori terurut + nilai'
+turns:
+- prompt: Top 10 jumlah izin edar berdasarkan kategori pangan
+  assert_contains:
+  - kategori
+  - '10'
+  note: 'CB-7 — Expected: 10 kategori terurut + nilai'

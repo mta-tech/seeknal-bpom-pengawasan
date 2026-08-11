@@ -1,0 +1,9 @@
+name: Top_5_Perusahaan_All_Time
+scenario_id: COMP-2
+description: 'COMP-2 — Top 5 perusahaan all-time. DB verified 2026-06-10: Interfood=2.076, Star Niaga=1.316'
+turns:
+- prompt: 5 perusahaan dengan izin edar terbanyak sepanjang masa
+  assert_contains:
+  - perusahaan
+  - sepanjang masa
+  note: 'COMP-2 — DB aktual (t_produk_3_erba, nama_trader, all-time): Interfood=2.076, Star Niaga=1.316, Brother Food=1.310, Crown Pratama=999, Organik Sehat=985. Tolerance ±5%.'

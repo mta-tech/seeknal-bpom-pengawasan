@@ -1,0 +1,21 @@
+name: UAT_MEI_MR_1
+scenario_id: UAT-MEI-MR-1
+verification_date: '2026-07-23'
+description: 'UAT-MEI-MR-1 — JEBAKAN TAKSONOMI LINTAS SISTEM: "Menengah Rendah" hanya terdefinisi di ERBA (KATEGORI_DOKUMEN). ERLA tidak punya padanan resmi — tidak ada gabungan yang sah. Redefined 23Jul2026.'
+turns:
+- prompt: berapa jumlah NIE yang terbit pada bulan Mei untuk kategori risiko Menengah Rendah
+  assert_contains:
+  - 'Menengah Rendah'
+  - 'Mei'
+  assert_any_of:
+  -
+    - '3.717'
+    - 'ERBA'
+  -
+    - '10.600'
+    - 'ERLA'
+  -
+    - '728'
+    - 'ERLA'
+  tolerance_pct: 5
+  note: 'KANONIK (ERBA): SELECT COUNT(DISTINCT nomor) FROM t_produk_3_erba WHERE kategori_dokumen=''303'' AND EXTRACT(MONTH FROM tanggal::timestamp)=5 AND status IN (''0999'',''0906'',''9999'') AND trader_id::bigint NOT IN (5,17,50,85) AND nomor<>''''. DB 23Jul2026 = 3.717 (bulan Mei semua tahun; prompt tidak menyebut tahun). BEDA KODE ERBA vs ERLA — inti kasus ini: dictionary KATEGORI_DOKUMEN terdaftar sumber=ERBA SAJA (301 Tinggi · 302 Menengah Tinggi · 303 Menengah Rendah · 304 Tinggi Notifikasi); ERLA TIDAK punya entri dictionary untuk taksonomi ini. Dua pendekatan ERLA yang sama-sama bisa dibela, keduanya diterima: (a) jenis_dokumen=''303'' = "Pangan Medium Risk" (dictionary sumber="ERLA dan ERBA", taksonomi BERBEDA — Medium Risk != Menengah Rendah) → Mei = 10.600; (b) kolom kategori_dokumen di tabel ERLA ternyata TERISI (301-304) meski TIDAK terdaftar di dictionary utk ERLA (lihat filter_code_reference §4d) → Mei = 728. GABUNGAN SENGAJA TIDAK DI-ASSERT: menjumlah dua taksonomi berbeda menghasilkan angka tanpa makna bisnis; jawaban yang benar menyebut ERBA sebagai kanonik dan menjelaskan keterbatasan ERLA.'

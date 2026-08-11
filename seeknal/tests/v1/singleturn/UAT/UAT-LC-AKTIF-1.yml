@@ -1,0 +1,9 @@
+name: UAT_LC_NIE_Masih_Berlaku
+scenario_id: UAT-LC-AKTIF-1
+description: 'UAT-LC-AKTIF-1 — [Domain 1: Lifecycle] NIE ERBA dengan status Perizinan Berusaha Terbit (0999) = yang benar-benar aktif. DB verified 2026-06-17: 140.082. Total termasuk 0906+9999 = 182.630.'
+turns:
+- prompt: berapa izin edar yang masih berlaku saat ini?
+  assert_contains:
+  - '140.'
+  - berlaku
+  note: 'UAT-LC-AKTIF-1 — status 0999 (Perizinan Berusaha Terbit) ERBA = 140.082. Berbeda dari "aktif" termasuk 0906+9999 = 182.630. Domain: Lifecycle Izin Edar.'

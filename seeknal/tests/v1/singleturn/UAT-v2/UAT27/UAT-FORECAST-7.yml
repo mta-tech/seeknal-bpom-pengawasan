@@ -1,0 +1,18 @@
+name: UAT_FORECAST_7
+scenario_id: UAT-FORECAST-7
+description: 'UAT-FORECAST-7 — Proyeksi sub-series Menengah Rendah (303) yang sudah terbukti BAIK (MAPE 12.8%). Volume avg ~1.100/bulan (2025+). Sistem bisa memforecast sub-series risiko.'
+turns:
+- prompt: Prediksi permohonan risiko menengah rendah untuk 3 bulan ke depan
+  assert_contains:
+  - Menengah Rendah
+  - BAIK
+  - Rentang Realistis
+  - Tingkat Keyakinan
+  - Historis & Proyeksi
+  - Apa Artinya
+  - Metodologi
+  assert_not_contains:
+  - sigma
+  - p10
+  - p90
+  note: 'UAT-FORECAST-7 — MR (kategori_dokumen=303) ERBA sub-series. Backtest MAPE ~12.8% BAIK. Volume avg ~1.100/bulan (2025+), tidak perlu volume adjustment. Output: 7-blok format identik dengan total series. Label BAIK harus muncul.'

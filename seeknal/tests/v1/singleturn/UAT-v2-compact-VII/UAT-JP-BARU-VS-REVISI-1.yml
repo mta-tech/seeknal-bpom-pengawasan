@@ -1,0 +1,16 @@
+name: UAT_JP_BARU_VS_REVISI_1
+scenario_id: UAT-JP-BARU-VS-REVISI-1
+verification_date: '2026-07-28'
+description: 'UAT-JP-BARU-VS-REVISI-1 — ERBA sebagai sumber utama untuk pertanyaan tren tahun berjalan (ERLA nyaris tak aktif di 2025). Prompt bertanya "industri yang daftar" — populasinya permohonan, dihitung produk_id.'
+turns:
+- prompt: tahun 2025 lebih banyak mana, industri yang daftar produk baru atau yang mengubah produk lama?
+  assert_contains:
+  - 'permohonan baru'
+  - 'lebih banyak'
+  assert_any_of:
+  -
+    - '45.461'
+  -
+    - '17.441'
+  tolerance_pct: 5
+  note: 'SQL (per jenis, satu GROUP BY): SELECT jenis_permohonan, COUNT(DISTINCT produk_id) FROM t_produk_3_erba WHERE jenis_permohonan IN (''301'',''302'',''303'') AND NULLIF(tanggal_bayar,'''')::timestamp>=''2025-01-01'' AND NULLIF(tanggal_bayar,'''')::timestamp<''2026-01-01'' AND status IN (''0999'',''0906'',''9999'') AND trader_id::bigint NOT IN (5,17,50,85) GROUP BY 1. DB 28Jul2026 (ERBA): Baru (301)=45.461 · Mayor (302)=8.183 · Minor (303)=9.258. Revisi = Mayor+Minor = 17.441. Baru jauh lebih banyak: rasio 45.461 : 17.441 ≈ 2,6 : 1. SCOPE ERBA SAJA UNTUK KESIMPULAN TREN 2025: bila ERLA disertakan, permohonan baru ERLA di 2025 cuma 99 (praktis beku) sementara revisinya (mayor+minor) 2.278+2.988=5.266 — jadi menyertakan ERLA tidak membalik kesimpulan (baru tetap unggul di kedua sistem) tapi mengaburkan besaran rasio karena mencampur satu sistem yang sedang tumbuh dengan satu sistem yang sedang padam; sebut ERBA sebagai basis utama jawaban dan ERLA sebagai catatan tambahan bila diperlukan. ENTITY: produk_id — prompt bertanya "industri yang daftar", subjeknya adalah tindakan mengajukan (permohonan), bukan NIE yang terbit; pembanding entity nomor pada filter sama: Baru=43.643 · Mayor=6.831 · Minor=6.934, rasio serupa (≈3,2:1) sehingga kesimpulan arah tidak berubah walau entity berbeda. KODE: dictionary JENIS_PERMOHONAN 301 Permohonan Baru · 302 Perubahan Mayor · 303 Perubahan Minor — "mengubah produk lama" mencakup KEDUA kode revisi, bukan hanya salah satu; menjumlahkan 302+303 adalah langkah wajib sebelum membandingkan dengan 301, bukan pembulatan opsional. STATUS: filter status IN (status sah per sistem) dipasang karena "daftar produk baru / mengubah produk" pada praktiknya dihitung dari permohonan yang berujung status resmi (terbit atau revisi tercatat) — bila pertanyaan berubah menjadi "berapa yang MENGAJUKAN" tanpa syarat hasil, filter ini dilepas dan angkanya akan lebih tinggi di kedua kelompok. Nilai lama: Baru=43.142, Mayor+Minor=13.571 (6.636+6.935), rasio 3:1 — arah kesimpulan sama, besaran naik mengikuti pertumbuhan data.'

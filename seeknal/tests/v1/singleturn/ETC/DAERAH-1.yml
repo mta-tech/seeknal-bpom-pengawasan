@@ -1,0 +1,9 @@
+name: Top_5_Daerah_NIE_2024
+scenario_id: DAERAH-1
+description: 'DAERAH-1 — Top 5 daerah NIE 2024. DB verified 2026-06-10: Kab.Tangerang=2.697, (37.01)=2.102'
+turns:
+- prompt: 5 daerah dengan pabrik yang paling banyak memiliki izin edar tahun 2024
+  assert_contains:
+  - daerah
+  - 2024
+  note: 'DAERAH-1 — DB aktual (t_produk_3_erba, daerah_pabrik, tanggal 2024): Kab.Tangerang=2.697, (37.01)=2.102, (37.16)=1.365, Kota.Tangerang=1.354, (38.15)=1.223. Beberapa kode legacy belum resolve. Tolerance ±5%.'

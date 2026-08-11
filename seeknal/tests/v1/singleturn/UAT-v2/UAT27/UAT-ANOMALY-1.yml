@@ -1,0 +1,8 @@
+name: UAT_ANOMALY_1
+scenario_id: UAT-ANOMALY-1
+description: 'UAT-ANOMALY-1 — Test anomaly tool. Harus trigger detect_anomaly untuk data registrasi ERBA.'
+turns:
+- prompt: Apakah ada anomali atau data tidak biasa pada registrasi ERBA dari tahun 2022?
+  assert_contains:
+  - anomali
+  note: 'UAT-ANOMALY-1 — Pertanyaan anomali langsung. Agent harus build SQL dan panggil detect_anomaly. Tool yang diharapkan: detect_anomaly. Tidak ada forecast.'

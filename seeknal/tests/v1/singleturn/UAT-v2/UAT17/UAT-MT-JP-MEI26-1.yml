@@ -1,0 +1,10 @@
+name: UAT_MT_JP_MEI26_1
+scenario_id: UAT-MT-JP-MEI26-1
+description: 'UAT-MT-JP-MEI26-1 — single-scope (by-design).'
+turns:
+- prompt: untuk permohonan baru produk menengah tinggi yang terbit bulan Mei 2026 berapa jumlahnya?
+  assert_contains:
+  - '147'
+  - 'Menengah Tinggi'
+  - 'Mei'
+  note: 'UAT-MT-JP-MEI26-1 — ERBA kategori_dokumen=302 AND jenis_permohonan=301 AND tanggal Mei 2026, NIE aktif = 147. Minor(303)=17, Mayor(302)=3.'

@@ -1,0 +1,19 @@
+name: UAT_PABRIK_TOP_1
+scenario_id: UAT-PABRIK-TOP-1
+verification_date: '2026-08-05'
+description: 'UAT-PABRIK-TOP-1 — Scope-agnostic (ERBA/ERLA/UNION valid via assert_any_of). Menguji dimensi PABRIK PEMBUAT (nama_pabrik) yang belum pernah disentuh 105 test compact I-VII. Jebakannya konseptual: pabrik BUKAN pendaftar, dan peringkat keduanya sama sekali berbeda — memakai nama_trader untuk pertanyaan ini menghasilkan daftar nama yang lain sepenuhnya.'
+turns:
+- prompt: pabrik mana yang paling banyak memproduksi produk terdaftar di BPOM?
+  assert_contains:
+  - 'Crown Pratama'
+  assert_any_of:
+  -
+    - '1.012'
+    - 'ERBA'
+  -
+    - '1.245'
+    - 'ERLA'
+  -
+    - '870'
+  tolerance_pct: 5
+  note: 'SQL ERBA: SELECT nama_pabrik, COUNT(DISTINCT nomor) FROM t_produk_3_erba WHERE status IN (''0999'',''0906'',''9999'') AND trader_id::bigint NOT IN (5,17,50,85) AND nomor<>'''' AND nama_pabrik<>'''' GROUP BY 1 ORDER BY 2 DESC. SQL ERLA: idem pada t_produk_3_rilis_erla dgn status IN (''0099'',''0999'',''0906'',''9999'') AND trader_id<>3384. DB 05Agu2026 — ERBA: "PT Crown Pratama"=1.012 · "PT. ANEKA DASUIB JAYA"=870 · "FUJIAN JIANMIN FOOD CO., LTD."=563 (CN). ERLA: "PT. ASIA SAKTI WAHID FOODS MANUFACTURE"=1.245 · "PT. Indofood CBP Sukses Makmur Tbk"=924 · "PT. Crown Pratama"=853. PABRIK BUKAN PENDAFTAR — INI INTI SKENARIO: nama_pabrik adalah tempat produk DIBUAT; nama_trader adalah perusahaan yang MENDAFTARKAN izin edar. Keduanya sering berbeda badan usaha (pemilik merek memesan produksi ke pabrik pihak ketiga — lihat pola makloon di UAT-MAKLOON-1). Buktinya peringkatnya berbeda total: pendaftar teratas di ERBA adalah "INTERFOOD SUKSES JASINDO" dengan 2.162 NIE, nama yang bahkan tidak masuk tiga besar pabrik. Menjawab pertanyaan pabrik dengan nama_trader memberi daftar yang sepenuhnya salah meski angkanya tampak masuk akal. FORMAT NAMA TIDAK KONSISTEN LINTAS SISTEM: perusahaan yang sama ditulis "PT Crown Pratama" di ERBA (tanpa titik) dan "PT. Crown Pratama" di ERLA (dengan titik) — persis masalah yang sama seperti pada nama_trader di UAT-KOPI-INSTAN-PENDAFTAR-1. Menggabungkan peringkat lintas sistem wajib menormalisasi prefiks PT/PT. dan huruf besar-kecil dulu; tanpa itu Crown Pratama muncul dua kali (1.012 dan 853) dan kalah dari ASIA SAKTI (1.245) padahal setelah digabung justru unggul. Bila lingkup dijawab per sistem saja, sebutkan sistemnya dengan jelas dan jangan menjumlahkan naif. PABRIK LUAR NEGERI IKUT TERHITUNG: "FUJIAN JIANMIN FOOD CO., LTD." (negara_pabrik=''CN'') masuk peringkat ERBA — wajar karena pertanyaan tidak membatasi negara. Bila pengguna memaksudkan pabrik dalam negeri saja, itu penyempitan berbeda dan perlu filter negara_pabrik=''ID'' (lihat UAT-KOPI-INSTAN-ID-1). Kolom terisi 100% di kedua tabel dengan 17.396 nama pabrik unik di ERBA. ENTITY: COUNT(DISTINCT nomor) (predikat §1). BENTUK JAWABAN: tabel pabrik x jumlah NIE terurut menurun, dengan lingkup sistem dinyatakan.'

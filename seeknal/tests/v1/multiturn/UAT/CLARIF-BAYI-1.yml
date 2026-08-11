@@ -1,0 +1,25 @@
+name: Clarification_Gate_Formula_Bayi
+scenario_id: "CLARIF-BAYI-1"
+description: "Uji clarification gate SOURCE_PATH: 'total produk formula bayi terdaftar di BPOM' ambigu antara ERBA saja, ERLA saja, atau gabungan. Kode berbeda antar sistem."
+turns:
+  - prompt: "berapa total produk formula bayi terdaftar di BPOM?"
+    assert_contains:
+      - "formula bayi"
+    note: "Material ambiguity SOURCE_PATH: 'terdaftar di BPOM' tidak spesifik sistem. ERBA pakai kode 1301/1302, ERLA pakai 622/604/624. Agent HARUS tanya scope sistem."
+  - prompt: "gabungkan keduanya"
+    assert_contains:
+      - "916"
+      - "formula bayi"
+    note: "Setelah klarifikasi, agent harus resolve kode per sistem: ERBA 102 + ERLA 814 = 916. Verified DB 2026-06-17."
+  - prompt: "pisahkan per sistem, berapa masing-masing?"
+    assert_contains:
+      - "102"
+      - "814"
+      - "ERBA"
+      - "ERLA"
+    note: "Follow-up: breakdown per sistem. Agent harus retain konteks formula bayi dan pisahkan ERBA (102) vs ERLA (814)."
+  - prompt: "buatkan grafik perbandingan ERBA vs ERLA"
+    assert_contains:
+      - "102"
+      - "814"
+    note: "Plot turn: agent harus buat chart perbandingan ERBA vs ERLA via execute_python. Response harus berisi data yang divisualisasi."

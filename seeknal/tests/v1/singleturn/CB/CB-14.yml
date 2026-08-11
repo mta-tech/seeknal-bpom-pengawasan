@@ -1,0 +1,10 @@
+name: 14_Tren produk AMDK berdasarkan skala industri tahun terbit
+scenario_id: CB-14
+description: 'CB-14 — Expected: Tren AMDK per skala & tahun'
+turns:
+- prompt: Tren produk AMDK berdasarkan skala industri tahun terbit
+  assert_contains:
+  - AMDK
+  - skala industri
+  - tren
+  note: 'CB-14 — Expected: Tren AMDK per skala & tahun'

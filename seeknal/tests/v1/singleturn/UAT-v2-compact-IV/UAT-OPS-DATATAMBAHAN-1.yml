@@ -1,0 +1,13 @@
+name: UAT_OPS_DATATAMBAHAN_1
+scenario_id: UAT-OPS-DATATAMBAHAN-1
+verification_date: '2026-07-23'
+description: 'UAT-OPS-DATATAMBAHAN-1 — single-scope by-design (pipeline = ERBA only). TRANSIENT. Konsep "data tambahan" mencakup DUA sisi: petugas dan pendaftar.'
+turns:
+- prompt: berapa permohonan yang sedang diminta untuk melengkapi data tambahan?
+  assert_contains:
+  - 'data tambahan'
+  assert_any_of:
+  -
+    - '7.089'
+  tolerance_pct: 10
+  note: 'SQL: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_erba WHERE status IN (''0308'',''0402'',''0407'',''0901'',''0914'',''0915'',''0917'',''0951''). DB 23Jul2026 = 7.089. KOMPOSISI (filter_code §2 — WAJIB kedua grup, jangan satu saja): sisi PETUGAS 0308 (Evaluator - Proses Data Tambahan) · 0402 & 0407 (Verifikator 1 - Proses Data Tambahan); sisi PENDAFTAR 0901/0914/0915/0917/0951 (Pendaftar - Perlu Data Tambahan). Memakai hanya salah satu sisi akan meng-undercount signifikan. ENTITY: "permohonan" → produk_id (predikat §1). TANPA filter status NIE (populasi belum terbit). Dictionary STATUS sumber=ERBA. SCOPE: ERBA only — ERLA hanya menyimpan status final. TRANSIENT: toleransi 10%. Nilai lama 7.371.'

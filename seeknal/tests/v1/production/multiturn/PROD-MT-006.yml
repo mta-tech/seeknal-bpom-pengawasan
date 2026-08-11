@@ -1,0 +1,24 @@
+name: nie_skala_dan_umkm
+scenario_id: "PROD-MT-006"
+description: "Breakdown skala industri lalu agregasi UMKM dan perbandingan non-UMKM"
+turns:
+  - prompt: "berapa jumlah NIE pangan olahan per skala industri di ERBA tahun 2024?"
+    assert_contains:
+      - "Besar"
+      - "Menengah"
+      - "Kecil"
+      - "Mikro"
+    note: "Baseline skala industri ERBA 2024"
+  - prompt: "yang termasuk UMKM berapa totalnya?"
+    assert_contains:
+      - "UMKM"
+    note: "Agregasi dari T1 — UMKM = Mikro + Kecil + Menengah"
+  - prompt: "skala mana yang paling banyak?"
+    assert_contains:
+      - "Besar"
+    note: "Ranking dari data T1 — Besar adalah terbanyak"
+  - prompt: "apakah UMKM lebih besar dari non-UMKM?"
+    assert_contains:
+      - "UMKM"
+      - "non-UMKM"
+    note: "Cross-turn reasoning — agent harus jelasin perbandingan"

@@ -1,0 +1,19 @@
+name: UAT_MEI_MR_1
+scenario_id: UAT-MEI-MR-1
+description: 'UAT-MEI-MR-1 — Scope-agnostic (ERBA/ERLA/UNION valid via assert_any_of). DB ref catatan (BUKAN standar kebenaran).'
+turns:
+- prompt: berapa jumlah NIE yang terbit pada bulan Mei untuk kategori risiko Menengah Rendah
+  assert_contains:
+  - 'Menengah Rendah'
+  - 'Mei'
+  assert_any_of:
+  -
+    - '10.556'
+  -
+    - '3.261'
+    - 'ERBA'
+  -
+    - '7.295'
+    - 'ERLA'
+  tolerance_pct: 5
+  note: 'UAT-MEI-MR-1 — Scope-agnostic. Nilai kanonik note asli. UAT-MEI-MR-1 — EXTRACT(MONTH)=5, semua tahun. ERBA 3.261 + ERLA 7.295 = 10.556.'

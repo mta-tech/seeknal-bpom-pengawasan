@@ -1,0 +1,19 @@
+name: UAT_JP_BARU_1
+scenario_id: UAT-JP-BARU-1
+verification_date: '2026-07-28'
+description: 'UAT-JP-BARU-1 — scope-agnostic. Prompt menyebut "disetujui" sehingga filter status NIE sah dipakai (beda dari pertanyaan "permohonan baru" murni yang tidak memfilter status).'
+turns:
+- prompt: berapa permohonan baru izin edar yang disetujui di tahun 2023?
+  assert_contains:
+  - '2023'
+  assert_any_of:
+  -
+    - '34.223'
+  -
+    - '33.519'
+    - 'ERBA'
+  -
+    - '704'
+    - 'ERLA'
+  tolerance_pct: 5
+  note: 'SQL ERBA: SELECT COUNT(DISTINCT nomor) FROM t_produk_3_erba WHERE jenis_permohonan=''301'' AND NULLIF(tanggal_bayar,'''')::timestamp>=''2023-01-01'' AND NULLIF(tanggal_bayar,'''')::timestamp<''2024-01-01'' AND status IN (''0999'',''0906'',''9999'') AND trader_id::bigint NOT IN (5,17,50,85) AND nomor<>''''. SQL ERLA: SELECT COUNT(DISTINCT nomor) FROM t_produk_3_rilis_erla WHERE jenis_permohonan=''301'' AND tanggal_bayar>=''2023-01-01'' AND tanggal_bayar<''2024-01-01'' AND status IN (''0099'',''0999'',''0906'',''9999'') AND trader_id<>3384 AND nomor<>''''. GABUNGAN: COUNT(DISTINCT nomor) atas UNION ALL kedua query. DB 28Jul2026: ERBA=33.519 · ERLA=704 · gabungan=34.223. KODE: dictionary JENIS_PERMOHONAN kode 301 = "Permohonan Baru", sama di kedua sistem. KENAPA FILTER STATUS DIPAKAI: prompt bilang "disetujui", bukan sekadar "permohonan baru diajukan" — populasinya harus permohonan yang berujung NIE terbit, sehingga status IN (status sah per sistem) tetap dipasang. Bila kata "disetujui" dihapus dari pertanyaan (mis. "berapa permohonan baru yang MASUK tahun 2023"), filter status dilepas dan entity berganti ke produk_id karena subjeknya jadi seluruh pengajuan terlepas hasilnya. KOLOM TANGGAL: tanggal_bayar (tanggal permohonan resmi tercatat, bukan tanggal_aju yang hanya submission awal, bukan pula tanggal yang merupakan tanggal terbit NIE). ENTITY: nomor — subjeknya NIE hasil dari permohonan baru yang disetujui. Pembanding produk_id: ERBA=34.709 · ERLA=1.079 — nilai lama (ERBA 29.888 mendekati snapshot lebih awal, ERLA 1.079 persis produk_id) mencampur satuan berbeda dan angkanya sudah tumbuh sejak snapshot itu. TAHUN 2023 SUDAH TERTUTUP: seluruh baris tanggal_bayar 2023 sudah final, jadi angka ini seharusnya stabil antar sesi kecuali ada koreksi data historis — toleransi 5% tetap dipasang untuk berjaga-jaga. Nilai lama 30.967/29.888/1.079 (tol 0).'

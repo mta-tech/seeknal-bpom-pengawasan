@@ -1,0 +1,18 @@
+name: UAT_JP_BARU_1
+scenario_id: UAT-JP-BARU-1
+description: 'UAT-JP-BARU-1 — Scope-agnostic (ERBA/ERLA/UNION valid via assert_any_of). DB ref catatan (BUKAN standar kebenaran).'
+turns:
+- prompt: berapa permohonan baru izin edar yang disetujui di tahun 2023?
+  assert_contains:
+  - '2023'
+  assert_any_of:
+  -
+    - '30.967'
+  -
+    - '29.888'
+    - 'ERBA'
+  -
+    - '1.079'
+    - 'ERLA'
+  tolerance_pct: 0
+  note: 'UAT-JP-BARU-1 — Scope-agnostic. ERBA=note kanonik 29.888; ERLA=live 1.079. SQL ERBA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_erba WHERE jenis_permohonan=''301'' AND tanggal_bayar::text LIKE ''2023%'' AND status IN (''0999'',''0906'',''9999''). SQL ERLA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_rilis_erla WHERE jenis_permohonan=''301'' AND tanggal_bayar::text LIKE ''2023%'' AND status IN (''0999'',''0906'',''9999''). UAT-JP-BARU-1 — jenis_permohonan=301 (Permohonan Baru) ERBA 2023 = 29.888. Dictionary: JENIS_PERMOHONAN kode 301.'

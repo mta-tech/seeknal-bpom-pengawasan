@@ -1,0 +1,10 @@
+name: UAT_NIE_FORECAST_2
+scenario_id: UAT-NIE-FORECAST-2
+description: 'UAT-NIE-FORECAST-2 — Prediksi permohonan Juni 2027. forecast_permohonan tidak ada data bulan real (DMY-FOR format).'
+turns:
+- prompt: Berapa prediksi jumlah permohonan bulan Juni 2027?
+  assert_contains:
+  - prediksi
+  - '2027'
+  - forecast
+  note: 'UAT-NIE-FORECAST-2 — forecast_permohonan tidak ada data bulan real (DMY-FOR format). System harus tetap menjawab dengan insight forecast.'

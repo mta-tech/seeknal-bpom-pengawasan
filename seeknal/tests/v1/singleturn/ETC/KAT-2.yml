@@ -1,0 +1,10 @@
+name: Kategori_Pangan_UMKM_2024
+scenario_id: KAT-2
+description: 'KAT-2 — Kategori pangan UMKM 2024. DB verified 2026-06-10: agent harus filter skala 1,2,3'
+turns:
+- prompt: Kategori pangan mana yang paling banyak diproduksi oleh industri UMKM tahun 2024?
+  assert_contains:
+  - UMKM
+  - kategori
+  - 2024
+  note: 'KAT-2 — DB aktual (t_produk_3_erba + m_trader_rba, skala_industri_id IN 1,2,3, tanggal 2024). Agent harus join + filter UMKM. Tolerance ±5%.'

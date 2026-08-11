@@ -1,0 +1,18 @@
+name: UAT_OFF_9
+scenario_id: UAT-OFF-9
+description: 'UAT-OFF-9 — Scope-agnostic. Nilai kanonik dari note asli (DB verified snapshot). DB ref catatan per 2026-07-14 (BUKAN standar kebenaran).'
+turns:
+- prompt: apakah ada izin edar formula bayi yang dibatalkan
+  assert_contains:
+  - 'Gasol'
+  assert_any_of:
+  -
+    - '10'
+  -
+    - '0'
+    - 'ERBA'
+  -
+    - '10'
+    - 'ERLA'
+  tolerance_pct: 5
+  note: 'UAT-OFF-9 — Scope-agnostic (ERBA/ERLA/UNION valid via assert_any_of). ERBA & ERLA = nilai kanonik note asli (agent output dari context, bukan re-query live karena live drift). Asal data Per-kode ERLA (jenis_pangan 622/604/624) status 0009/0000 = 10 record, SEMUANYA merk Gasol "Makanan Selingan" (misclassified, BUKAN formula bayi sebenarnya). ERBA=0. Lihat UAT-OFF-13 untuk klarifikasi/koreksi. SQL ERBA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_erba WHERE jenis_pangan IN (''1301'',''1302'') AND status IN (''0009'',''0000''). SQL ERLA: SELECT COUNT(DISTINCT produk_id) FROM t_produk_3_rilis_erla WHERE jenis_pangan IN (''622'',''604'',''624'') AND status IN (''0009'',''0000''). Tolerance sesuai field.'

@@ -1,0 +1,19 @@
+name: UAT_BTP_SERBUK_1
+scenario_id: UAT-BTP-SERBUK-1
+description: 'UAT-BTP-SERBUK-1 — Scope-agnostic (ERBA/ERLA/UNION valid via assert_any_of). DB ref catatan (BUKAN standar kebenaran).'
+turns:
+- prompt: ada berapa BTP dalam bentuk serbuk yang terdaftar di BPOM?
+  assert_contains:
+  - 'serbuk'
+  - 'BTP'
+  assert_any_of:
+  -
+    - '5.290'
+  -
+    - '1.796'
+    - 'ERBA'
+  -
+    - '3.494'
+    - 'ERLA'
+  tolerance_pct: 5
+  note: 'UAT-BTP-SERBUK-1 — Scope-agnostic. ERBA=note kanonik 1.796; ERLA=live 3.494. SQL ERBA: SELECT COUNT(DISTINCT produk_id) FROM t_btp_3_erba WHERE bentuk_sediaan=''102'' AND status IN (''0999'',''0906'',''9999''). SQL ERLA: SELECT COUNT(DISTINCT produk_id) FROM t_btp_3_erla WHERE bentuk_sediaan=''102'' AND status IN (''0999'',''0906'',''9999''). UAT-BTP-SERBUK-1 — t_btp_3_erba bentuk_sediaan=102 (Serbuk) status aktif = 1.796. Cair/Pasta(101)=2.274 lebih banyak. Dictionary: BENTUK_SEDIAAN kode 102.'

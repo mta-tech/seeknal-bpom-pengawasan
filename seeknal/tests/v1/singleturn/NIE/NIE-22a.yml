@@ -1,0 +1,11 @@
+name: Jumlah_NIE_AMDK_ERBA_2023
+scenario_id: NIE-22a
+description: 'NIE-22a — Expected: NIE AMDK ERBA 2023. DB verified 2026-06-09: 1.743'
+turns:
+- prompt: Berapa jumlah NIE produk AMDK di ERBA tahun 2023?
+  assert_contains:
+  - NIE
+  - AMDK
+  - ERBA
+  - 2023
+  note: 'NIE-22a — DB aktual 1.743 (t_produk_3_erba, jenis_pangan=1401, tanggal 2023). Tolerance ±5%.'
