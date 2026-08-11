@@ -19,11 +19,11 @@ agent:
   request_clarification:
     enabled: true
   forecast:
-    enabled: true
+    enabled: false
   anomaly:
-    enabled: true
+    enabled: false
   upload_to_s3:
-    enabled: true
+    enabled: false
   visualize_chart:
     enabled: true
     # Charts are part of how a data answer is presented, not an opt-in extra:

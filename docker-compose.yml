@@ -18,17 +18,6 @@ services:
         source: /home/cbnpom/seeknal-bpom-pengawasan
         target: /app/project
     command: ["--project", "/app/project", "--transport", "http", "--max-concurrency", "20"]
-  iba-engine:
-    container_name: iba-dev-engine
-    image: ${DOCKER_REGISTRY}:${IBA_ENGINE_VERSION:-26.7.0}
-    restart: unless-stopped
-    env_file: .env.worker
-    environment:
-      API_KEY: ${IBA_ENGINE_API_KEY:-}
-      LOCKED_MODEL: ${LOCKED_MODEL:-autoets}
-      LOG_LEVEL: ${LOG_LEVEL:-INFO}
-    ports:
-      - "6805:8000"
 networks:
   default:
     external: true
