@@ -1,9 +1,0 @@
-name: Produk_Ecolabel_2024
-scenario_id: EDGE-1
-description: 'EDGE-1 — Produk ecolabel 2024. DB verified 2026-06-10: 0 (tidak ada data)'
-turns:
-- prompt: Berapa banyak produk pangan olahan yang memiliki label ecolabel tahun 2024?
-  assert_contains:
-  - ecolabel
-  - 2024
-  note: 'EDGE-1 — DB aktual (t_produk_3_erba, ecolabel=1, tanggal 2024): 0. Tidak ada produk ecolabel di database. Agent harus jujur: tidak ada data.'

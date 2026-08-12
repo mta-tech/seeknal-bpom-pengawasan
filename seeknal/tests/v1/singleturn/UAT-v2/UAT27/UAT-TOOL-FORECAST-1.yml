@@ -1,8 +1,0 @@
-name: UAT_TOOL_FORECAST_1
-scenario_id: UAT-TOOL-FORECAST-1
-description: 'UAT-TOOL-FORECAST-1 — Forecast tool capture. Harus trigger run_forecast.'
-turns:
-- prompt: Berapa prediksi jumlah registrasi ERBA total untuk 3 bulan ke depan?
-  assert_contains:
-  - prediksi
-  note: 'UAT-TOOL-FORECAST-1 — Pertanyaan forecast. Agent harus build SQL 2 kolom dan panggil run_forecast. Tool yang diharapkan: run_forecast. Jika MAPE>25%, anomaly otomatis ter-attach.'

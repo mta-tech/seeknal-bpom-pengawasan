@@ -1,9 +1,0 @@
-name: UAT_Risiko_Tinggi_Notifikasi_AllTime
-scenario_id: UAT-RISIKO-TINGGI-NOTIF-1
-description: 'UAT-RISIKO-TINGGI-NOTIF-1 — [Domain 4: Kategori Risiko] NIE aktif Tinggi Notifikasi (kategori_dokumen=304). DB verified 2026-06-17: ERBA=3.500, ERLA=1.708. Total=5.208. Tren ERBA: 2024=519, 2025=1.891, 2026=1.531.'
-turns:
-- prompt: berapa jumlah NIE produk dengan kategori risiko tinggi notifikasi?
-  assert_contains:
-  - Tinggi Notifikasi
-  - '3.500'
-  note: 'UAT-RISIKO-TINGGI-NOTIF-1 — ERBA kategori_dokumen=304 aktif = 3.500. ERLA jenis_dokumen=304 = 1.708. Total = 5.208. Ini kategori terkecil dari 4 kategori risiko.'

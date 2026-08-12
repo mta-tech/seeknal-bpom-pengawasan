@@ -1,9 +1,0 @@
-name: UAT_OPS_DITOLAK_SISTEM_1
-scenario_id: UAT-OPS-DITOLAK-SISTEM-1
-description: 'UAT-OPS-DITOLAK-SISTEM-1 — single-scope (by-design).'
-turns:
-- prompt: berapa permohonan yang ditolak otomatis oleh sistem BPOM?
-  assert_contains:
-  - '12.278'
-  - 'ditolak'
-  note: 'UAT-OPS-DITOLAK-SISTEM-1 — 0908+0918+0911 (Ditolak Oleh System) = 12.278. Ini terbesar ke-4 dalam pipeline. Domain: Kualitas Proses.'

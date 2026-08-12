@@ -1,9 +1,0 @@
-name: UAT_Pipe_Verifikator2
-scenario_id: UAT-PIPE-VERIF2-1
-description: 'UAT-PIPE-VERIF2-1 — [Domain 2: Pipeline] Permohonan ERBA di tahap verifikator 2 (status 05xx). DB verified 2026-06-17: 159. Titik paling sedikit dalam pipeline = potential bottleneck.'
-turns:
-- prompt: berapa permohonan yang sedang di tahap verifikasi kedua?
-  assert_contains:
-  - '159'
-  - verifikasi
-  note: 'UAT-PIPE-VERIF2-1 — status 05xx (Verifikator 2) = 159. Verifikasi 1 = 1.695, Verifikasi 2 = 159. Jauh lebih sedikit — mungkin bottleneck.'

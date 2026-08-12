@@ -1,9 +1,0 @@
-name: Klaim_Kesehatan_2024
-scenario_id: KLAIM-1
-description: 'KLAIM-1 — Produk dengan klaim 2024. DB verified 2026-06-10: 2.492 (semua Risiko Tinggi)'
-turns:
-- prompt: Berapa banyak produk pangan olahan yang memiliki klaim kesehatan tahun 2024?
-  assert_contains:
-  - klaim
-  - 2024
-  note: 'KLAIM-1 — DB aktual (t_produk_3_erba, klaim=1, tanggal 2024): 2.492. Semua = Risiko Tinggi. Tolerance ±5%.'

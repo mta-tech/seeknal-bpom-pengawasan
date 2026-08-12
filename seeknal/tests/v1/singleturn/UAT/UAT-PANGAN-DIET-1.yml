@@ -1,9 +1,0 @@
-name: UAT_Pangan_Diet_NIE
-scenario_id: UAT-PANGAN-DIET-1
-description: 'UAT-PANGAN-DIET-1 — NIE ERBA pangan diet (klasifikasi_id=310). DB verified 2026-06-17: 35. Uji terjemahan kode KLASIFIKASI_ID ke "Pangan Diet".'
-turns:
-- prompt: ada berapa izin edar produk pangan diet di BPOM?
-  assert_contains:
-  - '35 produk'
-  - diet
-  note: 'UAT-PANGAN-DIET-1 — klasifikasi_id=310 (Pangan Diet) ERBA NIE aktif = 35. Pangan Diet lebih sedikit dari Berklaim (256).'

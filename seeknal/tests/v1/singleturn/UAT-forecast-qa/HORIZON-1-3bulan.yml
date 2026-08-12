@@ -1,8 +1,0 @@
-name: HORIZON_1_3Bulan_ERBA
-scenario_id: HORIZON-3M
-description: 'Matriks horizon #1/5 — 3 bulan ke depan, series ERBA total permohonan. DB-verified: 47/47 bulan terisi (Sep2022-Jul2026), nol gap. Anchor "sekarang" = Jun2026 (bulan lengkap terakhir).'
-turns:
-- prompt: Prediksi permohonan ERBA untuk 3 bulan ke depan
-  assert_contains:
-  - Proyeksi
-  note: 'Ekspektasi: periods=3, target Jul-Sep 2026. Cross-check konsistensi run-ke-run (angka harus identik jika dijalankan 2x dalam sesi terpisah dgn data sama).'

@@ -1,9 +1,0 @@
-name: 06_Tren jumlah izin edar pangan olahan per tahun
-scenario_id: CB-6
-description: 'CB-6 — Expected: Data tren tahunan lengkap'
-turns:
-- prompt: Tren jumlah izin edar pangan olahan per tahun
-  assert_contains:
-  - tren
-  - per tahun
-  note: 'CB-6 — Expected: Data tren tahunan lengkap'

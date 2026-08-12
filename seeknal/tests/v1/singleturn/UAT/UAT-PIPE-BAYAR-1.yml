@@ -1,9 +1,0 @@
-name: UAT_Pipe_Menunggu_Pembayaran
-scenario_id: UAT-PIPE-BAYAR-1
-description: 'UAT-PIPE-BAYAR-1 — [Domain 2: Pipeline] Permohonan ERBA yang menunggu pembayaran (status 0903+0907). DB verified 2026-06-17: 6.988. Uji kemampuan membedakan tahap dalam pipeline.'
-turns:
-- prompt: ada berapa permohonan yang sudah diproses tapi masih menunggu pembayaran?
-  assert_contains:
-  - '6.988'
-  - pembayaran
-  note: 'UAT-PIPE-BAYAR-1 — status 0903+0907 (Pendaftar - Pembayaran SPB/HPR) = 6.988. Ini yang sudah dapat tagihan tapi belum bayar. Domain: Pipeline Registrasi.'

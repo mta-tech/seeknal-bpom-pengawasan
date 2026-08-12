@@ -1,9 +1,0 @@
-name: 37_Skala usaha perusahaan dengan kategori produk olahan ikan
-scenario_id: CB-37
-description: 'CB-37 — Expected: Distribusi skala usaha olahan ikan'
-turns:
-- prompt: Skala usaha perusahaan dengan kategori produk olahan ikan
-  assert_contains:
-  - skala usaha
-  - olahan ikan
-  note: 'CB-37 — Expected: Distribusi skala usaha olahan ikan'

@@ -1,9 +1,0 @@
-name: UAT_Formula_Bayi_Total
-scenario_id: UAT-BAYI-1
-description: 'UAT-BAYI-1 — Total NIE formula bayi ERBA+ERLA semua status. DB verified 2026-06-17: ERBA 102 (jenis_pangan 1301+1302) + ERLA 814 (jenis_pangan 622+604+624) = 916'
-turns:
-- prompt: berapa jumlah produk formula bayi yang telah memiliki izin edar
-  assert_contains:
-  - formula bayi
-  - '916'
-  note: 'UAT-BAYI-1 — ERBA 102 + ERLA 814 = 916. Perhatian: ERLA pakai kode 622/604/624, berbeda dari ERBA 1301/1302. Resolve via nama_kategori probe.'

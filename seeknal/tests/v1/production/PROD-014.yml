@@ -1,8 +1,0 @@
-name: NIE_Masa_Berlaku_Habis
-scenario_id: PROD-014
-description: "PROD-014 — Berapa produk yang masa berlaku NIE-nya sudah habis"
-turns:
-- prompt: "Berapa produk yang masa berlaku NIE-nya sudah habis?"
-  assert_contains:
-  - "habis"
-  note: "PROD-014 — Expired NIE count, expects numeric result about expired licenses"

@@ -1,8 +1,0 @@
-name: HORIZON_2_6Bulan_ERBA
-scenario_id: HORIZON-6M
-description: 'Matriks horizon #2/5 — 6 bulan ke depan, series ERBA total permohonan.'
-turns:
-- prompt: Prediksi permohonan ERBA untuk 6 bulan ke depan
-  assert_contains:
-  - Proyeksi
-  note: 'Ekspektasi: periods=6, target Jul-Des 2026, 6 titik detail lengkap (bukan cuma ringkasan seperti bug C.6-H12).'

@@ -1,9 +1,0 @@
-name: UAT_ERLA_1
-scenario_id: UAT-ERLA-1
-description: 'UAT-ERLA-1 — single-scope (by-design).'
-turns:
-- prompt: Berapa total permohonan pangan olahan yang terdaftar di sistem ERLA untuk seluruh periode data?
-  assert_contains:
-  - 'ERLA'
-  - '400.'
-  note: 'UAT-ERLA-1 — COUNT DISTINCT produk_id t_produk_3_rilis_erla. DB 400.784.'

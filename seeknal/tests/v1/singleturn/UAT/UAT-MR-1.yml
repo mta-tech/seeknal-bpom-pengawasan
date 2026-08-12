@@ -1,9 +1,0 @@
-name: UAT_MR_NIE_Menengah_Rendah_AllTime
-scenario_id: UAT-MR-1
-description: 'UAT-MR-1 — NIE Menengah Rendah all-time ERBA+ERLA. DB verified 2026-06-17: ERBA 41.425 (kategori_dokumen=303) + ERLA 77.949 (jenis_dokumen=301 Pangan Low Risk) = 119.374'
-turns:
-- prompt: Berapa jumlah izin edar pangan olahan dengan risiko menengah rendah?
-  assert_contains:
-  - Menengah Rendah
-  - '119.'
-  note: 'UAT-MR-1 — ERBA kode 303=41.425; ERLA kode 301 (Low Risk, setara MR)=77.949. Total 119.374.'

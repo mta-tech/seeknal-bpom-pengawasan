@@ -1,8 +1,0 @@
-name: 41_Berapa jumlah permohonan
-scenario_id: NIE-3
-description: 'NIE-3 — Expected: Sistem menampilkan jumlah permohonan sesuai data'
-turns:
-- prompt: Berapa jumlah permohonan?
-  assert_contains:
-  - permohonan
-  note: 'NIE-3 — Expected: Sistem menampilkan jumlah permohonan sesuai data'

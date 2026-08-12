@@ -1,9 +1,0 @@
-name: Makloon_2024
-scenario_id: MAKLOON-1
-description: 'MAKLOON-1 — Produk makloon 2024. DB verified 2026-06-10: 637 (semua dari pabrik Indonesia)'
-turns:
-- prompt: Berapa banyak produk makloon (kontrak manufaktur) yang terbit izin edarnya tahun 2024?
-  assert_contains:
-  - makloon
-  - 2024
-  note: 'MAKLOON-1 — DB aktual (t_produk_3_erba, status_produk=304, tanggal 2024): 637. Semua dari pabrik Indonesia. Tolerance ±5%.'

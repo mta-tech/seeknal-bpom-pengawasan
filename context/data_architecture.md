@@ -2,7 +2,7 @@
 
 Domain: **Pengawasan Iklan BPOM** (bukan registrasi pangan — domain itu ada di `seeknal-bpom-neo`).
 Source: data disync dari sistem RPO (sumber asli), lalu dituangkan ke tabel-tabel di sini.
-**Snapshot terakhir**: `sync = 2026-08-10 22:53:15` (semua tabel disync serempak kecuali `last_updated` di agg).
+**Last audited snapshot**: `sync = 2026-08-10 22:53:15` (all main tables were synced together at that time). This is a reference snapshot, not permanent truth; live SQL wins.
 **Cakupan waktu data**: `tgl_start`/`tgl_end` 2023-01-01 → 2026-08-31.
 
 ## Naming lie: `mv_*` adalah tabel biasa, BUKAN materialized view
@@ -27,7 +27,7 @@ Konsekuensi:
 | `mv_pengawasan_agg` | Jan 2023 → Aug 2026 | **118.114 baris** | Pre-aggregated per `(periode_type, tanggal_periode, komoditi, nama_balai, media_iklan, jenis_pembuat_iklan, kesimpulan_*)`. Dua `periode_type`: `day` (70.736 rows), `month` (47.378 rows). |
 | `mv_pengawasan_ketidaksesuaian` | Jan 2023 → Aug 2026 | **9.068 baris** | Non-conformity per `id_pengawasan`. 7.257 distinct id. 6 klasifikasi tetap (lihat `filter_code_reference.md` §3). |
 | `coverage_balai` | master | **668 baris** | Balai → kabupaten/kota (many-to-many). 84 balai, banyak kabupaten per balai. |
-| `target_balai` | tahun 2024 saja | **532 baris** | Target tahunan per `(nama_balai, komoditi, tahun)`. 76 balai × 7 komoditi × 1 tahun. **Hanya 2024 — tidak ada target 2025/2026.** |
+| `target_balai` | tahun 2024 saja | **532 baris** | Target tahunan per `(nama_balai, komoditi, tahun)`. 76 balai × 7 komoditi × 1 tahun. **Hanya 2024 — tidak ada target 2025/2026.** Exact matching currently leaves 22 target balai names unmatched in the main table. |
 
 ## Identities & grain hierarchy (WAJIB tahu sebelum ngomong "jumlah")
 
@@ -55,16 +55,16 @@ Untuk angka yang verified per snapshot 2026-08-10, lihat `predikat.md` §1.
 
 ## Joins (semua logical — tidak ada FK di schema)
 
-- **`mv_pengawasan.id` ↔ `mv_pengawasan_log.id_pengawasan`** — banyak log per pengawasan (timeline status). **INNER JOIN akan drop 0 baris** karena log punya superset id (236.856 > 172.165). LEFT JOIN dari main aman; RIGHT/INNER dari log akan menampilkan id historis yang tidak ada di main.
-- **`mv_pengawasan.id` ↔ `mv_pengawasan_timeline.id_pengawasan`** — sama dengan log. Satu baris timeline per id (236.856 = jumlah id timeline, ini grain 1:1 dengan log distinct id).
+- **`mv_pengawasan.id` ↔ `mv_pengawasan_log.id_pengawasan`** — many log transitions per event. The log has 236,856 distinct ids; 64,691 are not present in main. Join from a deduplicated main/event CTE when the answer is main-population scoped. Join from log only when historical transitions are the subject.
+- **`mv_pengawasan.id` ↔ `mv_pengawasan_timeline.id_pengawasan`** — one timeline row per timeline id, but timeline also contains 64,691 ids absent from main. Filter to the main population when comparing with main counts.
 - **`mv_pengawasan.id` ↔ `mv_pengawasan_ketidaksesuaian.id_pengawasan`** — hanya 7.257 id yang punya ketidaksesuaian (3.6% dari total). **LEFT JOIN dari main**; INNER JOIN akan drop 96% data.
 - **`mv_pengawasan_agg`** — TIDAK ada id. Join via `(periode_type, tanggal_periode, komoditi, nama_balai, ...)`. Gunakan langsung tanpa join kalau bisa — angka di agg sudah pre-computed untuk Q "berapa pengawasan per bulan per komoditi".
 - **`coverage_balai.nama_balai`** ↔ `mv_pengawasan.nama_balai` — many-to-many (satu balai → banyak kabupaten). Jangan join kalau hanya butuh daftar balai (langsung `SELECT DISTINCT nama_balai FROM mv_pengawasan`).
-- **`target_balai.nama_balai`** ↔ `mv_pengawasan.nama_balai` — perlu cleansing nama balai (case-insensitive match direkomendasikan).
+- **`target_balai.nama_balai`** ↔ `mv_pengawasan.nama_balai` — exact match currently leaves 22 target names unmatched. Do not silently use fuzzy matching; report unmatched target rows or resolve an approved name mapping first.
 
 ## Workflow topology — pipeline kabalai → direktur → pusat
 
-Status transisi ada di `mv_pengawasan_log` (kronologis per `tanggal_proses`) dan dirangkum di `mv_pengawasan_timeline` (tanggal milestone + durasi).
+Status transitions are in `mv_pengawasan_log` (chronological by `tanggal_proses`) and summarized in `mv_pengawasan_timeline` (milestones + durations). The log uses `status_code`; the timeline uses `status`.
 
 ```
 [0] Operator - Draft Sampling
@@ -84,7 +84,7 @@ Mapping `status_code` → `status_label` lengkap ada di `filter_code_reference.m
 **Tiga kolom durasi di timeline (semua dalam HARI):**
 - `mulai_kabalai` — dari mulai sampai kirim ke kabalai (median **8 hari**, max 740)
 - `kabalai_direktur` — kabalai ke direktur (median **18 hari**, max 1.551 — ada outlier 4 tahun)
-- `direktur_pusat` — direktur ke pusat (median **0**, max 1 — kemungkinan jarang terisi atau auto-fill saat selesai)
+- `direktur_pusat` — direktur ke pusat (median **0**, max 1; 187,556 rows are zero and 8,613 have a null `tanggal_kirim_pusat`)
 
 **Trap durasi:** `direktur_pusat` yang 0 di mayoritas baris TIDAK berarti prosesnya cepat — bisa berarti **tanggal_kirim_pusat belum terisi**. Selalu cek `WHERE tanggal_kirim_pusat IS NOT NULL` sebelum hitung avg/median durasi pusat.
 
@@ -104,7 +104,7 @@ Sama seperti `0`/`9999`/`''` di neo — di sini:
 - `PT PHAROS INDONESIAPT PHAROS I` (string sama diconcat ke dirinya sendiri)
 - `PJ  GUNA SEHAT  CILACAPPJ  GUN`
 
- Ini artifact ETL dari RPO. **Jangan gunakan `COUNT(DISTINCT pendaftar)` langsung tanpa cleansing** — angka akan undercount akibat string corrupt. Lihat `predikat.md` §6 untuk cleansing rule.
+ Ini artifact ETL dari RPO. Raw duplicated strings make `COUNT(DISTINCT pendaftar)` a poor company metric: it can over-count real companies split into corrupt variants. Treat it as a raw diagnostic only unless an approved normalization mapping is applied.
 
 ## Finding a dimension this file does not list
 

@@ -1,9 +1,0 @@
-name: 60_Tampilkan tren AMDK
-scenario_id: NIE-22
-description: NIE-22
-turns:
-- prompt: Tampilkan tren AMDK
-  assert_contains:
-  - AMDK
-  - tren
-  note: NIE-22

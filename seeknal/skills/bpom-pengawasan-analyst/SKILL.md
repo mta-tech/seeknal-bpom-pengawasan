@@ -7,14 +7,14 @@ version: "1.0.0"
 
 # BPOM Pengawasan Analyst — gated executor
 
-Follow `SEEKNAL_PENGAWASAN.md` Gates 1–5 literally. Skill ini menambahkan enforcement detail.
+Follow `SEEKNAL_ASK.md` Gates 0–5 literally. Skill ini menambahkan enforcement detail.
 
 ## Budget ledger (per turn)
 
-- Dictionary/probe lookups: max 2 — untuk discover free text (`nama_produk`, `pendaftar`) atau cek distinct value yang tidak ada di `filter_code_reference.md`.
-- Discovery/verification SQL: max 2.
+- Discovery/probe lookups: max 2 — untuk free text (`nama_produk`, `pendaftar`) atau dimensi yang belum ada di context.
+- These are the same two discovery/verification slots, not an additional budget.
 - Final SQL: 1. Corrected retry: 1.
-- **TOTAL SQL ceiling per turn: 6.** Mencapai ceiling tanpa angka defensible = STOP dan laporkan jujur (apa yang resolved, apa yang gagal, keputusan mana yang hilang).
+- **TOTAL evidence SQL ceiling per turn: 4**: two discovery/verification, one final, and one corrected retry. Mencapai ceiling tanpa angka defensible = STOP dan laporkan jujur.
 
 ## Stop rules (override urge to keep querying)
 
@@ -24,6 +24,7 @@ Follow `SEEKNAL_PENGAWASAN.md` Gates 1–5 literally. Skill ini menambahkan enfo
 - Free-text search (`nama_produk`, `pendaftar`): pakai exact value kalau ada di `filter_code_reference.md`; baru ILIKE untuk discover, lalu exact filter. Maks 2 probe (ikut budget).
 - `pendaftar` PUNYA CORRUPT-STRING TRAP — baca `predikat.md` §6 sebelum `COUNT(DISTINCT pendaftar)`.
 - Clarification lewat `request_clarification`/`ask_user` SAJA — pertanyaan klarifikasi sebagai plain text tidak pernah dijawab dan membunuh turn.
+- "Pengawasan" tanpa grain is ambiguous: ask whether the user means rows/products, distinct events, or letters. Do not silently use a default.
 - Question tentang **target** (bukan realisasi) → load `bpom-pengawasan-target` skill, bukan ini.
 - Question tentang **durasi/SLA pipeline** (kabalai→direktur→pusat) → load `bpom-pengawasan-timeline` skill.
 
@@ -40,7 +41,7 @@ Setiap item pernah salah di real case:
   - sentinel `nie='--'` untuk count NIE unik
   - sentinel `nomor_surat IN ('','-')` untuk count surat
   - `tgl_start IS NOT NULL` untuk time-series GROUP BY
-  - corrupt-string trap `pendaftar` sebelum `COUNT(DISTINCT)`
+  - `pendaftar` raw distinct is diagnostic only; do not present it as a cleansed company count
 - **Final SQL touch tabel yang sesuai scope.** Side yang sengaja dikecualikan → sebutkan. Side yang accidentally ketinggalan → undercount terbesar yang available.
 - **Kode → label.** `MK` → "Memenuhi Keputusan". `TMK MAYOR` → "Tidak Memenuhi Keputusan, severity Mayor". Sekali per angka.
 - **Partial-year disclosure.** Data 2026 hanya sampai Agustus. Jangan tampilkan "2026: 12.345" tanpa label "(YTD Agustus)".
@@ -73,6 +74,25 @@ SELECT komoditi,
        COUNT(*) FILTER (WHERE kesimpulan_penilaian_akhir IS NULL) AS belum_dinilai
 FROM mv_pengawasan GROUP BY 1 ORDER BY mk+tmk DESC;
 ```
+
+This exact-value pivot is only for `MK` and exact `TMK`. For the TMK family use the closure set from `filter_code_reference.md`; do not silently mix exact and family counts.
+
+### Latest workflow status per event
+```sql
+WITH latest AS (
+  SELECT DISTINCT ON (id_pengawasan)
+         id_pengawasan, status_code, status_label, tanggal_proses
+  FROM mv_pengawasan_log
+  ORDER BY id_pengawasan, tanggal_proses DESC NULLS LAST
+)
+SELECT l.status_code, l.status_label, COUNT(*) AS event_unik
+FROM latest l
+JOIN (SELECT DISTINCT id FROM mv_pengawasan) p
+  ON p.id = l.id_pengawasan
+GROUP BY 1, 2 ORDER BY 1;
+```
+
+Use `COUNT(*)` on the deduplicated `latest` CTE for current event status. Use the raw log only when the question explicitly asks for transitions or log records.
 
 ### Detail dengan filter balai + komoditi + range tanggal
 ```sql

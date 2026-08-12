@@ -1,8 +1,0 @@
-name: QA_C6_Horizon_3Bulan
-scenario_id: QA-C6-H3
-description: 'Peta QA C.6 (horizon parameter ditangani benar, P1, status QA: FAILED — "hasil ramalan 3 bulan sesuai, 12 bulan tidak ada detail"). Bagian A: horizon 3 bulan (baseline yang sudah pernah lolos di QA asli).'
-turns:
-- prompt: Ramalkan 3 bulan ke depan untuk permohonan ERBA
-  assert_contains:
-  - Proyeksi
-  note: 'Cek tool_trace: run_forecast periods=3. Jawaban harus memuat TEPAT 3 titik proyeksi dengan detail lengkap (bukan cuma angka tunggal). Bandingkan dengan QA-C6-H12 — dua kasus ini pasangan untuk cek konsistensi penyampaian detail antar horizon berbeda.'

@@ -1,9 +1,0 @@
-name: 59_Apakah sistem menampilkan SQL transparency
-scenario_id: NIE-21
-description: NIE-21
-turns:
-- prompt: Apakah sistem menampilkan SQL transparency?
-  assert_contains:
-  - SQL
-  - transparency
-  note: NIE-21

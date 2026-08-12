@@ -1,9 +1,0 @@
-name: UAT_TOTAL_1
-scenario_id: UAT-TOTAL-1
-description: 'UAT-TOTAL-1 — single-scope (by-design).'
-turns:
-- prompt: Berapa produk pangan olahan terdaftar di BPOM saat ini
-  assert_contains:
-  - '312.'
-  - 'pangan olahan'
-  note: 'UAT-TOTAL-1 — data hidup. 312.337 per 17 Jun 2026. Tolerance ±5%. ERBA status IN (0999,0906,9999) + ERLA +0099.'

@@ -1,9 +1,0 @@
-name: UAT_PIPE_VERIF2_1
-scenario_id: UAT-PIPE-VERIF2-1
-description: 'UAT-PIPE-VERIF2-1 — single-scope (by-design).'
-turns:
-- prompt: berapa permohonan yang sedang di tahap verifikasi kedua?
-  assert_contains:
-  - '159'
-  - 'verifikasi'
-  note: 'UAT-PIPE-VERIF2-1 — status 05xx (Verifikator 2) = 159. Verifikasi 1 = 1.695, Verifikasi 2 = 159. Jauh lebih sedikit — mungkin bottleneck.'

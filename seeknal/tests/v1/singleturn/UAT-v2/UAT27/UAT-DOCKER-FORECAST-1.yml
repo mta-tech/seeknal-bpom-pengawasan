@@ -1,8 +1,0 @@
-name: UAT_DOCKER_FORECAST_1
-scenario_id: UAT-DOCKER-FORECAST-1
-description: 'UAT-DOCKER-FORECAST-1 — Test forecast tool via Docker. Harus trigger run_forecast dan cek Docker logs.'
-turns:
-- prompt: Berapa prediksi jumlah registrasi ERBA total untuk 3 bulan ke depan? Gunakan run_forecast.
-  assert_contains:
-  - prediksi
-  note: 'UAT-DOCKER-FORECAST-1 — Harus trigger: run_forecast. Cek Docker logs iba-forecast untuk POST /forecast.'

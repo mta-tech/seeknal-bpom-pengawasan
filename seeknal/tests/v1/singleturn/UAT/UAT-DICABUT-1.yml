@@ -1,9 +1,0 @@
-name: UAT_NIE_Dicabut_Dibatalkan
-scenario_id: UAT-DICABUT-1
-description: 'UAT-DICABUT-1 — NIE ERBA yang statusnya dicabut/dibatalkan (status 0009). DB verified 2026-06-17: 5.237. Uji terjemahan status 0009 ke label "Dicabut/Dibatalkan".'
-turns:
-- prompt: berapa izin edar yang sudah dicabut atau dibatalkan BPOM?
-  assert_contains:
-  - '5.237'
-  - dicabut
-  note: 'UAT-DICABUT-1 — status=0009 (Dicabut/Dibatalkan) ERBA = 5.237. Berbeda dari Dihapus (0000=246). Dictionary: STATUS kode 0009.'

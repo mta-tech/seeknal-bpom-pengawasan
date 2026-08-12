@@ -1,9 +1,0 @@
-name: UAT_PIPE_DRAFT_TOTAL_1
-scenario_id: UAT-PIPE-DRAFT-TOTAL-1
-description: 'UAT-PIPE-DRAFT-TOTAL-1 — single-scope (by-design).'
-turns:
-- prompt: total permohonan yang masih nyangkut di tahap draft berapa?
-  assert_contains:
-  - '24.959'
-  - 'draft'
-  note: 'UAT-PIPE-DRAFT-TOTAL-1 — 0910 (Draft baru) = 4.939 + 0912 (Draft belum bayar) = 20.020 = total 24.959. Ini 43% dari semua yang dalam proses.'

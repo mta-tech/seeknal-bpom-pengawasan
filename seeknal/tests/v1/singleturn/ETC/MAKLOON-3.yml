@@ -1,9 +1,0 @@
-name: Makloon_All_Time
-scenario_id: MAKLOON-3
-description: 'MAKLOON-3 — Makloon all-time. DB verified 2026-06-10: total all-time'
-turns:
-- prompt: Berapa total produk makloon sepanjang masa dan distribusi risikonya?
-  assert_contains:
-  - makloon
-  - risiko
-  note: 'MAKLOON-3 — DB aktual (t_produk_3_erba, status_produk=304, all-time). Agent harus hitung total + breakdown risiko. Tolerance ±5%.'

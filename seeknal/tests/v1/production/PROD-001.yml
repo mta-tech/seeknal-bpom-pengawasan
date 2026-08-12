@@ -1,9 +1,0 @@
-name: Total_NIE_ERBA_2024
-scenario_id: PROD-001
-description: "PROD-001 — Berapa total NIE pangan olahan di sistem ERBA tahun 2024"
-turns:
-- prompt: "Berapa total NIE pangan olahan di sistem ERBA tahun 2024?"
-  assert_contains:
-  - "ERBA"
-  - "2024"
-  note: "PROD-001 — Query NIE count ERBA 2024, expects numeric result with ERBA and 2024 context"

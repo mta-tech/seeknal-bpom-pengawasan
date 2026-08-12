@@ -1,9 +1,0 @@
-name: FC_ERBA_TigaBulan_Berturut
-scenario_id: FC-ERBA-4
-description: 'Forecast natural — permintaan bertingkat dalam satu kalimat (bulan depan, 2 bulan ke depan, 3 bulan ke depan sekaligus). Menguji sistem tidak bingung/menjawab hanya salah satu titik.'
-turns:
-- prompt: Prediksi permohonan ERBA untuk bulan depan, 2 bulan ke depan, dan 3 bulan ke depan
-  assert_contains:
-  - Agustus
-  - September
-  note: 'Tiga titik diminta eksplisit: Agustus, September, Oktober 2026 (dari Jun2026). Assert dua bulan tengah/akhir (Agustus, September) memverifikasi ketiganya benar-benar dijawab satu per satu, bukan diringkas jadi satu rentang generik "3 bulan ke depan".'

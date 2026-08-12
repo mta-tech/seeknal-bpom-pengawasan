@@ -1,9 +1,0 @@
-name: FC_ERBA_SemesterDepan
-scenario_id: FC-ERBA-3
-description: 'Forecast natural — frasa "semester depan" (6 bulan). Series: permohonan ERBA total.'
-turns:
-- prompt: Berapa proyeksi permohonan ERBA untuk semester depan?
-  assert_contains:
-  - Juli
-  - Desember
-  note: 'Semester depan dari Jun2026 = Jul-Des 2026 (H2), periods=6. Assert bulan AWAL (Juli) dan AKHIR (Desember) jendela — memastikan seluruh 6 titik tercakup, bukan cuma sebagian. DB Jun2026 permohonan=4.691 (baseline histori).'

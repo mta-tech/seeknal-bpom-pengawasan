@@ -1,9 +1,0 @@
-name: UAT_DQ_BELUM_KLASIFIKASI_1
-scenario_id: UAT-DQ-BELUM-KLASIFIKASI-1
-description: 'UAT-DQ-BELUM-KLASIFIKASI-1 — single-scope (by-design).'
-turns:
-- prompt: apakah ada produk pangan olahan yang belum dikategorikan jenis pangannya di sistem ERBA?
-  assert_contains:
-  - 'tidak ada'
-  - 'klasifikasi'
-  note: 'UAT-DQ-BELUM-KLASIFIKASI-1 — jenis_pangan NULL untuk produk ERBA aktif = 0. Semua produk aktif sudah punya klasifikasi. Domain: Data Quality.'

@@ -1,9 +1,0 @@
-name: 18_3 daerah dengan proporsi pabrik produk risiko tinggi terbesar
-scenario_id: CB-18
-description: 'CB-18 — Expected: 3 daerah + nilai proporsi'
-turns:
-- prompt: 3 daerah dengan proporsi pabrik produk risiko tinggi terbesar
-  assert_contains:
-  - daerah
-  - risiko tinggi
-  note: 'CB-18 — Expected: 3 daerah + nilai proporsi'

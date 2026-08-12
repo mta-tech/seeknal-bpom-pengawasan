@@ -1,8 +1,0 @@
-name: AMDK_Terdaftar
-scenario_id: PROD-018
-description: "PROD-018 — Produk air minum dalam kemasan yang terdaftar"
-turns:
-- prompt: "Berapa produk air minum dalam kemasan yang sudah terdaftar di BPOM?"
-  assert_contains:
-  - "air minum"
-  note: "PROD-018 — AMDK product count, expects numeric result about registered products"

@@ -1,9 +1,0 @@
-name: Region_Company_Kotakab
-scenario_id: CAP-3
-description: "New capability: 'daerah mana paling banyak NIE' harus pakai kotakab_id dari m_trader (100% coverage). DB verified 2026-06-12: JakTim=17.283, JakPus=10.665, ..."
-turns:
-- prompt: 5 daerah dengan jumlah izin edar terbanyak
-  assert_contains:
-  - Jakarta
-  - Tangerang
-  note: 'CAP-3 — Harus pakai m_trader_rba.kotakab_id (100% coverage), bukan daerah_pabrik (37%). Top: Jakarta Timur, Jakarta Pusat, Jakarta Selatan.'

@@ -1,9 +1,0 @@
-name: UAT_Single_MD_Induk
-scenario_id: UAT-SINGLE-MD-1
-description: 'UAT-SINGLE-MD-1 — NIE ERBA aktif dengan status produk Single MD Induk (status_produk=306). DB verified 2026-06-17: 5.658. Uji terjemahan kode STATUS_PRODUK 306 ke label "Single MD Induk".'
-turns:
-- prompt: berapa produk yang terdaftar sebagai Single MD Induk di BPOM?
-  assert_contains:
-  - '5.658'
-  - Single MD
-  note: 'UAT-SINGLE-MD-1 — status_produk=306 (Single MD Induk) ERBA NIE aktif = 5.658. Single MD Anak (307)=2.019. Dictionary: STATUS_PRODUK kode 306.'

@@ -1,9 +1,0 @@
-name: UAT_PIPE_BAYAR_1
-scenario_id: UAT-PIPE-BAYAR-1
-description: 'UAT-PIPE-BAYAR-1 — single-scope (by-design).'
-turns:
-- prompt: ada berapa permohonan yang sudah diproses tapi masih menunggu pembayaran?
-  assert_contains:
-  - '6.988'
-  - 'pembayaran'
-  note: 'UAT-PIPE-BAYAR-1 — status 0903+0907 (Pendaftar - Pembayaran SPB/HPR) = 6.988. Ini yang sudah dapat tagihan tapi belum bayar. Domain: Pipeline Registrasi.'

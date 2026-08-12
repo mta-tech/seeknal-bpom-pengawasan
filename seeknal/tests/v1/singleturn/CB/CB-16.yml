@@ -1,9 +1,0 @@
-name: 16_Tren produk Garam Beryodium pada tahun tertentu
-scenario_id: CB-16
-description: 'CB-16 — Expected: Tren Garam Beryodium'
-turns:
-- prompt: Tren produk Garam Beryodium pada tahun tertentu
-  assert_contains:
-  - Garam Beryodium
-  - tren
-  note: 'CB-16 — Expected: Tren Garam Beryodium'

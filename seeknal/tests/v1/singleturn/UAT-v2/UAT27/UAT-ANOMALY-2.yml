@@ -1,8 +1,0 @@
-name: UAT_ANOMALY_2
-scenario_id: UAT-ANOMALY-2
-description: 'UAT-ANOMALY-2 — Test anomaly tool via Docker. Harus trigger detect_anomaly dan cek Docker logs iba-forecast untuk POST /anomaly.'
-turns:
-- prompt: Apakah ada anomali pada data registrasi ERBA dari tahun 2022? Gunakan detect_anomaly.
-  assert_contains:
-  - anomali
-  note: 'UAT-ANOMALY-2 — Harus trigger: detect_anomaly. Cek Docker logs iba-forecast untuk POST /anomaly.'

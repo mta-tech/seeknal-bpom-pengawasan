@@ -25,7 +25,7 @@ WHERE komoditi = 'OBAT KUASI'           --  2.831
 - "pangan" bisa = `PRODUK PANGAN` saja
 - "rokok" = `ROKOK` (tidak ada ambiguitas)
 
-## §2 — `status_code` ↔ `status_label` (di `mv_pengawasan_log` dan `mv_pengawasan_timeline`)
+## §2 — `status_code` ↔ `status_label` (di `mv_pengawasan_log`; timeline uses `status`)
 
 ```sql
 -- Final state saja (sudah selesai):
@@ -156,7 +156,7 @@ SELECT nama_balai, COUNT(*) FROM mv_pengawasan GROUP BY 1 ORDER BY 2 DESC;
 
 **Case-sensitive**. Nama resmi uppercase: `BALAI BESAR POM DI BANDUNG`, `BALAI POM DI PALOPO`. Jangan `ILIKE '%bandung%'` untuk aggregate (akan menyamakan balai yang berbeda); discover dulu lalu exact.
 
-**Trap**: 76 balai di `target_balai` vs 84 di main — 8 balai main tidak punya target 2024. Cross-join balai-by-balai harus di-LEFT JOIN dari main.
+**Trap**: 76 distinct target balai names vs 84 main names is not the row-level coverage result. Exact matching currently leaves 22 target names (154 target rows) unmatched. Cross-table achievement requires an approved name mapping or explicit exclusion.
 
 ## §8 — Pivot SQL templates
 
@@ -169,7 +169,7 @@ WHERE tgl_start IS NOT NULL
 GROUP BY 1, 2 ORDER BY 1, 3 DESC;
 ```
 
-### 8b. Verdict akhir per balai (closure set)
+### 8b. Verdict akhir per balai (exact values)
 ```sql
 SELECT nama_balai,
        COUNT(*) FILTER (WHERE kesimpulan_penilaian_akhir='MK') AS mk,
@@ -179,7 +179,47 @@ FROM mv_pengawasan
 GROUP BY 1 ORDER BY mk+tmk DESC;
 ```
 
-### 8c. Top 10 pelanggaran by klasifikasi (closure)
+The query above counts exact `MK` and exact `TMK` only. For a TMK family, use the correct column-specific closure:
+
+```sql
+-- Pusat: all non-compliant severities
+COUNT(*) FILTER (WHERE kesimpulan_penilaian_pusat IN
+  ('TMK','TMK KRITIKAL','TMK MAYOR','TMK MINOR')) AS tmk_family_pusat
+
+-- Balai: center has no KRITIKAL value
+COUNT(*) FILTER (WHERE kesimpulan_penilaian_balai IN
+  ('TMK','TMK MAYOR','TMK MINOR')) AS tmk_family_balai
+```
+
+Exact `TMK` and `TMK family` are different answers and must have different labels.
+
+### 8c. Latest workflow status per main event
+```sql
+WITH latest AS (
+  SELECT DISTINCT ON (id_pengawasan)
+         id_pengawasan, status_code, status_label, tanggal_proses
+  FROM mv_pengawasan_log
+  ORDER BY id_pengawasan, tanggal_proses DESC NULLS LAST
+)
+SELECT l.status_code, l.status_label, COUNT(*) AS event_unik
+FROM latest l
+JOIN (SELECT DISTINCT id FROM mv_pengawasan) p
+  ON p.id = l.id_pengawasan
+GROUP BY 1, 2 ORDER BY 1;
+```
+
+This is the current-status contract. A raw log count answers transitions, not current events.
+
+### 8d. Timeline status distribution
+```sql
+SELECT status, COUNT(*) AS timeline_rows
+FROM mv_pengawasan_timeline
+GROUP BY 1 ORDER BY 1;
+```
+
+The timeline column is `status`; the log column is `status_code`. Timeline rows include historical ids absent from the main table, so state the population.
+
+### 8e. Top 10 pelanggaran by klasifikasi (closure)
 ```sql
 SELECT k.id_klasifikasi, MIN(k.keterangan_ketidaksesuaian) AS klasifikasi, COUNT(*) AS cnt,
        COUNT(DISTINCT k.id_pengawasan) AS event_unik
@@ -187,13 +227,13 @@ FROM mv_pengawasan_ketidaksesuaian k
 GROUP BY 1 ORDER BY cnt DESC LIMIT 10;
 ```
 
-### 8d. Realisasi vs target (HANYA tahun 2024)
+### 8f. Realisasi vs target (HANYA tahun 2024)
 ```sql
 SELECT t.nama_balai, t.komoditi, t.target_pengawasan,
        COUNT(DISTINCT p.id) FILTER (WHERE EXTRACT(YEAR FROM p.tgl_start)=2024) AS realisasi_2024
 FROM target_balai t
 LEFT JOIN mv_pengawasan p
-  ON p.nama_balai = t.nama_balai AND p.komoditi = t.komoditi
+   ON p.nama_balai = t.nama_balai AND UPPER(p.komoditi) = UPPER(t.komoditi)
 WHERE t.tahun = 2024
 GROUP BY 1, 2, 3 ORDER BY t.target_pengawasan DESC NULLS LAST;
 ```

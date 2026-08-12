@@ -1,9 +1,0 @@
-name: UAT_MT_1
-scenario_id: UAT-MT-1
-description: 'UAT-MT-1 — single-scope (by-design).'
-turns:
-- prompt: Berapa jumlah izin edar produk pangan dengan risiko menengah tinggi?
-  assert_contains:
-  - 'Menengah Tinggi'
-  - '11.919'
-  note: 'UAT-MT-1 — ERBA only 11.919. ERLA tidak dapat isolasi MT (ERLA jenis_dokumen 303=semua Pangan Medium Risk). RC-1 fix: sumber-aware dictionary lookup.'

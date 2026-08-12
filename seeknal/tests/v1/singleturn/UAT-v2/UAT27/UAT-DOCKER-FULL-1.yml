@@ -1,8 +1,0 @@
-name: UAT_DOCKER_FULL_1
-scenario_id: UAT-DOCKER-FULL-1
-description: 'UAT-DOCKER-FULL-1 — Test full flow: deskriptif, analitik, forecast, anomaly, s3.'
-turns:
-- prompt: Berapa jumlah registrasi ERBA per bulan dari Januari 2025 sampai Juni 2026? Tampilkan dalam tabel dan apakah ada anomali?
-  assert_contains:
-  - registrasi
-  note: 'UAT-DOCKER-FULL-1 — Harus trigger: execute_sql (analitik) + mungkin detect_anomaly. Cek semua tool calls.'

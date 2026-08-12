@@ -1,9 +1,0 @@
-name: 56_Berapa NIE UMKM tahun 2023
-scenario_id: NIE-18
-description: NIE-18
-turns:
-- prompt: Berapa NIE UMKM tahun 2023?
-  assert_contains:
-  - UMKM
-  - '2023'
-  note: NIE-18

@@ -1,9 +1,0 @@
-name: UAT_LC_NIE_Sudah_Diubah
-scenario_id: UAT-LC-DIUBAH-1
-description: 'UAT-LC-DIUBAH-1 — [Domain 1: Lifecycle] NIE ERBA dengan status 9999 (Sudah Diubah) = versi lama yang digantikan versi baru. DB verified 2026-06-17: 8.931. Ini bukan dicabut, tapi nomor NIE lama yang punya versi terbaru.'
-turns:
-- prompt: berapa izin edar yang sudah diperbarui dengan nomor baru di BPOM?
-  assert_contains:
-  - '8.931'
-  - diubah
-  note: 'UAT-LC-DIUBAH-1 — status 9999 (Sudah Diubah) ERBA = 8.931. NIE ini masih tercatat tapi sudah diganti versi baru. Domain: Lifecycle Data Quality.'

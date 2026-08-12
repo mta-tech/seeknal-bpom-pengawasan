@@ -1,9 +1,0 @@
-name: UAT_Produk_Belum_Dikategorikan
-scenario_id: UAT-BELUM-KATEGORI-1
-description: 'UAT-BELUM-KATEGORI-1 — Produk ERBA dengan jenis_dokumen=000 (Belum Dikategorikan). DB verified 2026-06-17: 28.667. Data quality monitoring: produk tanpa kategori risiko.'
-turns:
-- prompt: berapa produk yang belum punya kategori risiko di BPOM?
-  assert_contains:
-  - '28.667'
-  - belum
-  note: 'UAT-BELUM-KATEGORI-1 — jenis_dokumen=000 (Belum Dikategorikan) ERBA = 28.667. Ini bisa produk legacy atau proses yang belum selesai dikategorikan.'

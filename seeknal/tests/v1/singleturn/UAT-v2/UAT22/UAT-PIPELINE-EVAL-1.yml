@@ -1,9 +1,0 @@
-name: UAT_PIPELINE_EVAL_1
-scenario_id: UAT-PIPELINE-EVAL-1
-description: 'UAT-PIPELINE-EVAL-1 — single-scope (by-design).'
-turns:
-- prompt: berapa produk yang sedang diproses oleh evaluator BPOM saat ini?
-  assert_contains:
-  - '5.469'
-  - 'evaluasi'
-  note: 'UAT-PIPELINE-EVAL-1 — status 03xx (Evaluator - Proses Penilaian, Data Tambahan, dll) = 5.469. Penting: bukan NIE aktif, ini yang masih dalam antrian.'

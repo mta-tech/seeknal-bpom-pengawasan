@@ -1,9 +1,0 @@
-name: 34_Produk Risiko Menengah Rendah yang paling banyak dibatalkan
-scenario_id: CB-34
-description: 'CB-34 — Expected: Daftar terurut pembatalan'
-turns:
-- prompt: Produk Risiko Menengah Rendah yang paling banyak dibatalkan
-  assert_contains:
-  - Risiko Menengah Rendah
-  - dibatalkan
-  note: 'CB-34 — Expected: Daftar terurut pembatalan'

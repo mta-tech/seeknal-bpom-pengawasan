@@ -1,9 +1,0 @@
-name: 03_Berapa izin edar produk pangan olahan risiko tinggi
-scenario_id: CB-3
-description: 'CB-3 — NIE Tinggi all-time UNION ERBA+ERLA. DB verified 2026-06-03: 102.955'
-turns:
-- prompt: Berapa izin edar produk pangan olahan risiko tinggi?
-  assert_contains:
-  - Risiko Tinggi
-  - '102'
-  note: 'CB-3 — DB aktual 102.955 (ERBA kategori_dokumen=301/304 + ERLA jenis_dokumen=302, COUNT DISTINCT global). Oracle lama 81.380 = ERBA-only scope. Agent orig 102.931 = hampir exact match.'

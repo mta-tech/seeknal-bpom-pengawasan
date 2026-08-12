@@ -1,8 +1,0 @@
-name: NIE_Tahun_2027
-scenario_id: EDGE-4
-description: 'EDGE-4 — NIE tahun 2027 (belum ada data). Agent harus jujur.'
-turns:
-- prompt: Berapa total NIE pangan olahan yang terbit tahun 2027?
-  assert_contains:
-  - 2027
-  note: 'EDGE-4 — Data terakhir 2026. Tahun 2027 belum ada. Agent harus jawab 0 atau tidak ada data, jangan fabricate.'

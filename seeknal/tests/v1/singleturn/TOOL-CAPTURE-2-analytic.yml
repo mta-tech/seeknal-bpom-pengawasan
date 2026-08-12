@@ -1,9 +1,0 @@
-name: tool_capture_analytic
-scenario_id: "TOOL-CAPTURE-2"
-description: "Tabel analitik — harus trigger execute_sql dengan agregasi"
-turns:
-  - prompt: "Berapa jumlah registrasi ERBA per bulan dari Januari 2025 sampai Juni 2026? Tampilkan dalam tabel."
-    assert_contains:
-      - "2025"
-      - "2026"
-    note: "Pertanyaan analitik — agent harus build SQL dengan GROUP BY dan tampilkan tabel. Tool yang diharapkan: execute_sql. Tidak ada forecast/anomaly."

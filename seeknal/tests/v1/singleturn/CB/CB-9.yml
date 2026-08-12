@@ -1,8 +1,0 @@
-name: 09_Jumlah produk berdasarkan nama produk dan daerah pabrik
-scenario_id: CB-9
-description: 'CB-9 — Expected: Data terfilter akurat'
-turns:
-- prompt: Jumlah produk berdasarkan nama produk dan daerah pabrik
-  assert_contains:
-  - daerah pabrik
-  note: 'CB-9 — Expected: Data terfilter akurat'

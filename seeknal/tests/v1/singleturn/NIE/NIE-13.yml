@@ -1,8 +1,0 @@
-name: 51_Apa itu NIE MT
-scenario_id: NIE-13
-description: 'NIE-13 — Expected: Sistem menampilkan definisi/data NIE MT'
-turns:
-- prompt: Apa itu NIE MT?
-  assert_contains:
-  - NIE MT
-  note: 'NIE-13 — Expected: Sistem menampilkan definisi/data NIE MT'

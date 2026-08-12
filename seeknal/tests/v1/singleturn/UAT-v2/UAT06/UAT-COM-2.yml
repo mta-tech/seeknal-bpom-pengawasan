@@ -1,9 +1,0 @@
-name: UAT_COM_2
-scenario_id: UAT-COM-2
-description: 'UAT-COM-2 — single-scope (by-design).'
-turns:
-- prompt: Berapa jumlah produk MR dengan status komitmen Validasi Pembatalan?
-  assert_contains:
-  - '42 produk'
-  - 'Validasi Pembatalan'
-  note: 'UAT-COM-2 — Case A: status_komitmen kode 8 (Validasi Pembatalan) dengan NIE status filter. DB 42.'

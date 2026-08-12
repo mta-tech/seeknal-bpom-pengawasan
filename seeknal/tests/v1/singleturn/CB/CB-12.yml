@@ -1,9 +1,0 @@
-name: 12_Jumlah perusahaan yang memiliki izin edar berdasarkan skala usaha
-scenario_id: CB-12
-description: 'CB-12 — Expected: Distribusi per skala usaha'
-turns:
-- prompt: Jumlah perusahaan yang memiliki izin edar berdasarkan skala usaha
-  assert_contains:
-  - perusahaan
-  - skala usaha
-  note: 'CB-12 — Expected: Distribusi per skala usaha'

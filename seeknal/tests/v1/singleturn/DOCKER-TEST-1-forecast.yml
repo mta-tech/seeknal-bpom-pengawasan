@@ -1,8 +1,0 @@
-name: docker_test_forecast
-scenario_id: "DOCKER-TEST-1"
-description: "Test forecast tool - tangkap semua tool calls dari awal hingga akhir"
-turns:
-  - prompt: "Berapa prediksi jumlah registrasi ERBA total untuk3 bulan ke depan? Gunakan run_forecast."
-    assert_contains:
-      - "prediksi"
-    note: "Harus trigger: run_forecast. Cek Docker logs iba-forecast untuk POST /forecast."

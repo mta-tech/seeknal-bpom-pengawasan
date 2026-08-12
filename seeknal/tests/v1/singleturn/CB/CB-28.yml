@@ -1,9 +1,0 @@
-name: 28_Wilayah yang banyak memproduksi produk AMDK
-scenario_id: CB-28
-description: 'CB-28 — Expected: Ranking wilayah AMDK'
-turns:
-- prompt: Wilayah yang banyak memproduksi produk AMDK
-  assert_contains:
-  - AMDK
-  - wilayah
-  note: 'CB-28 — Expected: Ranking wilayah AMDK'

@@ -1,9 +1,0 @@
-name: UAT_Ops_Data_Tambahan_Pipeline
-scenario_id: UAT-OPS-DATATAMBAHAN-1
-description: 'UAT-OPS-DATATAMBAHAN-1 — [Domain 3: Operational Health] Total permohonan ERBA yang diminta data tambahan di semua tahap. DB verified 2026-06-17: 7.371 (eval/verif=2.894, pendaftar=4.477). Uji monitoring kinerja proses.'
-turns:
-- prompt: berapa permohonan yang sedang diminta untuk melengkapi data tambahan?
-  assert_contains:
-  - '7.371'
-  - data tambahan
-  note: 'UAT-OPS-DATATAMBAHAN-1 — total data tambahan: 0308+0407+0402=2.894 (evaluasi/verif) + 0914+0915+0917+0951=4.477 (pendaftar) = 7.371. Domain: Operational Health.'

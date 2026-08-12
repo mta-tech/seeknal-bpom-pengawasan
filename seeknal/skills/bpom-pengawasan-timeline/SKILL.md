@@ -58,7 +58,7 @@ Selalu sebut "median X, p95 Y" — jangan avg saja karena outlier skew parah.
 - Stat summary (median/p95/avg): max 2.
 - Cross-tab (per balai, per komoditi, per bulan): max 2.
 - Final detail listing: max 1.
-- **TOTAL ceiling: 6 SQL.**
+- **TOTAL evidence SQL ceiling: 4**: two discovery/verification, one final, one corrected retry.
 
 ## Pivot SQL cepat
 
@@ -73,16 +73,34 @@ FROM mv_pengawasan_timeline;
 
 ### Per-balai median durasi (slow-balai ranking)
 ```sql
+WITH main_event AS (
+  SELECT id, MIN(nama_balai) AS nama_balai
+  FROM mv_pengawasan
+  GROUP BY id
+)
 SELECT p.nama_balai,
-       COUNT(DISTINCT t.id_pengawasan) AS event_count,
+       COUNT(*) AS event_count,
        PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY t.mulai_kabalai) AS med_mulai_kb,
        PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY t.kabalai_direktur) AS med_kb_dr
 FROM mv_pengawasan_timeline t
-JOIN mv_pengawasan p ON p.id = t.id_pengawasan
+JOIN main_event p ON p.id = t.id_pengawasan
 WHERE t.mulai_kabalai IS NOT NULL
-GROUP BY 1 HAVING COUNT(DISTINCT t.id_pengawasan) >= 50  -- exclude balai kecil
+GROUP BY 1 HAVING COUNT(*) >= 50  -- exclude balai kecil
 ORDER BY med_kb_dr DESC NULLS LAST LIMIT 20;
 ```
+
+The deduplicated `main_event` CTE is mandatory. Joining timeline to raw `mv_pengawasan` weights a duration once per product row and changes the percentile.
+
+### Threshold query (for example, duration greater than 3 days)
+```sql
+SELECT
+  COUNT(*) FILTER (WHERE mulai_kabalai > 3) AS mulai_kabalai_gt3,
+  COUNT(*) FILTER (WHERE kabalai_direktur > 3) AS kabalai_direktur_gt3,
+  COUNT(*) FILTER (WHERE direktur_pusat > 3) AS direktur_pusat_gt3
+FROM mv_pengawasan_timeline;
+```
+
+Clarify whether the user means one stage or any stage. If "any stage", use one explicit OR predicate and state that the source population is timeline rows/events.
 
 ### Time-in-status (dari log, untuk satu status tertentu)
 ```sql
@@ -98,14 +116,14 @@ ORDER BY tanggal_proses;
 ```sql
 SELECT status, COUNT(*) FROM mv_pengawasan_timeline GROUP BY 1 ORDER BY 1;
 ```
-Status `999` = final (Sampel Rujukan Selesai), 183.845 baris. Selain itu = masih dalam proses atau transitional.
+`status=999` = final (Sampel Rujukan Selesai). Other values are intermediate or transitional. Do not hardcode a row count; it changes with refresh. For log status, use `status_code`, not `status`.
 
 ## CHECK sebelum jawab
 
 - **Sample size disebut**: "dari 172.165 event, 150.234 punya data `mulai_kabalai`". Jangan stat dari N kecil tanpa konteks.
 - **NULL/zero disclosed**: kalau `direktur_pusat` median 0, sebut "median 0 terindikasi mayoritas data belum sampai pusat, bukan durasi cepat".
 - **Outlier handling**: sebut p95 atau avg-dengan-trim, jangan avg mentah.
-- **Per-balai ranking disertai threshold**: balai dengan <50 event tidak reliable untuk perbandingan median.
+- **Per-balai ranking disertai threshold**: balai dengan <50 deduplicated events tidak reliable untuk perbandingan median.
 - **Beda sumber = beda angka**: count dari timeline (236.856 id) vs count dari main (172.165 id) → selalu sebut dari mana angka berasal.
 
 ## Stop rules

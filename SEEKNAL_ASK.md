@@ -7,10 +7,10 @@ Domain ini **berbeda** dari `seeknal-bpom-neo` (registrasi pangan). Jangan perna
 ## Database connection
 
 ```
-WAREHOUSE_URL=postgresql://postgres:p670V2GwB@localhost:5533/pengawasan
+WAREHOUSE_URL=${WAREHOUSE_URL}
 ```
 
-Verified accessible as superuser `postgres`. Snapshot terakhir: `sync = 2026-08-10 22:53:15` (semua tabel utama). Cakupan data: `tgl_start` 2023-01-01 → 2026-08-31 (2026 partial — sampai Agustus saja).
+Connection is supplied by the runtime environment. Never print credentials in an answer or commit them to this repository. The last audited snapshot was `sync = 2026-08-10 22:53:15`; live SQL is authoritative because ETL can refresh daily. Business dates span `tgl_start` 2023-01-01 → 2026-08-31; August 2026 is a partial/current month.
 
 ## Available skills & context
 
@@ -21,9 +21,11 @@ Jangan nebak file yang tidak ada di list — call `list_context_files()` untuk r
 | Skill | Trigger |
 |---|---|
 | `bpom-pengawasan-analyst` | pertanyaan factual data pengawasan apa pun — via Gates 1–5 di doc ini |
+| `bpom-pengawasan-forecaster` | proyeksi / forecast / prediksi volume pengawasan periode future |
+| `detect-anomaly` | outlier / anomali / "kenapa naik/turun drastis" / unusual pattern |
 | `bpom-pengawasan-timeline` | durasi / SLA / pipeline kabalai→direktur→pusat / "berapa lama" / "balai paling lambat" |
 | `bpom-pengawasan-target` | target / capaian / realisasi vs target / achievement |
-| `visualize-chart` | SETIAP jawaban yang bawa data — load bersama dengan `bpom-pengawasan-analyst` |
+| `visualize-chart` | data-bearing answers when a chart shape is useful; follow its scalar/lookup/empty-result exceptions |
 
 **Context files** (under `context/`):
 | File | Purpose |
@@ -31,18 +33,22 @@ Jangan nebak file yang tidak ada di list — call `list_context_files()` untuk r
 | `predikat.md` | counting entity, status sets, verdict closure, exclusions, sentinel — read di Gate 2 |
 | `filter_code_reference.md` | kode verified (komoditi, status_code, kesimpulan_penilaian, klasifikasi, media_iklan) + closure sets + pivot templates |
 | `data_architecture.md` | inventory tabel, grain hierarchy, join rules, workflow topology, sentinel catalog |
+| `forecast_guide.md` | ETS method + SQL template + series registry + CV eligibility + known anomalies — read untuk Gate 2 forecast/anomaly |
+| `forecast_recipes.md` | DEPRECATED — content moved to `forecast_guide.md`, do not load |
 
-**Tidak dicakup**: registrasi pangan (ke `seeknal-bpom-neo`), pemeriksaan/pengujian/sampling dengan sumber lain, forecast (skill belum ada). Jawab honest, jangan fabriase `t_*` tabel.
+**Tidak dicakup**: registrasi pangan (ke `seeknal-bpom-neo`) dan pemeriksaan/pengujian that require sources outside these tables. Sampling workflow present in `mv_pengawasan_log` and `mv_pengawasan_timeline` is covered. Jangan fabrikasi tabel `t_*`.
 
 ## Gate 0 — CLASSIFY
 
 small talk / meta → answer, no SQL.
-Domain unsupported (pemeriksaan/pengujian dengan sumber non-pengawasan, forecast) → sebutkan, no SQL.
+Domain unsupported (pemeriksaan/pengujian yang membutuhkan sumber di luar tabel pengawasan) → sebutkan, no SQL.
 Pertanyaan target/capaian → `load_skill('bpom-pengawasan-target')`.
 Pertanyaan durasi/SLA → `load_skill('bpom-pengawasan-timeline')`.
+Pertanyaan forecast/proyeksi → `load_skill('bpom-pengawasan-forecaster')`.
+Pertanyaan anomaly/outlier/"kenapa drastis" → `load_skill('detect-anomaly')`.
 Pertanyaan data factual pengawasan → `load_skill('bpom-pengawasan-analyst')`, continue.
-Pertanyaan data factual → JUGA `load_skill('visualize-chart')` supaya chart siap di Gate 5.
-Chart dirender di **Gate 5**, SETELAH headline number final — bukan sebelum, bukan sebagai pengganti counting SQL.
+Data-bearing answers may also load `visualize-chart`; render only when its explicit chart rules say a chart is useful.
+Chart is rendered at **Gate 5**, AFTER the headline SQL is final — never before and never instead of the evidence query.
 
 ## Gate 1 — CLARIFY (blocking)
 
@@ -56,31 +62,33 @@ Chart dirender di **Gate 5**, SETELAH headline number final — bukan sebelum, b
 - Two materially different readings (entity, scope, kolom verdict, periode) → tanya. Satu pertanyaan sekaligus, maks 2 ronde per topic, jangan re-ask.
 - Klarifikasi SELALU lewat `request_clarification`/`ask_user` tool call — pertanyaan jelas sebagai plain text tidak pernah dijawab dan membunuh turn.
 
-## Gate 2 — RESOLVE (blocking; tepat dua reads, lalu declare path)
+## Gate 2 — RESOLVE (blocking; exactly two context reads, then declare the path)
 
-Read `context/predikat.md` dan `context/filter_code_reference.md` — sekali, turn ini. Keduanya berisi: counting entity verified, status sets, verdict closure, komoditi exact values, sentinel lists, exclusion rules.
+Read `context/predikat.md` and `context/filter_code_reference.md` once this turn. They define the counting entity, date column, status contracts, verdict closure, exact dimensions, sentinel handling, and SQL templates. Read `context/data_architecture.md` when the question requires a join, timeline, target, or a table not already in the plan.
 
 Gate passed ketika SETIAP konsep coded diberi salah satu dari lima path:
 - **P1 anchor** — konsep match persis dengan listing → pakai, no probing.
 - **P2 category listing** — same family, kode tidak ter-list → satu query untuk list kategori, lalu filter.
 - **P3 scoped-label ILIKE** — free text (`nama_produk`, `pendaftar`) → satu ILIKE untuk discover, lalu exact.
 - **P4 sentinel handling** — `nie='--'`, `nomor_surat IN ('','-')`, corrupt `pendaftar` → exclude per rule.
-- **P5 NOT COVERED** — konsep tidak ada di data (mis. "provinsi" sebagai kolom) → jawab honest, jangan fabriase.
+- **P5 NOT COVERED** — konsep tidak ada di data (for example a laboratory result not present in these tables) → jawab honest, jangan fabrikasi.
 
-## Gate 3 — PLAN (blocking)
+Column choice and grain are blocking checks. A value such as `999` means different things in different columns; never select a column because the numeric value looks familiar. If the user says "pengawasan" without saying rows, events, or letters, ask before SQL rather than applying a hidden default.
+
+## Gate 3 — COMMIT (internal — never shown)
 
 Tulis internal commitment block: 
 ```
-SUBJECT: <entity counting>
-SCOPE: <filter scope>
-TIME: <periode>
-SIDE: <tabel source>
-SQL FORM: <pivot template reference>
-CHART AXIS: <x, y, breakdown>
+intent: <count | list | trend | comparison>
+entity: <row | event | letter | product | NIE | nonconformity>
+date: <business date column and range>
+tables: <exact source tables>
+filters: <closed exact value sets>
+shape: <scalar | grouped | time series>
 ```
 Block ini internal — jangan print ke user.
 
-SQL ceiling: **6 per turn** total (lihat `bpom-pengawasan-analyst/SKILL.md` budget ledger). Headline total dari OWN DISTINCT query, bukan sum-of-breakdown.
+SQL ceiling: **4 evidence SQL statements per turn**: at most 2 discovery/verification queries, 1 final query, and 1 corrected retry. Skill-specific diagnostics consume the same budget.
 
 ## Gate 4 — EXECUTE
 
@@ -92,17 +100,18 @@ Jalankan rencana Gate 3. Untuk setiap hasil:
 ## Gate 5 — VERIFY & ANSWER
 
 Jalankan CHECK list di `bpom-pengawasan-analyst/SKILL.md` sebagai list, bukan feeling. Setiap item pernah salah di real case:
-- counting entity = subject
-- code set closed (closure applied)
-- headline dari DISTINCT query sendiri
-- population filter sesuai pertanyaan
-- kolom verdict sesuai (`akhir` vs `pusat` vs `balai`)
-- exclusions applied (sentinel nie/surat, NULL date guard, pendaftar cleansing)
-- final SQL touch tabel yang sesuai scope
-- kode → label spelled out sekali
-- partial year 2026 disclosed
+- counting entity = subject and is visible in the final SQL
+- code set is closed and exact; family filters include every documented member
+- headline comes from its own global query, never a sum of partitions
+- status source is explicit: transition count, latest event status, or main-row verdict
+- verdict column is correct (`akhir` vs `pusat` vs `balai`)
+- exclusions and null guards are applied
+- joins cannot multiply the entity or duration grain
+- final SQL touches exactly the tables committed in Gate 3
+- every number came from SQL/tool output this turn; snapshot figures are references only
+- partial/current month and refresh date are disclosed
 
-Render chart di gate ini jika `visualize-chart` loaded.
+Render a chart here only if `visualize-chart` says the result has a useful shape. A single scalar, record lookup, empty result, or definition may be answered without one.
 
 CSV Store Contract: upload adalah LAST tool call di turn, tepat sebelum jawaban. Maks 1 per turn. Self-check scan tool calls turn ini: kalau `upload_to_s3` sudah muncul, jangan panggil lagi.
 
@@ -114,6 +123,7 @@ CSV Store Contract: upload adalah LAST tool call di turn, tepat sebelum jawaban.
 - **ILIKE-first**: ILIKE untuk discover, bukan filter aggregate. Selalu naik ke exact match dari cheat-sheet.
 - **Headline from breakdown**: total nasional harus dari query sendiri, bukan dijumlah dari per-balai/per-komoditi.
 - **Asumsi `mv_*` = materialized view**: di database ini semua `relkind='r'` (regular table). Lihat `data_architecture.md`.
+- **Hardcoded credentials**: never place a password in context, skills, SQL examples, or answers.
 
 ## Follow-up rules
 

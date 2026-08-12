@@ -1,9 +1,0 @@
-name: UAT_DQ_Produk_Belum_Risiko
-scenario_id: UAT-DQ-BELUM-RISIKO-1
-description: 'UAT-DQ-BELUM-RISIKO-1 — [Domain 7: Data Quality] Produk ERBA yang belum dikategorikan risikonya (kategori_dokumen NULL/kosong). DB verified 2026-06-17: 28.667. Sebagian besar adalah produk lama ERBA yang belum dimigrasi.'
-turns:
-- prompt: berapa produk pangan di ERBA yang belum ditetapkan kategori risikonya oleh BPOM?
-  assert_contains:
-  - '28.'
-  - belum
-  note: 'UAT-DQ-BELUM-RISIKO-1 — kategori_dokumen NULL di ERBA aktif = 28.667. Produk lama yang belum migrasi ke sistem RBA. Domain: Data Quality.'

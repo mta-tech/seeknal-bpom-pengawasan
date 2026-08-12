@@ -14,7 +14,7 @@ Load skill ini ketika pertanyaan mengandung: "target", "capaian", "realisasi vs 
 - **`target_balai`** (532 baris) — target tahunan per `(nama_balai, komoditi, tahun)`.
   - **Cakupan: HANYA tahun 2024.** Tidak ada target 2023, 2025, 2026. Verified: `SELECT DISTINCT tahun FROM target_balai` → `{2024}`.
   - 76 balai × 7 komoditi × 1 tahun = 532 baris.
-  - **8 balai di `mv_pengawasan` tidak ada di `target_balai`** (84 main − 76 target). Mereka tidak punya target → realisasi-nya tidak masuk achievement rate.
+  - Exact name matching leaves **22 target balai names** without a main-table match (154 target rows, 22 names × 7 commodities). Do not call these "8 balai"; the 84-vs-76 distinct count is not enough to establish row-level coverage because names differ.
 - **7 kolom target**:
   - `target_penandaan`
   - `target_pengawasan`
@@ -35,14 +35,20 @@ Pemetaan kolom target → realisasi:
 - `target_pengawasan` ↔ count dari `mv_pengawasan` dengan filter komoditi & balai sesuai baris target
 - `target_penandaan`, `target_pengujian`, dst ↔ TIDAK ada realisasi langsung di `mv_pengawasan` (skill ini hanya covers pengawasan). Untuk yang lain, jawab honest "realisasi penandaan/pengujian tidak ada di database ini".
 
-### Trap 3: Join by name case-sensitif
-`nama_balai` di kedua tabel harus match persis (case-sensitive). Verified ada beberapa balai yang namanya beda format antar tabel — selalu test join dulu:
+### Trap 3: Join by name and commodity
+`nama_balai` currently requires an approved exact mapping; do not silently fuzzy-match names. Commodity casing differs, so compare it case-insensitively. Always test both dimensions first:
 ```sql
 -- Balai di target tapi tidak di main (atau sebaliknya):
-SELECT t.nama_balai FROM target_balai t
-WHERE NOT EXISTS (SELECT 1 FROM mv_pengawasan p WHERE p.nama_balai = t.nama_balai)
-GROUP BY 1;
+SELECT t.nama_balai, t.komoditi FROM target_balai t
+WHERE NOT EXISTS (
+  SELECT 1 FROM mv_pengawasan p
+  WHERE p.nama_balai = t.nama_balai
+    AND UPPER(p.komoditi) = UPPER(t.komoditi)
+)
+GROUP BY 1, 2;
 ```
+
+If an approved mapping is unavailable, report unmatched target rows separately and do not infer achievement for them.
 
 ### Trap 4: Komoditi casing
 `target_balai.komoditi` (Title Case: `Kosmetika`) **vs** `mv_pengawasan.komoditi` (UPPER: `KOSMETIKA`). Verified:
@@ -79,23 +85,50 @@ SELECT t.nama_balai, t.komoditi, t.target_pengawasan,
        ROUND(COALESCE(r.realisasi_event, 0)::numeric / NULLIF(t.target_pengawasan,0) * 100, 2) AS achievement_pct
 FROM target_balai t
 LEFT JOIN realisasi r ON r.nama_balai = t.nama_balai AND r.komoditi = UPPER(t.komoditi)
-WHERE t.tahun = 2024 AND t.target_pengawasan > 0
+WHERE t.tahun = 2024
+  AND t.target_pengawasan > 0
+  AND EXISTS (
+    SELECT 1 FROM mv_pengawasan p
+    WHERE p.nama_balai = t.nama_balai
+      AND UPPER(p.komoditi) = UPPER(t.komoditi)
+  )
 ORDER BY achievement_pct DESC NULLS LAST;
 ```
 
-### Nasional aggregate (total target vs total realisasi)
+### Nasional aggregate (target-covered population only)
 ```sql
+WITH target_pairs AS (
+  SELECT DISTINCT nama_balai, UPPER(komoditi) AS komoditi, target_pengawasan
+  FROM target_balai
+  WHERE tahun = 2024
+    AND target_pengawasan > 0
+    AND EXISTS (
+      SELECT 1 FROM mv_pengawasan p
+      WHERE p.nama_balai = target_balai.nama_balai
+        AND UPPER(p.komoditi) = UPPER(target_balai.komoditi)
+    )
+),
+realisasi AS (
+  SELECT COUNT(DISTINCT p.id) AS event_unik
+  FROM mv_pengawasan p
+  JOIN target_pairs t
+    ON t.nama_balai = p.nama_balai
+   AND t.komoditi = UPPER(p.komoditi)
+  WHERE p.tgl_start >= DATE '2024-01-01'
+    AND p.tgl_start < DATE '2025-01-01'
+)
 SELECT
   SUM(t.target_pengawasan) AS total_target,
-  (SELECT COUNT(DISTINCT id) FROM mv_pengawasan
-   WHERE EXTRACT(YEAR FROM tgl_start) = 2024) AS total_realisasi_event,
+  r.event_unik AS total_realisasi_event,
   ROUND(
-    (SELECT COUNT(DISTINCT id) FROM mv_pengawasan
-     WHERE EXTRACT(YEAR FROM tgl_start) = 2024)::numeric /
+    r.event_unik::numeric /
     NULLIF(SUM(t.target_pengawasan), 0) * 100, 2
   ) AS achievement_pct_nasional
-FROM target_balai t WHERE t.tahun = 2024;
+FROM target_pairs t CROSS JOIN realisasi r
+GROUP BY r.event_unik;
 ```
+
+This percentage is only for target-covered balai/commodity pairs. A separate national all-main-data count may be reported, but it must not be called the achievement numerator for this denominator.
 
 ### Top 5 under-performing balai
 ```sql
@@ -114,10 +147,10 @@ LIMIT 5;
 
 - **Tahun disebut eksplisit**: "target tahun 2024" — jangan generalize ke "tahun lalu" atau "tahun ini".
 - **Komoditi casing di-handle**: sebut "join dilakukan dengan UPPER pada kedua sisi karena target Title-Case dan pengawasan UPPERCASE".
-- **Balai tanpa target disebut**: 8 balai di main tidak ada target → realisasi-nya tidak masuk achievement rate. Jumlah mereka dilaporkan terpisah.
+- **Unmatched target rows disebut**: 22 target balai names (154 target rows) have no exact main match and are excluded until an approved mapping exists.
 - **Realisasi entity consistent**: kalau target adalah angka pengawasan, realisasi juga count pengawasan (`DISTINCT id`), bukan count baris produk.
 - **NULL target diexclude**: beberapa baris mungkin `target_pengawasan = 0` atau NULL → di-`FILTER (WHERE target_pengawasan > 0)` sebelum achievement rate.
-- **Sum-of-breakdown ≠ headline**: total realisasi nasional harus dari query sendiri, bukan dijumlah dari per-balai (over-count kalau ada id lintas-balai — jarang, tapi possible).
+- **Sum-of-breakdown ≠ headline**: total realisasi target-covered harus dari query sendiri, bukan dijumlah dari per-balai.
 
 ## Stop rules
 

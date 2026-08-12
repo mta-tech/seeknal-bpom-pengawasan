@@ -1,9 +1,0 @@
-name: UAT_Produk_Impor_StatusProduk
-scenario_id: UAT-IMPOR-1
-description: 'UAT-IMPOR-1 — NIE ERBA produk impor (status_produk=302). DB verified 2026-06-17: 44.127. Uji terjemahan kode status_produk ke label "Impor".'
-turns:
-- prompt: berapa produk impor yang punya izin edar di BPOM?
-  assert_contains:
-  - '44.127'
-  - impor
-  note: 'UAT-IMPOR-1 — status_produk=302 (Impor) ERBA NIE aktif = 44.127. Dictionary: STATUS_PRODUK kode 302.'

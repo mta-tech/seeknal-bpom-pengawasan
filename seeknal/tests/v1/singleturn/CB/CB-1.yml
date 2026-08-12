@@ -1,9 +1,0 @@
-name: 01_Berapa izin edar produk pangan olahan risiko menengah rendah
-scenario_id: CB-1
-description: 'CB-1 — NIE MR all-time UNION ERBA+ERLA. DB verified 2026-06-03: 118.896'
-turns:
-- prompt: Berapa izin edar produk pangan olahan risiko menengah rendah?
-  assert_contains:
-  - Risiko Menengah Rendah
-  - '118'
-  note: 'CB-1 — DB aktual 118.896 (ERBA kategori_dokumen=303 + ERLA jenis_dokumen=301, COUNT DISTINCT global). Oracle lama 40.716 = ERBA-only scope, sudah tidak relevan.'

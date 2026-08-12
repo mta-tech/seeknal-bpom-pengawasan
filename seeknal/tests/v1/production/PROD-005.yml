@@ -1,9 +1,0 @@
-name: Produk_BTP_ERBA
-scenario_id: PROD-005
-description: "PROD-005 — Berapa produk BTP yang terdaftar di ERBA"
-turns:
-- prompt: "Berapa produk BTP yang terdaftar di ERBA?"
-  assert_contains:
-  - "BTP"
-  - "ERBA"
-  note: "PROD-005 — BTP count in ERBA system, expects numeric result"

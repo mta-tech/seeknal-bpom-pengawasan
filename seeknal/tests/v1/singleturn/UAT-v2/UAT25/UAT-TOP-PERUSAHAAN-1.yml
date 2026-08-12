@@ -1,9 +1,0 @@
-name: UAT_TOP_PERUSAHAAN_1
-scenario_id: UAT-TOP-PERUSAHAAN-1
-description: 'UAT-TOP-PERUSAHAAN-1 — single-scope (by-design).'
-turns:
-- prompt: siapa perusahaan yang paling banyak produknya terdaftar di BPOM?
-  assert_contains:
-  - 'INTERFOOD'
-  - '2.077'
-  note: 'UAT-TOP-PERUSAHAAN-1 — ranking NIE aktif ERBA: INTERFOOD SUKSES JASINDO=2.077, BROTHER FOOD=1.319, STAR NIAGA SUKSES=1.317. Pola investigasi: siapa yang paling aktif.'

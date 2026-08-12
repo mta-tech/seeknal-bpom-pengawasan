@@ -1,9 +1,0 @@
-name: UAT_OPS_BOTTLENECK_1
-scenario_id: UAT-OPS-BOTTLENECK-1
-description: 'UAT-OPS-BOTTLENECK-1 — single-scope (by-design).'
-turns:
-- prompt: tahap mana yang paling banyak permohonan nyangkut dalam proses registrasi BPOM?
-  assert_contains:
-  - 'draft'
-  - '24.959'
-  note: 'UAT-OPS-BOTTLENECK-1 — ranking bottleneck: Draft(24.959) > DitolakSistem(12.278) > DatTambahan(7.371) > Bayar(6.988) > Evaluasi(2.909). Draft adalah bottleneck terbesar.'

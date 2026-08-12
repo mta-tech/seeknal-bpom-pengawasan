@@ -1,9 +1,0 @@
-name: UAT_Pipe_Draft_Semua_Status
-scenario_id: UAT-PIPE-DRAFT-TOTAL-1
-description: 'UAT-PIPE-DRAFT-TOTAL-1 — [Domain 2+3: Pipeline] Total permohonan ERBA yang masih berstatus draft (0910+0912). DB verified 2026-06-17: 24.959. 0910=4.939 (draft baru), 0912=20.020 (draft belum bayar).'
-turns:
-- prompt: total permohonan yang masih nyangkut di tahap draft berapa?
-  assert_contains:
-  - '24.959'
-  - draft
-  note: 'UAT-PIPE-DRAFT-TOTAL-1 — 0910 (Draft baru) = 4.939 + 0912 (Draft belum bayar) = 20.020 = total 24.959. Ini 43% dari semua yang dalam proses.'

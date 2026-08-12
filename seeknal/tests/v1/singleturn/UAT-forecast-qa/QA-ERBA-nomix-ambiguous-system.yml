@@ -1,8 +1,0 @@
-name: QA_ERBA_NoMix_Ambiguous_System_Wording
-scenario_id: QA-ERBA-NOMIX-1
-description: 'Test tambahan khusus dari kekhawatiran user: pertanyaan forecast TANPA menyebut sistem eksplisit — apakah agent diam-diam mencampur ERBA+ERLA jadi satu series, atau benar mempersempit ke ERBA (satu-satunya sistem eligible) / bertanya klarifikasi dulu? Tidak boleh menjumlah COUNT dari dua tabel berbeda sistem tanpa disadari.'
-turns:
-- prompt: Prediksi jumlah pendaftaran pangan olahan untuk 6 bulan ke depan
-  assert_contains:
-  - ERBA
-  note: 'forecast_guide.md §3: ERLA selalu ineligible untuk forecast. Ekspektasi BENAR: agent otomatis mempersempit ke ERBA (satu-satunya sistem yang forecast-able) dan MENYATAKAN itu secara eksplisit ("data ERBA" disebut di jawaban) — bukan diam-diam UNION ERBA+ERLA jadi satu angka tunggal tanpa penjelasan. Cek SQL di tool_trace: HARUS query t_produk_3_erba saja, TIDAK ada UNION ke t_produk_3_rilis_erla dalam SQL yang dikirim ke run_forecast.'

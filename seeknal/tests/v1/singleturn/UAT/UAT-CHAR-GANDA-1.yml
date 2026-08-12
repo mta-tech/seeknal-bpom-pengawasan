@@ -1,9 +1,0 @@
-name: UAT_Char_Kemasan_Ganda
-scenario_id: UAT-CHAR-GANDA-1
-description: 'UAT-CHAR-GANDA-1 — [Domain 8: Karakteristik Produk] NIE ERBA aktif dengan kemasan ganda (double/multiplex). DB verified 2026-06-17: 29.495.'
-turns:
-- prompt: berapa produk pangan olahan yang menggunakan kemasan ganda di BPOM?
-  assert_contains:
-  - '29.'
-  - kemasan ganda
-  note: 'UAT-CHAR-GANDA-1 — ERBA aktif kemasan ganda = 29.495. Domain: Karakteristik Produk.'

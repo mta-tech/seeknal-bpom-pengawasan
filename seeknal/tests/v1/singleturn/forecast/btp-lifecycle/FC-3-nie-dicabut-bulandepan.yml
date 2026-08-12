@@ -1,8 +1,0 @@
-name: FC_NIE_Dicabut_BulanDepan
-scenario_id: FC-BTP-3
-description: 'Forecast natural — NIE dicabut (status 0000/0009), bulan depan. Series KECIL & volatil (1-8/bulan) — kandidat kualitas rendah/kemungkinan ditolak, kasus tepi realistis.'
-turns:
-- prompt: Kira-kira berapa NIE yang akan dicabut bulan depan?
-  assert_contains:
-  - dicabut
-  note: 'DB 2026: Jan=8, Feb=6, Mar=7, Apr=5, Mei=2, Jun=1, Jul(berjalan)=1 — volume SANGAT kecil & menurun tajam, berpotensi CV tinggi. Assert longgar sengaja: bisa PROYEKSI (jika lolos eligibility >=10 titik & CV<=0.8) ATAU PENOLAKAN jujur (jika tidak lolos) — dua-duanya sah, yang TIDAK sah adalah mengarang angka tanpa dasar atau crash. Cek tool_trace utk tahu jalur mana yang diambil.'

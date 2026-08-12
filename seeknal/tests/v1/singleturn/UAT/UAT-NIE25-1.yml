@@ -1,9 +1,0 @@
-name: UAT_NIE_Total_2025_Canonical
-scenario_id: UAT-NIE25-1
-description: 'UAT-NIE25-1 — Total NIE 2025 canonical (ERBA+ERLA product, no BTP, no JP filter). DB verified 2026-06-17: ERBA 53.535 + ERLA 3.671 = 57.206. RC-5: harus deterministic lintas sesi.'
-turns:
-- prompt: berapa total izin edar yang terbit pada tahun 2025
-  assert_contains:
-  - '57.206'
-  - '2025'
-  note: 'UAT-NIE25-1 — RC-5 test. ERBA 53.535 + ERLA 3.671 = 57.206. Tanpa filter jenis_permohonan (canonical total NIE). Run 3x, harus konsisten.'

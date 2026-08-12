@@ -1,9 +1,0 @@
-name: QA_C6_Horizon_12Bulan
-scenario_id: QA-C6-H12
-description: 'Peta QA C.6 Bagian B (P1, FAILED di QA asli): horizon 12 bulan — bug yang dilaporkan "tidak ada detail yang dikasih". Test ini secara spesifik memverifikasi apakah bug itu masih terjadi.'
-turns:
-- prompt: Ramalkan 12 bulan ke depan untuk permohonan ERBA
-  assert_contains:
-  - Proyeksi
-  - Jan
-  note: 'Cek tool_trace: run_forecast periods=12. KRITERIA UTAMA (bug yg dilaporkan QA): jawaban HARUS memuat detail 12 titik/bulan, BUKAN cuma ringkasan tanpa rincian bulanan seperti dilaporkan gagal sebelumnya. Assert "Jan" mengecek minimal satu nama bulan konkret muncul (bukti tabel detail ada, bukan cuma angka rata-rata). Bandingkan jumlah baris tabel proyeksi vs QA-C6-H3 (harus 12 vs 3, bukan sama-sama terpotong).'

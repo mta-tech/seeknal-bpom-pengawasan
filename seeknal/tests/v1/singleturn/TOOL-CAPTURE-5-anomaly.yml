@@ -1,8 +1,0 @@
-name: tool_capture_anomaly
-scenario_id: "TOOL-CAPTURE-5"
-description: "Anomali langsung — harus trigger detect_anomaly"
-turns:
-  - prompt: "Apakah ada anomali atau data tidak biasa pada registrasi ERBA dari tahun2022?"
-    assert_contains:
-      - "anomali"
-    note: "Pertanyaan anomali langsung — agent harus build SQL dan panggil detect_anomaly. Tool yang diharapkan: detect_anomaly. Tidak ada forecast."

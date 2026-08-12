@@ -7,17 +7,31 @@ Gunakan angka di sini sebagai anchor; jangan dijahit dengan asumsi.
 
 | Entity | Angka | Query | Kapan dipakai |
 |---|---|---|---|
-| Baris (produk × pengawasan) | **183.953** | `SELECT COUNT(*) FROM mv_pengawasan` | Default ketika user nanya "jumlah kasus/pengawasan" tanpa konteks |
-| Event pengawasan unik | **172.165** | `COUNT(DISTINCT id)` | Ketika user nanya "berapa pengawasan" (1 event = 1 sesi pengawasan, walau banyak produk) |
+| Baris (produk × pengawasan) | **183.953** | `SELECT COUNT(*) FROM mv_pengawasan` | Only when user explicitly asks for rows, records, or product-lines |
+| Event pengawasan unik | **172.165** | `COUNT(DISTINCT id)` | Only when user explicitly means distinct pengawasan events |
 | Surat unik (non-empty) | **9.738** | `COUNT(DISTINCT nomor_surat) FILTER (WHERE nomor_surat IS NOT NULL AND nomor_surat NOT IN ('','-'))` | Ketika user nanya "berapa surat pengawasan" |
 | Produk unik | **42.854** | `COUNT(DISTINCT nama_produk)` | Ketika user nanya "berapa produk berbeda yang diawasi" |
 | NIE unik | **41.208** | `COUNT(DISTINCT nie) FILTER (WHERE nie <> '--')` | Ketika user nanya "berapa NIE terkait" |
 | Pendaftar unik | **6.584 (RAW — perlu cleanse)** | `COUNT(DISTINCT pendaftar)` | Lihat §6 sebelum pakai |
 | Balai unik | **84** | `COUNT(DISTINCT nama_balai)` | Master dimensi |
 
-**§1-RULE**: Setiap angka jawaban WAJIB menyebut entity yang dihitung. Jawab "172.165 event pengawasan (atau 183.953 baris produk)", bukan "172.165 pengawasan" mentah.
+**§1-RULE**: There is no hidden default for the bare word "pengawasan". Clarify whether the user means product rows, distinct events, or letters. Every answer must label the entity: "172.165 event pengawasan" or "183.953 baris produk", never an unlabeled "jumlah pengawasan".
 
 **§1-CARRY**: Follow-up question mewariskan entity yang sudah disepakati. Kalau user sebelumnya jelas bicara "surat", follow-up tetap di surat kecuali user eksplisit ganti entity.
+
+## §1A — Status counting contract
+
+Status data has three different grains. Never substitute one for another:
+
+| User asks for | Source and method |
+|---|---|
+| Log/transition records | `COUNT(*)` from `mv_pengawasan_log`; one event can contribute many rows |
+| Current/latest status of main events | `DISTINCT ON (id_pengawasan) ... ORDER BY tanggal_proses DESC`, then count the deduplicated latest rows, restricted to main ids when the question is main-population scoped |
+| Timeline status distribution | `COUNT(*)` from `mv_pengawasan_timeline`, using its actual `status` column; it includes historical ids absent from main |
+
+The phrase "yang sudah selesai" must be clarified between latest log status `999` and timeline `status=999`; do not compare their raw row totals as if they were the same population.
+
+If two log rows for one event share the same maximum `tanggal_proses`, the database has no declared sequence key. Do not invent a winner; report the event as latest-status ambiguous or use an approved `trx_steps` ordering rule.
 
 ## §2 — Status sets (verified, dari `mv_pengawasan_log`)
 
@@ -99,7 +113,7 @@ Beberapa baris `pendaftar` berisi string diduplikasi tanpa delimiter (ETL artifa
 - `PT PHAROS INDONESIAPT PHAROS I` → seharusnya `PT PHAROS INDONESIA`
 - `PJ  GUNA SEHAT  CILACAPPJ  GUN` → seharusnya `PJ GUNA SEHAT CILACAP`
 
-**§6-RULE**: Sebelum `COUNT(DISTINCT pendaftar)` atau GROUP BY pendaftar, jalankan cleansing:
+**§6-RULE**: `COUNT(DISTINCT pendaftar)` is raw diagnostic only. Corrupt duplicated strings can split one company into multiple values and make the result unsuitable as a company count. Before presenting a company metric, require an approved normalization mapping; otherwise label the result raw and do not call it a cleansed count.
 ```sql
 -- Heuristik sederhana: kalau string >40 char dan dua bagian menyerupai, potong setengah
 -- Untuk auditable result, lebih baik tampilkan TOP pendaftar dengan manual review
@@ -107,7 +121,7 @@ SELECT pendaftar, COUNT(*) FROM mv_pengawasan
 WHERE pendaftar IS NOT NULL AND pendaftar <> ''
 GROUP BY 1 ORDER BY 2 DESC LIMIT 50;
 ```
-Lalu di jawaban, sebut "6.584 pendaftar unik (raw, mungkin over-count karena duplikasi string ETL)".
+If no mapping exists, say "pendaftar unik raw" and disclose the ETL quality limitation.
 
 ## §7 — Date columns (4 jenis, beda konteks)
 
@@ -119,7 +133,7 @@ Lalu di jawaban, sebut "6.584 pendaftar unik (raw, mungkin over-count karena dup
 | `tanggal_proses` (log) | timestamp | dinamis per status | Waktu transisi status di log |
 | `tanggal_kirim_kabalai/direktur/pusat` (timeline) | date | bervariasi | Milestone pipeline |
 
-**§7-DEFAULT**: Untuk trend tahunan/bulanan → pakai `tgl_start` (lebih konsisten terisi). `tgl_end` bisa NULL untuk yang belum selesai.
+**§7-DEFAULT**: Untuk trend tahunan/bulanan → pakai `tgl_start` dengan an explicit null guard. In the audited snapshot both start and end were non-null, but do not turn that observation into a permanent schema rule.
 
 **§7-RANGE**: Range data 2023-01-01 → 2026-08-31. **Tahun 2026 baru sampai Agustus** — jangan tampilkan angka 2026 sebagai "tahun penuh" tanpa konteks partial-year.
 
@@ -141,7 +155,7 @@ Total: 9.068 baris ketidaksesuaian, dari 7.257 distinct id pengawasan (3.6% dari
 ## §9 — Pivot (verified)
 
 - **84 balai** di `mv_pengawasan.nama_balai`. Distinct nama balai case-sensitif.
-- **76 balai** di `target_balai` (kurang dari 84 — 8 balai tidak punya target 2024).
+- **76 distinct balai names** di `target_balai` versus 84 di main. This difference is not a reliable unmatched count: exact name matching currently identifies 22 target names (154 target rows) without a main match.
 - **668 rows** di `coverage_balai` = 84 balai × rata-rata ~8 kabupaten per balai.
 
 ## §10 — NULL date guard untuk GROUP BY tanpa range

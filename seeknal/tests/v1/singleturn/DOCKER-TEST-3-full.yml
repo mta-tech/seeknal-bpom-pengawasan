@@ -1,8 +1,0 @@
-name: docker_test_full_flow
-scenario_id: "DOCKER-TEST-3"
-description: "Test full flow - deskriptif, analitik, forecast, anomaly, s3"
-turns:
-  - prompt: "Berapa jumlah registrasi ERBA per bulan dari Januari2025 sampai Juni2026? Tampilkan dalam tabel dan apakah ada anomali?"
-    assert_contains:
-      - "registrasi"
-    note: "Harus trigger: execute_sql (analitik) + mungkin detect_anomaly. Cek semua tool calls."

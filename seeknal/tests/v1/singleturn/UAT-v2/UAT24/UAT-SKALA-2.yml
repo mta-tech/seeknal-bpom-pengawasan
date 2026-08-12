@@ -1,9 +1,0 @@
-name: UAT_SKALA_2
-scenario_id: UAT-SKALA-2
-description: 'UAT-SKALA-2 — single-scope (by-design).'
-turns:
-- prompt: perusahaan skala besar yang punya produk di BPOM ada berapa?
-  assert_contains:
-  - '1.367'
-  - 'besar'
-  note: 'UAT-SKALA-2 — m_trader_rba skala_industri_id=4 (Besar) = 1.367. Dictionary: SKALA_INDUSTRI dan SKALA_INDUSTRI_ID kode 4.'

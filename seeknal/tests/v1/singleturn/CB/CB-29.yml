@@ -1,9 +1,0 @@
-name: 29_Wilayah yang banyak memproduksi produk Garam
-scenario_id: CB-29
-description: 'CB-29 — Expected: Ranking wilayah Garam'
-turns:
-- prompt: Wilayah yang banyak memproduksi produk Garam
-  assert_contains:
-  - Garam
-  - wilayah
-  note: 'CB-29 — Expected: Ranking wilayah Garam'

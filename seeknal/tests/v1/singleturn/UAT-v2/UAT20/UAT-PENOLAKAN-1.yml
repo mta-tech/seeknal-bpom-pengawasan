@@ -1,9 +1,0 @@
-name: UAT_PENOLAKAN_1
-scenario_id: UAT-PENOLAKAN-1
-description: 'UAT-PENOLAKAN-1 — single-scope (by-design).'
-turns:
-- prompt: apa alasan paling banyak komitmen ditolak BPOM?
-  assert_contains:
-  - 'kemasan'
-  - '1.251'
-  note: 'UAT-PENOLAKAN-1 — top alasan: "Jenis Kemasan atau Data Pabrik tidak sesuai" = 1.251 produk. Ke-2: bahan baku = 808. Dictionary: JENIS_PENOLAKAN_KOMITMEN.'

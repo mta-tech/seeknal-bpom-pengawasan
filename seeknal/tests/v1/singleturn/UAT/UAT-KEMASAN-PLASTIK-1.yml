@@ -1,9 +1,0 @@
-name: UAT_Kemasan_Plastik_ERBA
-scenario_id: UAT-KEMASAN-PLASTIK-1
-description: 'UAT-KEMASAN-PLASTIK-1 — NIE ERBA aktif dengan kemasan plastik tunggal (kemasan_id=2, ERBA). DB verified 2026-06-17: 44.631. Uji terjemahan kode KEMASAN_ID sumber ERBA ke label "Plastik tunggal".'
-turns:
-- prompt: berapa produk BPOM yang menggunakan kemasan plastik?
-  assert_contains:
-  - '44.631'
-  - plastik
-  note: 'UAT-KEMASAN-PLASTIK-1 — t_produk_3_erba kemasan_id=2 (Plastik tunggal/monolayer), sumber=ERBA, NIE aktif = 44.631. Dictionary: KEMASAN_ID kode 2.'

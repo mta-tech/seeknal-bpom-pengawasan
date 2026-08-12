@@ -1,9 +1,0 @@
-name: 31_Kategori pangan terbanyak diproduksi oleh UMKM
-scenario_id: CB-31
-description: 'CB-31 — Expected: Daftar kategori terurut'
-turns:
-- prompt: Kategori pangan terbanyak diproduksi oleh UMKM
-  assert_contains:
-  - UMKM
-  - kategori pangan
-  note: 'CB-31 — Expected: Daftar kategori terurut'

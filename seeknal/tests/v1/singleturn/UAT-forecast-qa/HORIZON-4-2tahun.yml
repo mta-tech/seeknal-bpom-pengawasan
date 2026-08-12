@@ -1,8 +1,0 @@
-name: HORIZON_4_2Tahun_ERBA
-scenario_id: HORIZON-2Y
-description: 'Matriks horizon #4/5 — 2 tahun ke depan, series ERBA total permohonan.'
-turns:
-- prompt: Prediksi permohonan ERBA untuk 2 tahun ke depan
-  assert_contains:
-  - Proyeksi
-  note: 'Ekspektasi: periods=24, target Jul2026-Jun2028, 24 titik. Masih di bawah cap 36 — tidak perlu pesan pemotongan.'

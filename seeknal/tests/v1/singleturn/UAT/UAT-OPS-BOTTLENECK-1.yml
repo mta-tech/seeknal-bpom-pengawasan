@@ -1,9 +1,0 @@
-name: UAT_Ops_Bottleneck_Pipeline
-scenario_id: UAT-OPS-BOTTLENECK-1
-description: 'UAT-OPS-BOTTLENECK-1 — [Domain 3: Operational Health] Analisis bottleneck pipeline ERBA. DB verified 2026-06-17: Draft=24.959, DitolakSistem=12.278, DatTambahan=7.371, MenungguBayar=6.988, Evaluasi=2.909, Verif1=1.695, Direktur=872, Verif2=159. Uji kemampuan analisis kinerja proses.'
-turns:
-- prompt: tahap mana yang paling banyak permohonan nyangkut dalam proses registrasi BPOM?
-  assert_contains:
-  - draft
-  - '24.959'
-  note: 'UAT-OPS-BOTTLENECK-1 — ranking bottleneck: Draft(24.959) > DitolakSistem(12.278) > DatTambahan(7.371) > Bayar(6.988) > Evaluasi(2.909). Draft adalah bottleneck terbesar.'

@@ -1,9 +1,0 @@
-name: Produk_PMR_2024
-scenario_id: EDGE-2
-description: 'EDGE-2 — Produk PMR 2024. DB verified 2026-06-10: 0 (tidak ada data)'
-turns:
-- prompt: Berapa banyak produk yang mengikuti program Manajemen Risiko (PMR) tahun 2024?
-  assert_contains:
-  - PMR
-  - 2024
-  note: 'EDGE-2 — DB aktual (t_produk_3_erba, pmr=1, tanggal 2024): 0. Tidak ada produk PMR di database. Agent harus jujur: tidak ada data.'

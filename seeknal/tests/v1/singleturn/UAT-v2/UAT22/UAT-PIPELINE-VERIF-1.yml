@@ -1,9 +1,0 @@
-name: UAT_PIPELINE_VERIF_1
-scenario_id: UAT-PIPELINE-VERIF-1
-description: 'UAT-PIPELINE-VERIF-1 — single-scope (by-design).'
-turns:
-- prompt: ada berapa permohonan yang masih menunggu verifikasi di BPOM?
-  assert_contains:
-  - '1.695'
-  - 'verifikasi'
-  note: 'UAT-PIPELINE-VERIF-1 — status 04xx (Verifikator 1) = 1.695. Berbeda dari evaluasi (03xx=5.469) dan validasi direktur (0600=872).'
