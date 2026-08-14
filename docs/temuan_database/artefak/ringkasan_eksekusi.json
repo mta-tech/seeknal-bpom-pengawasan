@@ -1,0 +1,40 @@
+{
+  "database": "pengawasan",
+  "tanggal_eksekusi": "2026-08-13",
+  "pair_context_stores": {
+    "total": 88,
+    "ok_sesudah": 81,
+    "persen_ok": 92,
+    "status_sebelum": {
+      "ERR_SCHEMA": 52,
+      "ERR_SYNTAX": 1,
+      "OK": 34,
+      "ERR_LAIN": 1
+    },
+    "status_sesudah": {
+      "OK": 81,
+      "ERR_SYNTAX": 1,
+      "ERR_LAIN": 2,
+      "NOL_BARIS": 3,
+      "ERR_SCHEMA": 1
+    },
+    "diagnosa": {
+      "PULIH_RELASI": 44,
+      "ERR_SQL_RUSAK": 3,
+      "PULIH_RELASI_NILAI": 3,
+      "NOL_PLACEHOLDER": 1,
+      "NOL_ANTIJOIN_KOSONG": 2,
+      "ERR_KOLOM_DIHAPUS": 1,
+      "OK_LANGSUNG": 31,
+      "OK_TAPI_RAKSASA": 3
+    }
+  },
+  "csv_sql_training": {
+    "total": 13,
+    "ok": 12,
+    "hasil": {
+      "OK": 12,
+      "ERR_SCHEMA": 1
+    }
+  }
+}

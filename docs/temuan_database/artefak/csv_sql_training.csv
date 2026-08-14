@@ -1,0 +1,177 @@
+﻿"no_csv","modul","pertanyaan","status","baris_hasil","detik","error","sql"
+"7","pengawasan","Tampilkan data pemenuhan timeline untuk masing-masing laporan pengawasan iklan yang dihitu","OK","190017","0.5","","select id_pengawasan, tgl_start, tanggal_kirim_direktur, (mpt.mulai_kabalai + mpt.kabalai_direktur) as durasi_hari
+from mv_pengawasan_timeline mpt 
+where tanggal_kirim_direktur is not null
+order by 2"
+"8","pengawasan","Tampilkan data pemenuhan timeline untuk masing-masing laporan pengawasan iklan yang dihitu","OK","190017","0.5","","select id_pengawasan, tanggal_kirim_kabalai , tanggal_kirim_direktur, (mpt.kabalai_direktur) as durasi_hari
+from mv_pengawasan_timeline mpt 
+where tanggal_kirim_direktur is not null
+order by 2"
+"9","pengawasan","Tampilkan data hasil pengawasan iklan berdasarkan hasil verifikasi balai TMK yang statusny","OK","11","1.0","","select mp.tgl_start, mp.id, mp.komoditi, mp.nama_balai, mp.nama_produk, mp.media_iklan, mp.kesimpulan_penilaian_balai  
+from mv_pengawasan mp 
+join mv_pengawasan_timeline mpt 
+on mp.id = mpt.id_pengawasan 
+where mpt.tanggal_kirim_direktur is null
+and mp.kesimpulan_penilaian_balai = 'TMK'
+and extract(year from mp.tgl_start) = 2025
+order by 1, 2, 3, 4, 5, 6"
+"11","pengawasan","Tampilkan rekapitulasi jumlah laporan pengawasan iklan obat masing-masing UPT yang telah d","OK","2929","0.6","","select mpt.tanggal_kirim_kabalai, mp.nama_balai, mp.komoditi, count(*)
+from mv_pengawasan mp 
+join mv_pengawasan_timeline mpt 
+on mp.id = mpt.id_pengawasan 
+where lower(komoditi) like '%obat%'
+and extract(year from mp.tgl_start) = 2025
+and mpt.tanggal_kirim_kabalai is not null
+group by 1, 2, 3
+order by 1, 2, 3"
+"12","pengawasan","Tampilkan data berapa jumlah iklan obat keras yang dilaporkan oleh UPT dengan hasil verifi","OK","611","0.6","","select mp.nama_balai , mp.komoditi, mp.kesimpulan_penilaian_pusat, count(*)
+from mv_pengawasan mp 
+where lower(komoditi) like '%obat%'
+and extract(year from mp.tgl_start) = 2025
+group by 1, 2, 3
+order by 1, 2, 3"
+"14","pengawasan","Tampilkan data capaian UPT berdasarkan jumlah laporan yang dikirimkan ke pusat (tanggal ke","OK","494","1.5","","WITH latest_target_year AS (
+    SELECT MAX(tahun) AS tahun_terbaru FROM target_balai
+),
+laporan_dikirim AS (
+    SELECT 
+        mp.nama_balai,
+        mp.komoditi,
+        EXTRACT(YEAR FROM mp.tgl_start) AS tahun,
+        COUNT(*) AS jumlah_laporan
+    FROM mv_pengawasan mp
+    WHERE mp.tgl_start IS NOT NULL
+      AND EXTRACT(YEAR FROM mp.tgl_start) = EXTRACT(YEAR FROM CURRENT_DATE)
+    GROUP BY mp.nama_balai, mp.komoditi, EXTRACT(YEAR FROM mp.tgl_start)
+)
+SELECT 
+    ld.nama_balai,
+    ld.komoditi,
+    ld.tahun AS tahun_laporan,
+    tb.tahun AS tahun_target,
+    ld.jumlah_laporan,
+    tb.target_pengawasan,
+    ROUND(
+        (ld.jumlah_laporan::decimal / NULLIF(tb.target_pengawasan, 0)) * 100, 
+        2
+    ) AS capaian_persen
+FROM laporan_dikirim ld
+CROSS JOIN latest_target_year lty
+LEFT JOIN target_balai tb 
+    ON LOWER(TRIM(tb.nama_balai)) = LOWER(TRIM(ld.nama_balai))
+    AND LOWER(TRIM(tb.komoditi)) = LOWER(TRIM(ld.komoditi))
+    AND tb.tahun = lty.tahun_terbaru
+ORDER BY ld.nama_balai, ld.komoditi;"
+"16","pengawasan","Tampilkan data ketepatan waktu pelaporan oleh UPT yang dihitung berdasarkan laporan yang d","OK","76","3.3","","SELECT 
+    mp.nama_balai,
+    COUNT(*) AS jumlah_laporan,
+    SUM(
+        CASE 
+            WHEN mpt.tanggal_kirim_kabalai < (DATE_TRUNC('month', mp.tgl_start) + INTERVAL '1 month' + INTERVAL '8 day') 
+            THEN 1 ELSE 0 
+        END
+    ) AS laporan_tepat_waktu,
+    ROUND(
+        SUM(
+            CASE 
+                WHEN mpt.tanggal_kirim_kabalai < (DATE_TRUNC('month', mp.tgl_start) + INTERVAL '1 month' + INTERVAL '8 day') 
+                THEN 1 ELSE 0 
+            END
+        )::DECIMAL / COUNT(*) * 100, 
+        2
+    ) AS persentase_tepat_waktu
+FROM mv_pengawasan mp
+JOIN mv_pengawasan_timeline mpt 
+    ON mp.id = mpt.id_pengawasan
+WHERE 
+    EXTRACT(YEAR FROM mpt.tanggal_kirim_kabalai) = 2025
+GROUP BY mp.nama_balai
+ORDER BY mp.nama_balai;"
+"90","","Tampilkan data hasil pengawasan TMK berdasarkan klausul pelanggaran secara keseluruhan, ma","OK","720","3.5","","select mp.nama_balai, mp.media_iklan, mpk.id_klasifikasi, mpk.keterangan_ketidaksesuaian, mp.kesimpulan_penilaian_balai, count(*)
+from mv_pengawasan mp
+join mv_pengawasan_ketidaksesuaian mpk
+on mp.id = mpk.id_pengawasan 
+where lower(mp.komoditi) like '%produk pangan%'
+and extract(year from mp.tgl_end) = 2025
+and lower(mp.kesimpulan_penilaian_balai) like '%tmk%'
+group by 1, 2, 3, 4, 5
+order by 1, 2, 3, 4, 5;"
+"92","pengawasan","Tampilkan jumlah iklan tepat waktu yang telah dikirimkan ke pusat pada UPT tertentu pada r","OK","76","1.7","","SELECT 
+    mp.nama_balai,
+    COUNT(*) AS jumlah_laporan,
+    SUM(
+        CASE 
+            WHEN mpt.tanggal_kirim_kabalai < (DATE_TRUNC('month', mp.tgl_start) + INTERVAL '1 month' + INTERVAL '9 day') 
+            THEN 1 ELSE 0 
+        END
+    ) AS laporan_tepat_waktu,
+    ROUND(
+        SUM(
+            CASE 
+                WHEN mpt.tanggal_kirim_kabalai < (DATE_TRUNC('month', mp.tgl_start) + INTERVAL '1 month' + INTERVAL '9 day') 
+                THEN 1 ELSE 0 
+            END
+        )::DECIMAL / COUNT(*) * 100, 
+        2
+    ) AS persentase_tepat_waktu
+FROM mv_pengawasan mp
+JOIN mv_pengawasan_timeline mpt 
+    ON mp.id = mpt.id_pengawasan
+WHERE 
+    EXTRACT(YEAR FROM mpt.tanggal_kirim_kabalai) = 2025
+GROUP BY mp.nama_balai
+ORDER BY mp.nama_balai;"
+"94","pengawasan","Tampilkan persentase Penilaian Produk (UPT) berdasarkan TMK Mayor/TMK Minor  (baik secara ","OK","244","0.5","","WITH data_penilaian AS (
+    SELECT 
+        mp.nama_balai,
+        UPPER(mp.kesimpulan_penilaian_balai) AS kesimpulan_penilaian,
+        COUNT(*) AS jumlah
+    FROM mv_pengawasan mp
+    WHERE 
+        LOWER(mp.komoditi) LIKE '%pangan%'
+        AND mp.kesimpulan_penilaian_pusat IS NOT NULL
+        AND mp.kesimpulan_penilaian_balai IS NOT NULL
+    GROUP BY mp.nama_balai, UPPER(mp.kesimpulan_penilaian_balai)
+)
+SELECT 
+    dp.nama_balai,
+    dp.kesimpulan_penilaian,
+    dp.jumlah,
+    ROUND(
+        (dp.jumlah::decimal / NULLIF(SUM(dp.jumlah) OVER (PARTITION BY dp.nama_balai), 0)) * 100, 
+        2
+    ) AS persentase
+FROM data_penilaian dp
+ORDER BY dp.nama_balai, persentase DESC;"
+"95","pengawasan","Berdasarkan kata kunci nama produsen tertentu, tampilkan berapa jumlah iklan yang dilapork","OK","10","0.5","","select 
+    mp.pendaftar,
+    count(*) as total_laporan,
+    sum(case when lower(mp.kesimpulan_penilaian_pusat) = 'mk' then 1 else 0 end) as jumlah_mk_pusat,
+    sum(case when lower(mp.kesimpulan_penilaian_pusat) = 'tmk' then 1 else 0 end) as jumlah_tmk_pusat,
+    sum(case when lower(mp.kesimpulan_penilaian_balai) = 'mk' then 1 else 0 end) as jumlah_mk_balai,
+    sum(case when lower(mp.kesimpulan_penilaian_balai) = 'tmk' then 1 else 0 end) as jumlah_tmk_balai,
+    sum(case 
+        when lower(mp.kesimpulan_penilaian_balai) <> lower(mp.kesimpulan_penilaian_pusat)
+             and mp.kesimpulan_penilaian_balai is not null 
+             and mp.kesimpulan_penilaian_pusat is not null 
+        then 1 else 0 end) as jumlah_perbedaan_balai_pusat
+from mv_pengawasan mp 
+where lower(mp.pendaftar) like '%kao indonesia%'
+  and mp.kesimpulan_penilaian_pusat is not null
+group by mp.pendaftar
+order by total_laporan desc;"
+"97","pengawasan","Berdasarkan kabupaten kota dan provinsi alamat produsen,  tampilkan berapa jumlah iklan ya","ERR_SCHEMA","","0.4","ERROR:  column mp.kabupaten does not exist","SELECT 
+    mp.kabupaten,
+    COUNT(*) AS jumlah_perbedaan
+FROM mv_pengawasan mp
+WHERE 
+    mp.kesimpulan_penilaian_balai IS NOT NULL
+    AND mp.kesimpulan_penilaian_pusat IS NOT NULL
+    AND LOWER(mp.kesimpulan_penilaian_balai) <> LOWER(mp.kesimpulan_penilaian_pusat)
+    and mp.kesimpulan_penilaian_akhir = 'TMK'
+GROUP BY mp.kabupaten
+ORDER BY jumlah_perbedaan DESC;"
+"111","pengawasan","Tampilkan data pemenuhan timeline pengawasan oleh masing-masing UPT yang dapat diukur seja","OK","228258","0.5","","select id_pengawasan, tgl_start, mpt.tanggal_kirim_pusat, (mpt.mulai_kabalai + mpt.kabalai_direktur + mpt.direktur_pusat) as durasi_hari
+from mv_pengawasan_timeline mpt 
+where mpt.tanggal_kirim_pusat is not null
+order by 2"
