@@ -316,3 +316,13 @@ orang); kesamaan 96,8% pada `draft` vs `spv_1` adalah artefak semantik log, buka
 > berlawanan. Sebelum sebuah angka dijadikan tuduhan governance, semantik kolomnya wajib
 > dipastikan. Uji yang memutuskannya murah: sebaran `count(DISTINCT fullname)` per tahap — kalau
 > jumlah pelaku suatu tahap setara jumlah operator, tahap itu merekam pengirim, bukan penyetuju.
+
+---
+
+## ⚠️ Status penyaluran ke `context/` — kode tahap log: BELUM
+
+Diverifikasi 14 Agustus 2026 terhadap warehouse dan terhadap `context/45-status-dan-alur.md`.
+
+Dokumen ini memuat dictionary lengkap `status_code` × `status_label` × `trx_steps`. Halaman context tidak menyebut `status_code` sama sekali, padahal pemisahan blok kode tahap dari blok kode penolakan itulah yang membuat pertanyaan "berapa yang ditolak dan di tahap mana" bisa dijawab.
+
+Pengukuran cakupan lengkapnya di dokumen `cakupan_context_vs_database` di direktori ini.

@@ -156,3 +156,63 @@ Kegagalan IBA ("0 data, tidak ada tabel operasional") dan jawaban salah ("100% s
 
 ## Bukti SQL
 Lihat `13_sql_audit_trail.md` §10 untuk verifikasi setiap bug.
+
+---
+
+# Konsistensi penulisan nilai dan anomali tanggal
+
+> Diverifikasi langsung ke warehouse, 14 Agustus 2026. Bagian ini menjawab satu pertanyaan: **apakah ada
+> nilai yang maksudnya sama tetapi ditulis berbeda**, dan **apakah ada lubang atau tanggal mustahil
+> pada rentang waktunya**. Seluruh isinya khusus domain ini.
+
+Metodenya: tiap kolom berkode dinormalkan berlapis — rapatkan spasi, samakan besar-kecil huruf,
+buang tanda baca, lalu kanonikkan angka (`5`, `5.0`, dan `05` dianggap satu). Nilai mentah yang
+jatuh ke bentuk normal yang sama berarti **kembaran palsu**: dua baris berbeda di `GROUP BY`
+padahal satu makna.
+
+## K1. Spasi ekor pada nama balai — filter kesamaan persis gagal
+
+`BALAI POM DI DUMAI ` tersimpan **dengan spasi di belakang**, konsisten di `mv_pengawasan`,
+`mv_pengawasan_agg`, dan `mv_pengawasan_log`.
+
+Karena konsisten, **join antar tabel tetap jalan**. Yang gagal adalah filter literal
+`nama_balai = 'BALAI POM DI DUMAI'` — nol baris, tanpa pesan kesalahan.
+
+**Aturan:** setiap filter kesamaan persis pada nama balai harus lewat `trim()`, atau memakai nilai
+yang diambil dari probe `SELECT DISTINCT` apa adanya. Menyalin nama balai dari dokumen atau dari
+ingatan akan menghasilkan nol baris.
+
+## K2. Nama pelaku di log — kembaran karena gelar
+
+`mv_pengawasan_log.fullname` memuat orang yang sama dengan penulisan gelar berbeda:
+
+| Contoh | Baris |
+|---|---|
+| `Aan Sulistiawan, S.Farm., Apt,M.Sc` versus `... Apt, M. Sc` | 1.313 vs 95 |
+| `Eka Akhriana, S.Farm, Apt` versus `Eka Akhriana, S.Farm., Apt.` | 354 vs 224 |
+
+**Aturan:** peringkat berbasis nama orang dari kolom ini terpecah — satu orang bisa muncul sebagai
+dua entri. Sebutkan keterbatasan ini bila pertanyaannya menyangkut peringkat orang. Ini menambah
+alasan mengapa pertanyaan "siapa yang menyetujui" tidak bisa dijawab dari log ini saja.
+
+## K3. Kolom berkode lain bersih
+
+Diperiksa dengan normalisasi berlapis — rapatkan spasi, samakan besar-kecil huruf, buang tanda
+baca, kanonikkan angka. **Tidak ditemukan kembaran** pada kolom vonis, komoditi, media, status,
+maupun klausul ketidaksesuaian. Ini berbeda dari beberapa domain lain, dan berarti kode filter di
+domain ini bisa dipakai dengan kesamaan persis — **kecuali** nama balai pada K1.
+
+## K4. Tanggal bersih, tanpa lubang
+
+Kedua kolom tanggal di `mv_pengawasan_timeline` diperiksa per tahun:
+
+| Kolom | Rentang | Temuan |
+|---|---|---|
+| `tgl_start` | 2019-2026 | tidak ada tahun hilang di tengah, tidak ada tanggal mustahil |
+| `tgl_end` | 2019-2026 | idem |
+
+Baris bertahun 2019 hanya 7 — sisa uji coba, bukan periode pelaporan. **Rentang operasional
+sesungguhnya dimulai 2020**, dan naik tajam sampai puncaknya 2024.
+
+Ini kondisi yang lebih sehat daripada beberapa domain lain, dan layak dicatat supaya tidak ikut
+diberi aturan pembersihan yang tidak diperlukan.

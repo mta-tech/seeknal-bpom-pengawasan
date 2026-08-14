@@ -238,3 +238,13 @@ ORDER BY med_kb_dr DESC NULLS LAST LIMIT 20;
 
 ## Bukti SQL
 Lihat `13_sql_audit_trail.md` §04.
+
+---
+
+## ⚠️ Status penyaluran ke `context/` — kolom tahap timeline: BELUM
+
+Diverifikasi 14 Agustus 2026 terhadap warehouse dan terhadap `context/60-waktu-dan-durasi.md`.
+
+Halaman itu menyebut nama tabel tanpa menyebut kolom tahapnya. Yang paling berisiko: dokumen ini sudah membuktikan `direktur_pusat` adalah **flag biner, bukan durasi hari** — temuan yang mencegah kesalahan serius — tetapi peringatan itu tidak pernah sampai ke context.
+
+Pengukuran cakupan lengkapnya di dokumen `cakupan_context_vs_database` di direktori ini.

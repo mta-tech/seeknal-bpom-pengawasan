@@ -23,7 +23,18 @@
 | 1 | Iklan produk yang tidak boleh diiklankan (alkohol, PKMK, formula bayi) | 499 | 5,5% |
 | 4 | Iklan yang melanggar norma-norma yang berlaku (adegan berbahaya, SARA) | 88 | 1,0% |
 
-**Aturan**: klaim_kesehatan (klasifikasi 2) selalu dominates. Kalau user nanya "pelanggaran terbanyak", jawab klasifikasi 2 dgn angka spesifik.
+**Aturan**: pemetaan `id_klasifikasi` → klasifikasi di atas **tetap** dan boleh dipakai sebagai kode
+filter. Peringkatnya **tidak** — komposisi bergeser tiap ETL, jadi "pelanggaran terbanyak" harus
+selalu dijawab dari query saat itu juga, bukan dari tabel ini. Angka di kolom `n`/`%` adalah
+snapshot untuk memahami bentuk data, bukan jawaban siap pakai.
+
+> ⚠️ **Status penyaluran ke context — belum.** Diverifikasi ulang 14 Agustus 2026: halaman
+> `context/40-ketidaksesuaian.md` menyebut nama tabel dan kunci join `id_pengawasan`, tetapi
+> **tidak pernah menyebut `id_klasifikasi` maupun `keterangan_ketidaksesuaian`**, dan tidak memuat
+> keenam kodenya. Akibatnya pertanyaan seperti *"berapa iklan dengan klaim kesehatan"* tidak bisa
+> diresolusi langsung — agent harus menebak atau memakai kuota probe untuk menemukan sesuatu yang
+> sebenarnya tetap. Katalog di dokumen ini sudah benar sejak awal; yang kurang adalah salinannya
+> di context. Lihat `17_cakupan_context_vs_database.md`.
 
 ## Multi-klasifikasi per event
 

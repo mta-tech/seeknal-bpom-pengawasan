@@ -219,3 +219,13 @@ dipaksa punya target dan jangan dibuang diam-diam.
    7 komoditi × 1 tahun). Untuk realisasi 2025/2026, sebut bahwa pembandingnya target 2024 atau
    sajikan realisasi tanpa capaian.
 3. Pisahkan baris DIREKTORAT sebelum menghitung persentase capaian nasional.
+
+---
+
+## ⚠️ Status penyaluran ke `context/` — kolom target: BELUM
+
+Diverifikasi 14 Agustus 2026 terhadap warehouse dan terhadap `context/85-target-capaian.md`.
+
+Halaman itu menyebut nama tabel `target_balai` dan kunci join-nya, lalu berhenti — padahal dokumen ini sudah memuat ketujuh kolom target, grain balai × komoditi, dan batas tahunnya dengan benar. Untuk domain ini kolom yang relevan adalah `target_pengawasan`; enam kolom lain milik kegiatan lain dan tidak boleh dipakai. Pengetahuannya sudah ada di sini sejak awal; yang kurang adalah salinannya di context.
+
+Pengukuran cakupan lengkapnya di dokumen `cakupan_context_vs_database` di direktori ini.
