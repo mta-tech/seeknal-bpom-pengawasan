@@ -22,9 +22,6 @@ Istilah dan kode antar domain **tidak dapat dipertukarkan** — lihat `95-batas-
 | `detect-anomaly` | outlier / anomali / "kenapa naik/turun drastis" / unusual pattern |
 | `visualize-chart` | ANY answer that carries data — load alongside the analyst |
 
-⚠️ `forecast` and `anomaly` are set to `enabled: false` in `seeknal_agent.yml` (inherited from v1).
-The skills above are present and unchanged; enable the tools in the config to use them.
-
 ## PAGE MAP
 
 **Every data question** -> `context/00-menghitung.md` (entity · grain · canonical date · mandatory

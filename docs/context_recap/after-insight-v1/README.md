@@ -48,11 +48,12 @@ khas domain ini (hitung event bukan baris; keluarkan sentinel dari deret berbasi
 `forecast_guide.md` **tidak dibuat** karena mengarangnya berarti mengarang aturan forecast; metode
 sepenuhnya dibawa skill.
 
-⚠️ `forecast` dan `anomaly` berstatus `enabled: false` di `seeknal_agent.yml` (diwarisi dari v1,
-tidak diubah). Skill-nya tersedia; nyalakan konfigurasinya bila ingin dipakai.
+`forecast`, `anomaly`, dan `upload_to_s3` kini `enabled: true` di `seeknal_agent.yml`, sejajar
+dengan tiga domain lain. v1 mewariskan `false` untuk forecast dan anomaly — nilai yang tidak
+konsisten dengan `SEEKNAL_ASK.md` v1 sendiri, yang justru merutekan ke kedua skill tersebut.
 
-Pada `seeknal_agent.yml`, hanya `prompt.custom` yang diubah; blok `agent`, `sources`, dan
-`agent_harness` byte-identik dengan v1 (terverifikasi lewat diff).
+Pada `seeknal_agent.yml`, yang diubah adalah `prompt.custom` dan **tiga flag kapabilitas di blok
+`agent`** itu. Sisa blok `agent`, serta `sources` dan `agent_harness`, byte-identik dengan v1.
 
 **Dua skill v1 (`bpom-pengawasan-target`, `bpom-pengawasan-timeline`) tidak dibawa sebagai skill.**
 Aturannya dipindahkan menjadi halaman context (`85-target-capaian.md`, `60-waktu-dan-durasi.md`) —
