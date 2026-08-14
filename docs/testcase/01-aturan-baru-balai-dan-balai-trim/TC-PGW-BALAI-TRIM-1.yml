@@ -1,0 +1,13 @@
+name: TC_PGW_BALAI_TRIM_1
+scenario_id: TC-PGW-BALAI-TRIM-1
+verification_date: '2026-08-14'
+description: 'TC-PGW-BALAI-TRIM-1 — Jebakan spasi ekor pada nama balai. Filter tanpa trim mengembalikan nol baris secara senyap. v1 hanya mengajarkan normalisasi untuk join.'
+turns:
+- prompt: 'berapa pengawasan iklan yang dilakukan Balai POM di Dumai?'
+  assert_contains:
+  - 'Dumai'
+  assert_any_of:
+  -
+    - '1.310'
+  tolerance_pct: 5
+  note: 'SQL BENAR: SELECT COUNT(*) FROM mv_pengawasan WHERE trim(nama_balai)=''BALAI POM DI DUMAI'' = 1.310. SQL SALAH: WHERE nama_balai=''BALAI POM DI DUMAI'' (tanpa trim) = 0 baris. SEBAB: nilai balai ini tersimpan DENGAN SPASI MENEMPEL DI BELAKANG. Spasi itu konsisten di semua tabel yang memuat nama balai, jadi join antar tabel tetap jalan — yang gagal hanya filter kesamaan persis, dan gagalnya SENYAP: nol baris tanpa pesan kesalahan, seolah balai itu tidak punya data. KENAPA MUDAH SALAH: v1 mengajarkan normalisasi HANYA untuk join ke tabel target, tidak untuk filter. Kolom yang sama, teknik yang sama, operasi berbeda — dan aturannya tidak sampai. ATURAN: filter kesamaan persis pada nama balai wajib trim() di kedua sisi, atau memakai nilai hasil probe SELECT DISTINCT apa adanya termasuk spasinya.'

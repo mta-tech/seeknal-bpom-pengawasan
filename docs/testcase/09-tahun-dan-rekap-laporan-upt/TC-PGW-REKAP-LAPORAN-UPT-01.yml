@@ -1,0 +1,19 @@
+name: TC_PGW_REKAP_LAPORAN_UPT_01
+scenario_id: TC-PGW-REKAP-LAPORAN-UPT-01
+verification_date: '2026-08-14'
+description: 'TC-PGW-REKAP-LAPORAN-UPT-01 — Regresi dari pertanyaan nyata sistem lama; angka diverifikasi ulang ke database.'
+turns:
+- prompt: 'tampilkan rekapitulasi jumlah laporan pengawasan iklan pangan masing-masing upt yang telah dikirim ke pusat pada periode waktu antara tanggal 1 januari 2023 dan 31 desember 2025.'
+  assert_contains:
+  - 'BALAI BESAR POM DI BANDA ACEH'
+  assert_any_of:
+  -
+    - '77'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT nama_balai, COUNT(*) AS jumlah_laporan FROM mv_pengawasan WHERE tgl_start >= ''2023-01-01'' AND tgl_end <= ''2025-12-31'' GROUP BY nama_balai;
+    
+    DATA YANG DITANYA: mv_pengawasan. BENTUK JAWABAN: satu angka agregat; sebutkan entity dan lingkup filternya. Hasilnya daftar: yang diperiksa isi baris teratas, bukan seluruh daftar.;
+    HASIL DB 14Agu2026: 77 baris; baris teratas ''BALAI BESAR POM DI BANDA ACEH'' dengan nilai 3.133.
+    
+    CATATAN URUTAN: SQL ini mengembalikan banyak baris tanpa ORDER BY. sehingga urutan barisnya TIDAK dijamin. Yang diperiksa adalah CACAH BARIS (77), bukan nilai pada baris tertentu. Bila jawaban perlu diurutkan, sebutkan kolom pengurutnya secara eksplisit.'

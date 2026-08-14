@@ -1,0 +1,17 @@
+name: TC_PGW_KOM_OBAT_TRADISI_2024
+scenario_id: TC-PGW-KOM-OBAT-TRADISI-2024
+verification_date: '2026-08-14'
+description: 'Silang komoditi dengan periode; menguji apakah kedua komponen pertanyaan masuk ke filter.'
+turns:
+- prompt: 'berapa pengawasan iklan komoditi OBAT TRADISIONAL (OT) pada tahun 2024?'
+  assert_contains:
+  - 'OBAT TRADISIONAL (OT)'
+  - '2024'
+  assert_any_of:
+  -
+    - '5.401'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT COUNT(*) FROM mv_pengawasan WHERE komoditi = ''OBAT TRADISIONAL (OT)'' AND tgl_start >= ''2024-01-01'' AND tgl_start < ''2025-01-01'';
+    
+    HASIL DB 14Agu2026 = 5.401. DUA FILTER SEKALIGUS: komoditi dan periode. Keduanya harus muncul di SQL final; komponen yang halamannya tidak dibuka akan hilang dari filter secara senyap. NILAI KOMODITI: ''OBAT TRADISIONAL (OT)'' — ejaan domain ini, tidak berlaku di domain lain.'

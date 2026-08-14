@@ -1,0 +1,17 @@
+name: TC_PGW_MEDIA_IKL_389_2025
+scenario_id: TC-PGW-MEDIA_IKL-389-2025
+verification_date: '2026-08-14'
+description: 'Silang `media_iklan` dengan periode; menguji kelengkapan filter dari pertanyaan majemuk.'
+turns:
+- prompt: 'berapa pengawasan iklan dengan media iklan ELEKTRONIK pada tahun 2025?'
+  assert_contains:
+  - 'ELEKTRONIK'
+  - '2025'
+  assert_any_of:
+  -
+    - '34.648'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT COUNT(*) FROM mv_pengawasan WHERE media_iklan = ''ELEKTRONIK'' AND tgl_start >= ''2025-01-01'' AND tgl_start < ''2026-01-01'';
+    
+    HASIL DB 14Agu2026 = 34.648. KOLOM: `media_iklan` di `mv_pengawasan`. NILAI FILTER ''ELEKTRONIK'' diambil apa adanya dari data. DUA KOMPONEN: nilai kode dan periode — komponen yang halamannya tidak dibuka akan hilang dari filter secara senyap.'

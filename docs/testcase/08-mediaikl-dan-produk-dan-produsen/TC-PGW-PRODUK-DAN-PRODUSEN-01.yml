@@ -1,0 +1,17 @@
+name: TC_PGW_PRODUK_DAN_PRODUSEN_01
+scenario_id: TC-PGW-PRODUK-DAN-PRODUSEN-01
+verification_date: '2026-08-14'
+description: 'TC-PGW-PRODUK-DAN-PRODUSEN-01 — Regresi dari pertanyaan nyata sistem lama; angka diverifikasi ulang ke database.'
+turns:
+- prompt: 'buatkan pengelompokan iklan obat mk/tmk berdasarkan materi yang sama dari semua upt yang melaporkan materi iklan tersebut.'
+  assert_contains:
+  - 'BALAI BESAR POM DI BANDAR LAMPUNG'
+  assert_any_of:
+  -
+    - '2'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT media_iklan, nama_balai, kesimpulan_penilaian_akhir , count(*) FROM mv_pengawasan WHERE lower(komoditi) IN (''obat'') GROUP BY media_iklan, nama_balai, kesimpulan_penilaian_akhir ORDER BY media_iklan;
+    
+    DATA YANG DITANYA: mv_pengawasan. BENTUK JAWABAN: satu angka agregat; sebutkan entity dan lingkup filternya. Hasilnya daftar: yang diperiksa isi baris teratas, bukan seluruh daftar.;
+    HASIL DB 14Agu2026: 481 baris; baris teratas ''BALAI BESAR POM DI BANDAR LAMPUNG'' dengan nilai 2.'

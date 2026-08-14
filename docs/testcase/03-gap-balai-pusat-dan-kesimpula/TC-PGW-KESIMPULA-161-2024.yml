@@ -1,0 +1,17 @@
+name: TC_PGW_KESIMPULA_161_2024
+scenario_id: TC-PGW-KESIMPULA-161-2024
+verification_date: '2026-08-14'
+description: 'Silang `kesimpulan_penilaian_pusat` dengan periode; menguji kelengkapan filter dari pertanyaan majemuk.'
+turns:
+- prompt: 'berapa pengawasan iklan dengan kesimpulan penilaian pusat TMK KRITIKAL pada tahun 2024?'
+  assert_contains:
+  - 'TMK KRITIKAL'
+  - '2024'
+  assert_any_of:
+  -
+    - '2.499'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT COUNT(*) FROM mv_pengawasan WHERE kesimpulan_penilaian_pusat = ''TMK KRITIKAL'' AND tgl_start >= ''2024-01-01'' AND tgl_start < ''2025-01-01'';
+    
+    HASIL DB 14Agu2026 = 2.499. KOLOM: `kesimpulan_penilaian_pusat` di `mv_pengawasan`. NILAI FILTER ''TMK KRITIKAL'' diambil apa adanya dari data. DUA KOMPONEN: nilai kode dan periode — komponen yang halamannya tidak dibuka akan hilang dari filter secara senyap.'

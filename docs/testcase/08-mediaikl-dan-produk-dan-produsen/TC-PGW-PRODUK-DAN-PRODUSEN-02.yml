@@ -1,0 +1,17 @@
+name: TC_PGW_PRODUK_DAN_PRODUSEN_02
+scenario_id: TC-PGW-PRODUK-DAN-PRODUSEN-02
+verification_date: '2026-08-14'
+description: 'TC-PGW-PRODUK-DAN-PRODUSEN-02 — Regresi dari pertanyaan nyata sistem lama; angka diverifikasi ulang ke database.'
+turns:
+- prompt: 'buatkan pengelompokan iklan obat tradisional; suplemen kesehatan; obat kuasi mk/tmk berdasarkan materi yang sama dari semua upt yang melaporkan materi iklan yang sama.'
+  assert_contains:
+  - 'CETAK'
+  assert_any_of:
+  -
+    - 'CETAK'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT nama_produk, media_iklan, nama_balai FROM mv_pengawasan WHERE lower(komoditi) IN (''obat tradisional (ot)'', ''suplemen kesehatan'', ''obat kuasi'') GROUP BY nama_produk, media_iklan, nama_balai;
+    
+    DATA YANG DITANYA: mv_pengawasan. BENTUK JAWABAN: daftar rinci, bukan satu angka; sajikan sebagai tabel. Hasilnya daftar: yang diperiksa isi baris teratas, bukan seluruh daftar.;
+    HASIL DB 14Agu2026: 25063 baris; baris teratas ''CETAK''.'

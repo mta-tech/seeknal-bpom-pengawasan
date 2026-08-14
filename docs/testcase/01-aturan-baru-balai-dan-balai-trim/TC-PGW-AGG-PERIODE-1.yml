@@ -1,0 +1,19 @@
+name: TC_PGW_AGG_PERIODE_1
+scenario_id: TC-PGW-AGG-PERIODE-1
+verification_date: '2026-08-14'
+description: 'TC-PGW-AGG-PERIODE-1 — Kubus agregasi menggandakan bila periode_type tidak disaring, dan beragregasi pada tanggal berbeda dari tanggal kanonik.'
+turns:
+- prompt: 'berapa jumlah pengawasan iklan sepanjang 2025?'
+  assert_contains:
+  - '2025'
+  assert_any_of:
+  -
+    - '48.393'
+  -
+    - '48.401'
+    - 'selesai'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    -- fakta, tanggal kanonik SELECT COUNT(*) FROM mv_pengawasan WHERE tgl_start >= ''2025-01-01'' AND tgl_start < ''2026-01-01''; -- fakta, tanggal selesai SELECT COUNT(*) FROM mv_pengawasan WHERE tgl_end >= ''2025-01-01'' AND tgl_end < ''2026-01-01''; -- kubus TANPA saringan periode_type (SALAH, tergandakan) SELECT SUM(jumlah_pengawasan) FROM mv_pengawasan_agg WHERE tanggal_periode >= ''2025-01-01'' AND tanggal_periode < ''2026-01-01''; -- kubus DENGAN saringan (benar) SELECT SUM(jumlah_pengawasan) FROM mv_pengawasan_agg WHERE periode_type = ''day'' AND tanggal_periode >= ''2025-01-01'' AND tanggal_periode < ''2026-01-01''; SQL fakta by tgl_start (tanggal kanonik) = 48.393. SQL fakta by tgl_end = 48.401.;
+    
+    JEBAKAN KUBUS: SUM(jumlah_pengawasan) dari mv_pengawasan_agg TANPA menyaring periode_type = 96.802 — TEPAT DUA KALI LIPAT, karena kubus memuat baris ''day'' DAN ''month'' yang masing-masing sudah total penuh. Dengan periode_type=''day'' = 48.401, dan angka itu cocok dengan fakta berbasis tgl_end, BUKAN tgl_start. Jadi kubus beragregasi pada tanggal SELESAI sementara tanggal kanonik domain ini tgl_start — tren dari kubus tidak sebanding dengan tren dari fakta. Sebutkan basis mana yang dipakai.'

@@ -1,0 +1,17 @@
+name: TC_PGW_PRODUK_DAN_PRODUSEN_05
+scenario_id: TC-PGW-PRODUK-DAN-PRODUSEN-05
+verification_date: '2026-08-14'
+description: 'TC-PGW-PRODUK-DAN-PRODUSEN-05 — Regresi dari pertanyaan nyata sistem lama; angka diverifikasi ulang ke database.'
+turns:
+- prompt: 'tampilkan visualisasi data berupa urutan data yang paling besar dari hasil pengawasan label pangan yang dilaporkan tmk dari masing-masing upt yang dikategorikan berdasarkan nama produk, jenis pangan,'
+  assert_contains:
+  - 'BALAI BESAR POM DI MAKASSAR'
+  assert_any_of:
+  -
+    - '7'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT nama_balai, nama_produk, COUNT(*) AS jumlah_tmk_laporan FROM mv_pengawasan WHERE kesimpulan_penilaian_akhir = ''TMK'' AND EXTRACT(YEAR FROM tgl_start) = 2025 GROUP BY nama_balai, nama_produk ORDER BY jumlah_tmk_laporan DESC;
+    
+    DATA YANG DITANYA: mv_pengawasan + tgl_start. BENTUK JAWABAN: satu angka agregat; sebutkan entity dan lingkup filternya. Hasilnya daftar: yang diperiksa isi baris teratas, bukan seluruh daftar.;
+    HASIL DB 14Agu2026: 7156 baris; baris teratas ''BALAI BESAR POM DI MAKASSAR'' dengan nilai 7.'

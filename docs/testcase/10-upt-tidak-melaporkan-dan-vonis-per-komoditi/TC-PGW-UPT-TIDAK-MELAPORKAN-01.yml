@@ -1,0 +1,17 @@
+name: TC_PGW_UPT_TIDAK_MELAPORKAN_01
+scenario_id: TC-PGW-UPT-TIDAK-MELAPORKAN-01
+verification_date: '2026-08-14'
+description: 'TC-PGW-UPT-TIDAK-MELAPORKAN-01 — Regresi dari pertanyaan nyata sistem lama; angka diverifikasi ulang ke database.'
+turns:
+- prompt: 'tampilkan data upt yang tidak melaporkan iklan obat tradisional; suplemen kesehatan; obat kuasi.'
+  assert_contains:
+  - 'BALAI BESAR POM DI BANDA ACEH'
+  assert_any_of:
+  -
+    - 'BALAI BESAR POM DI BANDA ACEH'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT DISTINCT nama_balai FROM mv_pengawasan WHERE lower(komoditi) NOT IN (''obat tradisional (ot)'', ''suplemen kesehatan'', ''obat kuasi'');
+    
+    DATA YANG DITANYA: mv_pengawasan. BENTUK JAWABAN: daftar rinci, bukan satu angka; sajikan sebagai tabel. Hasilnya daftar: yang diperiksa isi baris teratas, bukan seluruh daftar.;
+    HASIL DB 14Agu2026: 84 baris; baris teratas ''BALAI BESAR POM DI BANDA ACEH''.'

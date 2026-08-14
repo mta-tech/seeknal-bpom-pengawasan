@@ -1,0 +1,17 @@
+name: TC_PGW_PRODUK_DAN_PRODUSEN_03
+scenario_id: TC-PGW-PRODUK-DAN-PRODUSEN-03
+verification_date: '2026-08-14'
+description: 'TC-PGW-PRODUK-DAN-PRODUSEN-03 — Regresi dari pertanyaan nyata sistem lama; angka diverifikasi ulang ke database.'
+turns:
+- prompt: 'tampilkan data label yang dilaporkan mk/tmk dari masing-masing upt yang dikategorikan berdasarkan nama produk, jenis pangan, kategori pangan, produsen, kabupaten/provinsi produsen, pada rentang waktu'
+  assert_contains:
+  - 'KECAP MANIS'
+  assert_any_of:
+  -
+    - 'KECAP MANIS'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT nama_produk, lower(komoditi), pendaftar, nama_balai FROM mv_pengawasan WHERE tgl_start >= ''2025-01-01'' AND tgl_end <= ''2025-12-31'' GROUP BY nama_produk, lower(komoditi), pendaftar, nama_balai;
+    
+    DATA YANG DITANYA: mv_pengawasan. BENTUK JAWABAN: daftar rinci, bukan satu angka; sajikan sebagai tabel. Hasilnya daftar: yang diperiksa isi baris teratas, bukan seluruh daftar.;
+    HASIL DB 14Agu2026: 41836 baris; baris teratas ''KECAP MANIS''.'

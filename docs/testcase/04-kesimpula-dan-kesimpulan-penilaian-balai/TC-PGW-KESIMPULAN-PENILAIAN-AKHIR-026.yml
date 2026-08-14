@@ -1,0 +1,16 @@
+name: TC_PGW_KESIMPULAN_PENILAIAN_AKHIR_026
+scenario_id: TC-PGW-KESIMPULAN-PENILAIAN-AKHIR-026
+verification_date: '2026-08-14'
+description: 'Cacah pengawasan iklan untuk satu nilai `kesimpulan_penilaian_akhir`; menguji pemetaan istilah ke kode filter yang benar.'
+turns:
+- prompt: 'berapa pengawasan iklan dengan kesimpulan penilaian akhir TMK?'
+  assert_contains:
+  - 'TMK'
+  assert_any_of:
+  -
+    - '51.683'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT COUNT(*) FROM mv_pengawasan WHERE kesimpulan_penilaian_akhir = ''TMK'';
+    
+    HASIL DB 14Agu2026 = 51.683. KOLOM: `kesimpulan_penilaian_akhir` di `mv_pengawasan`. NILAI FILTER: ''TMK'' — diambil apa adanya dari data, termasuk spasi dan kapitalisasinya. Jangan mengetik nilai dari ingatan; ambil lewat SELECT DISTINCT lalu pakai persis. ENTITY: COUNT(*) menghitung baris tabel fakta.'

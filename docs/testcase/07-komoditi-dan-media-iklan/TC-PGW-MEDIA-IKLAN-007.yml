@@ -1,0 +1,16 @@
+name: TC_PGW_MEDIA_IKLAN_007
+scenario_id: TC-PGW-MEDIA-IKLAN-007
+verification_date: '2026-08-14'
+description: 'Cacah pengawasan iklan untuk satu nilai `media_iklan`; menguji pemetaan istilah ke kode filter yang benar.'
+turns:
+- prompt: 'berapa pengawasan iklan dengan media iklan ELEKTRONIK?'
+  assert_contains:
+  - 'ELEKTRONIK'
+  assert_any_of:
+  -
+    - '98.090'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT COUNT(*) FROM mv_pengawasan WHERE media_iklan = ''ELEKTRONIK'';
+    
+    HASIL DB 14Agu2026 = 98.090. KOLOM: `media_iklan` di `mv_pengawasan`. NILAI FILTER: ''ELEKTRONIK'' — diambil apa adanya dari data, termasuk spasi dan kapitalisasinya. Jangan mengetik nilai dari ingatan; ambil lewat SELECT DISTINCT lalu pakai persis. ENTITY: COUNT(*) menghitung baris tabel fakta.'

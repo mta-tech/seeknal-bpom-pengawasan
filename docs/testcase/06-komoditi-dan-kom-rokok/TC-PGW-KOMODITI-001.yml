@@ -1,0 +1,16 @@
+name: TC_PGW_KOMODITI_001
+scenario_id: TC-PGW-KOMODITI-001
+verification_date: '2026-08-14'
+description: 'Cacah pengawasan iklan untuk satu nilai `komoditi`; menguji pemetaan istilah ke kode filter yang benar.'
+turns:
+- prompt: 'berapa pengawasan iklan dengan komoditi ROKOK?'
+  assert_contains:
+  - 'ROKOK'
+  assert_any_of:
+  -
+    - '40.031'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT COUNT(*) FROM mv_pengawasan WHERE komoditi = ''ROKOK'';
+    
+    HASIL DB 14Agu2026 = 40.031. KOLOM: `komoditi` di `mv_pengawasan`. NILAI FILTER: ''ROKOK'' — diambil apa adanya dari data, termasuk spasi dan kapitalisasinya. Jangan mengetik nilai dari ingatan; ambil lewat SELECT DISTINCT lalu pakai persis. ENTITY: COUNT(*) menghitung baris tabel fakta.'

@@ -1,0 +1,17 @@
+name: TC_PGW_VONIS_GAP_1
+scenario_id: TC-PGW-VONIS-GAP-1
+verification_date: '2026-08-14'
+description: 'TC-PGW-VONIS-GAP-1 — Gap balai-pusat wajib menyaring sentinel lebih dulu. Tanpa itu angkanya melebihi kenyataan.'
+turns:
+- prompt: 'ada berapa perbedaan kesimpulan antara balai dan pusat?'
+  assert_contains:
+  - 'balai'
+  - 'pusat'
+  assert_any_of:
+  -
+    - '80.676'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    -- BENAR: hanya baris yang kedua sisinya terisi SELECT COUNT(*) FROM mv_pengawasan WHERE kesimpulan_penilaian_balai <> '''' AND kesimpulan_penilaian_pusat <> '''' AND kesimpulan_penilaian_balai <> kesimpulan_penilaian_pusat; -- SALAH: tanpa menyaring penanda kosong SELECT COUNT(*) FROM mv_pengawasan WHERE kesimpulan_penilaian_balai <> kesimpulan_penilaian_pusat; SQL BENAR: hanya baris yang KEDUA sisinya terisi — WHERE kesimpulan_penilaian_balai <> '''' AND kesimpulan_penilaian_pusat <> '''' AND keduanya berbeda = 80.676. SQL SALAH (naif): membandingkan tanpa menyaring penanda kosong = 80.676 — melebihkan karena setiap baris yang belum dinilai salah satu sisinya ikut terhitung sebagai ''perbedaan''. SENTINEL: tabel fakta domain ini TIDAK punya SQL NULL sama sekali; kekosongan ditulis sebagai teks, sehingga IS NOT NULL tidak menyaring apa pun.;
+    
+    ATURAN: perbandingan gap hanya sah bila kedua sisi terisi, dan porsi yang dibuang harus disebut.'

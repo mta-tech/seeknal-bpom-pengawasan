@@ -1,0 +1,16 @@
+name: TC_PGW_KLAUSUL_SUPERLATIF_1
+scenario_id: TC-PGW-KLAUSUL-SUPERLATIF-1
+verification_date: '2026-08-14'
+description: 'TC-PGW-KLAUSUL-SUPERLATIF-1 — Istilah informal pengguna (berlebihan) harus dipetakan ke kode klausul yang benar.'
+turns:
+- prompt: 'ada berapa iklan dengan kalimat superlatif atau berlebihan?'
+  assert_contains:
+  - 'superlatif'
+  assert_any_of:
+  -
+    - '2.069'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT COUNT(DISTINCT id_pengawasan) FROM mv_pengawasan_ketidaksesuaian WHERE id_klasifikasi=5. DB 14Agu2026 = 2.069 event. ''superlatif'', ''berlebihan'', ''komparatif'', ''mendiskreditkan'' semuanya menunjuk kode 5 — teks lengkapnya menggabungkan ketiganya dalam satu klausul.;
+    
+    KENAPA MUDAH SALAH: sama dengan TC-PGW-KLAUSUL-KLAIM-1; tanpa katalog kode, istilah informal pengguna tidak punya jalur resolusi. ENTITY: event unik.'

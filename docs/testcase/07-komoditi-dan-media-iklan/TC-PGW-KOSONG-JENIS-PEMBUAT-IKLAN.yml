@@ -1,0 +1,15 @@
+name: TC_PGW_KOSONG_JENIS_PEMBUAT_IKLAN
+scenario_id: TC-PGW-KOSONG-JENIS-PEMBUAT-IKLAN
+verification_date: '2026-08-14'
+description: 'Keterisian `jenis_pembuat_iklan`; menguji penanganan penanda kosong yang lebih dari satu bentuk.'
+turns:
+- prompt: 'berapa pengawasan iklan yang belum punya jenis pembuat iklan?'
+  assert_contains: []
+  assert_any_of:
+  -
+    - '150.200'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT COUNT(*) FROM mv_pengawasan WHERE jenis_pembuat_iklan IS NULL OR btrim(jenis_pembuat_iklan) = '''';
+    
+    HASIL DB 14Agu2026 = 150.200 kosong, 33.788 terisi. PENANDA KOSONG: kolom ini memakai lebih dari satu bentuk kosong, sehingga `IS NULL` saja TIDAK cukup — string kosong juga harus dihitung. Itulah sebabnya SQL di atas memakai `IS NULL OR btrim(...) = ''''`. MAKNA KOSONG: periksa apakah kosongnya acak atau menandai sebuah kelompok; bila deterministik, menyaring ''yang terisi'' diam-diam membuang kelompok itu.'

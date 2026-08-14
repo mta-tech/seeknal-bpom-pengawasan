@@ -1,0 +1,19 @@
+name: TC_PGW_VONIS_PER_KOMODITI_03
+scenario_id: TC-PGW-VONIS-PER-KOMODITI-03
+verification_date: '2026-08-14'
+description: 'TC-PGW-VONIS-PER-KOMODITI-03 — Regresi dari pertanyaan nyata sistem lama; angka diverifikasi ulang ke database.'
+turns:
+- prompt: 'tampilkan data hasil kesimpulan tmk berdasarkan hasil verifikasi pusat pada rentang waktu Januari hingga Juni 2025'
+  assert_contains:
+  - 'KOSMETIKA'
+  assert_any_of:
+  -
+    - '3.331'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT * FROM mv_pengawasan WHERE kesimpulan_penilaian_pusat = ''TMK'' AND tgl_start >= ''2025-01-01'' AND tgl_end <= ''2025-06-30'';
+    
+    DATA YANG DITANYA: mv_pengawasan. BENTUK JAWABAN: daftar rinci, bukan satu angka; sajikan sebagai tabel. Hasilnya daftar: yang diperiksa isi baris teratas, bukan seluruh daftar.;
+    HASIL DB 14Agu2026: 3331 baris; baris teratas ''KOSMETIKA'' dengan nilai 161.051.
+    
+    CATATAN URUTAN: SQL ini mengembalikan banyak baris tanpa ORDER BY. sehingga urutan barisnya TIDAK dijamin. Yang diperiksa adalah CACAH BARIS (3.331), bukan nilai pada baris tertentu. Bila jawaban perlu diurutkan, sebutkan kolom pengurutnya secara eksplisit.'

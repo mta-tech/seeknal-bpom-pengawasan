@@ -1,0 +1,20 @@
+name: TC_PGW_PRODUK_DAN_PRODUSEN_04
+scenario_id: TC-PGW-PRODUK-DAN-PRODUSEN-04
+verification_date: '2026-08-14'
+description: 'TC-PGW-PRODUK-DAN-PRODUSEN-04 — Regresi dari pertanyaan nyata sistem lama; angka diverifikasi ulang ke database.'
+turns:
+- prompt: 'tampilkan data materi iklan berdasarkan nama produk ''buah'' dan nama industri farmasi ''nutrifood'' dari masing-masing upt.'
+  assert_contains:
+  - 'PW.03.12.20A.10.24.1329'
+  assert_any_of:
+  -
+    - '20'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT * FROM mv_pengawasan WHERE lower(nama_produk) like ''%buah%'' AND lower(pendaftar) like ''%nutrifood%'';
+    
+    DATA YANG DITANYA: mv_pengawasan. BENTUK JAWABAN: daftar rinci, bukan satu angka; sajikan sebagai tabel. Hasilnya daftar: yang diperiksa isi baris teratas, bukan seluruh daftar.;
+    HASIL DB 14Agu2026: 20 baris; baris teratas ''PW.
+    03.12.20A.10.24.1329'' dengan nilai 147.448.
+    
+    CATATAN URUTAN: SQL ini mengembalikan banyak baris tanpa ORDER BY. sehingga urutan barisnya TIDAK dijamin. Yang diperiksa adalah CACAH BARIS (20), bukan nilai pada baris tertentu. Bila jawaban perlu diurutkan, sebutkan kolom pengurutnya secara eksplisit.'

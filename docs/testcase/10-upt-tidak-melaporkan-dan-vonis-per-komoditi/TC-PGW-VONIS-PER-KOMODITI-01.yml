@@ -1,0 +1,20 @@
+name: TC_PGW_VONIS_PER_KOMODITI_01
+scenario_id: TC-PGW-VONIS-PER-KOMODITI-01
+verification_date: '2026-08-14'
+description: 'TC-PGW-VONIS-PER-KOMODITI-01 — Regresi dari pertanyaan nyata sistem lama; angka diverifikasi ulang ke database.'
+turns:
+- prompt: 'tampilkan data hasil kesimpulan tmk berdasarkan hasil verifikasi pusat pada rentang waktu antara tanggal mulai dan tanggal selesai 2 minggu.'
+  assert_contains:
+  - 'PW.01.13.32C.05.24.60'
+  assert_any_of:
+  -
+    - '88'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT * FROM mv_pengawasan WHERE kesimpulan_penilaian_pusat = ''TMK'' AND tgl_start = tgl_end - INTERVAL ''14 days'';
+    
+    DATA YANG DITANYA: mv_pengawasan. BENTUK JAWABAN: daftar rinci, bukan satu angka; sajikan sebagai tabel. Hasilnya daftar: yang diperiksa isi baris teratas, bukan seluruh daftar.;
+    HASIL DB 14Agu2026: 88 baris; baris teratas ''PW.
+    01.13.32C.05.24.60'' dengan nilai 122.012.
+    
+    CATATAN URUTAN: SQL ini mengembalikan banyak baris tanpa ORDER BY. sehingga urutan barisnya TIDAK dijamin. Yang diperiksa adalah CACAH BARIS (88), bukan nilai pada baris tertentu. Bila jawaban perlu diurutkan, sebutkan kolom pengurutnya secara eksplisit.'

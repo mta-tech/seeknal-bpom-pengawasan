@@ -1,0 +1,17 @@
+name: TC_PGW_KLAUSUL_PELANGGARAN_01
+scenario_id: TC-PGW-KLAUSUL-PELANGGARAN-01
+verification_date: '2026-08-14'
+description: 'TC-PGW-KLAUSUL-PELANGGARAN-01 — Regresi dari pertanyaan nyata sistem lama; angka diverifikasi ulang ke database.'
+turns:
+- prompt: 'Tampilkan data hasil pengawasan TMK berdasarkan klausul pelanggaran secara keseluruhan, masing-masing UPT, media iklan pada komoditi pangan dan rentang waktu 2025'
+  assert_contains:
+  - 'BALAI BESAR POM DI BANDA ACEH'
+  assert_any_of:
+  -
+    - '2'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    select mp.nama_balai, mp.media_iklan, mpk.id_klasifikasi, mpk.keterangan_ketidaksesuaian, mp.kesimpulan_penilaian_balai, count(*) from mv_pengawasan mp join mv_pengawasan_ketidaksesuaian mpk on mp.id = mpk.id_pengawasan where lower(mp.komoditi) like ''%produk pangan%'' and extract(year from mp.tgl_end) = 2025 and lower(mp.kesimpulan_penilaian_balai) like ''%tmk%'' group by 1, 2, 3, 4, 5 order by 1, 2, 3, 4, 5;
+    
+    DATA YANG DITANYA: mv_pengawasan + mv_pengawasan_ketidaksesuaian + mp. BENTUK JAWABAN: satu angka agregat; sebutkan entity dan lingkup filternya. Hasilnya daftar: yang diperiksa isi baris teratas, bukan seluruh daftar.;
+    HASIL DB 14Agu2026: 720 baris; baris teratas ''BALAI BESAR POM DI BANDA ACEH'' dengan nilai 2.'

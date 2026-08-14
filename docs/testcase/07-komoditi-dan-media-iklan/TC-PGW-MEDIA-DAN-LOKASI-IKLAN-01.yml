@@ -1,0 +1,17 @@
+name: TC_PGW_MEDIA_DAN_LOKASI_IKLAN_01
+scenario_id: TC-PGW-MEDIA-DAN-LOKASI-IKLAN-01
+verification_date: '2026-08-14'
+description: 'TC-PGW-MEDIA-DAN-LOKASI-IKLAN-01 — Regresi dari pertanyaan nyata sistem lama; angka diverifikasi ulang ke database.'
+turns:
+- prompt: 'tampilkan data iklan yang dilaporkan mk/tmk dari masing-masing upt yang dikategorikan berdasarkan nama produk, industri farmasi, media publikasi, dan golongan obat dengan status selesai pada rentang'
+  assert_contains:
+  - 'AIR MINUM DALAM KEMASAN (AIR MINERAL)'
+  assert_any_of:
+  -
+    - 'AIR MINUM DALAM KEMASAN (AIR MINERAL)'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT nama_produk, pendaftar AS industri_farmasi, media_iklan, lower(komoditi) AS golongan_obat, nama_balai AS upt, kesimpulan_penilaian_balai AS kesimpulan_upt FROM mv_pengawasan WHERE tgl_start >= ''2024-06-25'' AND tgl_end <= ''2024-06-30'';
+    
+    DATA YANG DITANYA: mv_pengawasan. BENTUK JAWABAN: daftar rinci, bukan satu angka; sajikan sebagai tabel. Hasilnya daftar: yang diperiksa isi baris teratas, bukan seluruh daftar.;
+    HASIL DB 14Agu2026: 1794 baris; baris teratas ''AIR MINUM DALAM KEMASAN (AIR MINERAL)''.'

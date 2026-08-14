@@ -1,0 +1,17 @@
+name: TC_PGW_GAP_BALAI_PUSAT_04
+scenario_id: TC-PGW-GAP-BALAI-PUSAT-04
+verification_date: '2026-08-14'
+description: 'TC-PGW-GAP-BALAI-PUSAT-04 — Regresi dari pertanyaan nyata sistem lama; angka diverifikasi ulang ke database.'
+turns:
+- prompt: 'Berdasarkan produsen Kao Indonesia, tampilkan berapa jumlah iklan yang dilaporkan MK atau TMK beserta jumlah perbedaan antara kesimpulan balai dengan pusat'
+  assert_contains:
+  - 'KAO INDONESIA  PT'
+  assert_any_of:
+  -
+    - '427'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    select mp.pendaftar, count(*) as total_laporan, sum(case when lower(mp.kesimpulan_penilaian_pusat) = ''mk'' then 1 else 0 end) as jumlah_mk_pusat, sum(case when lower(mp.kesimpulan_penilaian_pusat) = ''tmk'' then 1 else 0 end) as jumlah_tmk_pusat, sum(case when lower(mp.kesimpulan_penilaian_balai) = ''mk'' then 1 else 0 end) as jumlah_mk_balai, sum(case when lower(mp.kesimpulan_penilaian_balai) = ''tmk'' then 1 else 0 end) as jumlah_tmk_balai, sum(case when lower(mp.kesimpulan_penilaian_balai) <> lower(mp.kesimpulan_penilaian_pusat) and mp.kesimpulan_penilaian_balai is not null and mp.kesimpulan_penilaian_pusat is not null then 1 else 0 end) as jumlah_perbedaan_balai_pusat from mv_pengawasan mp where lower(mp.pendaftar) like ''%kao indonesia%'' and mp.kesimpulan_penilaian_pusat is not null group by mp.pendaftar order by total_laporan desc;
+    
+    DATA YANG DITANYA: mv_pengawasan. BENTUK JAWABAN: satu angka agregat; sebutkan entity dan lingkup filternya. Hasilnya daftar: yang diperiksa isi baris teratas, bukan seluruh daftar.;
+    HASIL DB 14Agu2026: 10 baris; baris teratas ''KAO INDONESIA PT'' dengan nilai 427.'

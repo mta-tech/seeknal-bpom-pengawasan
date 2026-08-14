@@ -1,0 +1,17 @@
+name: TC_PGW_X_44470
+scenario_id: TC-PGW-X-44470
+verification_date: '2026-08-14'
+description: 'Silang dua kolom berkode; menguji resolusi dua konsep sekaligus.'
+turns:
+- prompt: 'berapa pengawasan iklan PRODUK PANGAN dengan media iklan CETAK?'
+  assert_contains:
+  - 'PRODUK PANGAN'
+  - 'CETAK'
+  assert_any_of:
+  -
+    - '4.566'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT COUNT(*) FROM mv_pengawasan WHERE komoditi = ''PRODUK PANGAN'' AND media_iklan = ''CETAK'';
+    
+    HASIL DB 14Agu2026 = 4.566. DUA KOLOM BERKODE: `komoditi` = ''PRODUK PANGAN'' dan `media_iklan` = ''CETAK''. Keduanya nilai persis dari data. Bila kolom vonis termasuk di sini, ingat bahwa gradasi dicocokkan dengan pola awalan bila pertanyaannya menyebut keluarga, bukan satu tingkat tertentu.'

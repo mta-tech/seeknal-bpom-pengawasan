@@ -1,0 +1,16 @@
+name: TC_PGW_TARGET_KOLOM_1
+scenario_id: TC-PGW-TARGET-KOLOM-1
+verification_date: '2026-08-14'
+description: 'TC-PGW-TARGET-KOLOM-1 — Menguji pemilihan kolom target yang benar dari tujuh kolom yang tersedia. v1 tidak menyebut satu pun kolom.'
+turns:
+- prompt: 'berapa target pengawasan iklan nasional?'
+  assert_contains:
+  - 'target'
+  assert_any_of:
+  -
+    - '57.628'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT SUM(target_pengawasan) FROM target_balai = 57.628.;
+    
+    KOLOM FILTER: tabel `target_balai` memuat TUJUH kolom target untuk kegiatan berbeda — target_penandaan, target_pengawasan, target_pengujian, target_pengujian_pangan, target_pengujian_pangan_fortifikasi, target_sarana_distribusi, target_sarana_produksi. Untuk domain ini HANYA `target_pengawasan` yang sah; enam lainnya milik kegiatan lain dan angkanya nyata sehingga salah pilih tidak akan terlihat aneh. GRAIN: 1 baris = 1 balai x 1 komoditi x 1 tahun (532 baris, 76 balai). Total nasional = jumlah seluruh baris. KENAPA MUDAH SALAH: context v1 menyebut nama tabel dan kunci join lalu berhenti — tidak satu pun kolom target disebut, sehingga pertanyaan capaian tidak punya jalur resolusi. CAKUPAN TAHUN: kolom `tahun` hanya berisi 2024.'

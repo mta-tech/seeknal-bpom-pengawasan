@@ -1,0 +1,17 @@
+name: TC_PGW_KOMODITI_797_2025
+scenario_id: TC-PGW-KOMODITI-797-2025
+verification_date: '2026-08-14'
+description: 'Silang `komoditi` dengan periode; menguji kelengkapan filter dari pertanyaan majemuk.'
+turns:
+- prompt: 'berapa pengawasan iklan dengan komoditi KOSMETIKA pada tahun 2025?'
+  assert_contains:
+  - 'KOSMETIKA'
+  - '2025'
+  assert_any_of:
+  -
+    - '17.789'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT COUNT(*) FROM mv_pengawasan WHERE komoditi = ''KOSMETIKA'' AND tgl_start >= ''2025-01-01'' AND tgl_start < ''2026-01-01'';
+    
+    HASIL DB 14Agu2026 = 17.789. KOLOM: `komoditi` di `mv_pengawasan`. NILAI FILTER ''KOSMETIKA'' diambil apa adanya dari data. DUA KOMPONEN: nilai kode dan periode — komponen yang halamannya tidak dibuka akan hilang dari filter secara senyap.'

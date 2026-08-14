@@ -1,0 +1,16 @@
+name: TC_PGW_TAHUN_2023
+scenario_id: TC-PGW-TAHUN-2023
+verification_date: '2026-08-14'
+description: 'Cacah pengawasan iklan untuk satu tahun; menguji pemilihan kolom tanggal kanonik.'
+turns:
+- prompt: 'berapa pengawasan iklan pada tahun 2023?'
+  assert_contains:
+  - '2023'
+  assert_any_of:
+  -
+    - '37.769'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT COUNT(*) FROM mv_pengawasan WHERE tgl_start >= ''2023-01-01'' AND tgl_start < ''2024-01-01'';
+    
+    HASIL DB 14Agu2026 = 37.769. TANGGAL KANONIK: `tgl_start` di `mv_pengawasan` — kolom tanggal default untuk pertanyaan periode. Kolom tanggal lain di tabel ini menjawab pertanyaan berbeda dan angkanya tidak sama. BATAS RENTANG: pakai perbandingan >= dan < , bukan EXTRACT(YEAR ...) di WHERE — tabel ini tanpa indeks, EXTRACT memaksa pemindaian penuh.'

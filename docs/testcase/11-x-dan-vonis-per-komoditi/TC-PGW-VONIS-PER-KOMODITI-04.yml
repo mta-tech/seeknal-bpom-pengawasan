@@ -1,0 +1,17 @@
+name: TC_PGW_VONIS_PER_KOMODITI_04
+scenario_id: TC-PGW-VONIS-PER-KOMODITI-04
+verification_date: '2026-08-14'
+description: 'TC-PGW-VONIS-PER-KOMODITI-04 — Regresi dari pertanyaan nyata sistem lama; angka diverifikasi ulang ke database.'
+turns:
+- prompt: 'Tampilkan data berupa jumlah iklan obat keras yang dilaporkan oleh UPT dengan hasil verifikasi pusat MK/TMK pada tahun 2025'
+  assert_contains:
+  - 'BALAI BESAR POM DI BANDA ACEH'
+  assert_any_of:
+  -
+    - '10'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    select mp.nama_balai , mp.komoditi, mp.kesimpulan_penilaian_pusat, count(*) from mv_pengawasan mp where lower(mp.komoditi) like ''%obat%'' and extract(year from mp.tgl_start) = 2025 group by 1, 2, 3 order by 1, 2, 3;
+    
+    DATA YANG DITANYA: mv_pengawasan + mp. BENTUK JAWABAN: satu angka agregat; sebutkan entity dan lingkup filternya. Hasilnya daftar: yang diperiksa isi baris teratas, bukan seluruh daftar.;
+    HASIL DB 14Agu2026: 611 baris; baris teratas ''BALAI BESAR POM DI BANDA ACEH'' dengan nilai 10.'

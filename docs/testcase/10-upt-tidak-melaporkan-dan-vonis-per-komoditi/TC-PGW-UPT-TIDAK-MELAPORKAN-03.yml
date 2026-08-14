@@ -1,0 +1,17 @@
+name: TC_PGW_UPT_TIDAK_MELAPORKAN_03
+scenario_id: TC-PGW-UPT-TIDAK-MELAPORKAN-03
+verification_date: '2026-08-14'
+description: 'TC-PGW-UPT-TIDAK-MELAPORKAN-03 — Regresi dari pertanyaan nyata sistem lama; angka diverifikasi ulang ke database.'
+turns:
+- prompt: 'tampilkan data upt yang tidak melaporkan hasil pengawasan iklan pada media cetak / media luar ruang pada tahun 2022.'
+  assert_contains:
+  - 'LOKA POM DI KABUPATEN INDRAMAYU'
+  assert_any_of:
+  -
+    - 'LOKA POM DI KABUPATEN INDRAMAYU'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT DISTINCT nama_balai FROM mv_pengawasan WHERE nama_balai NOT IN ( SELECT DISTINCT nama_balai FROM mv_pengawasan WHERE media_iklan IN (''CETAK'', ''MEDIA_LUARRUANG'') AND EXTRACT(YEAR FROM tgl_start) = 2022 );
+    
+    DATA YANG DITANYA: mv_pengawasan + tgl_start. BENTUK JAWABAN: daftar rinci, bukan satu angka; sajikan sebagai tabel. Hasilnya daftar: yang diperiksa isi baris teratas, bukan seluruh daftar.;
+    HASIL DB 14Agu2026: 84 baris; baris teratas ''LOKA POM DI KABUPATEN INDRAMAYU''.'

@@ -1,0 +1,17 @@
+name: TC_PGW_VONIS_PER_KOMODITI_05
+scenario_id: TC-PGW-VONIS-PER-KOMODITI-05
+verification_date: '2026-08-14'
+description: 'TC-PGW-VONIS-PER-KOMODITI-05 — Regresi dari pertanyaan nyata sistem lama; angka diverifikasi ulang ke database.'
+turns:
+- prompt: 'Tampilkan data hasil pengawasan iklan berdasarkan hasil verifikasi balai TMK yang statusnya belum ada tanggal direktur (belum selesai) pada tahun 2025'
+  assert_contains:
+  - 'OBAT'
+  assert_any_of:
+  -
+    - '166.355'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    select mp.tgl_start, mp.id, mp.komoditi, mp.nama_balai, mp.nama_produk, mp.media_iklan, mp.kesimpulan_penilaian_balai from mv_pengawasan mp join mv_pengawasan_timeline mpt on mp.id = mpt.id_pengawasan where mpt.tanggal_kirim_direktur is null and mp.kesimpulan_penilaian_balai = ''TMK'' and extract(year from mp.tgl_start) = 2025 order by 1, 2, 3, 4, 5, 6;
+    
+    DATA YANG DITANYA: mv_pengawasan + mv_pengawasan_timeline + mp. BENTUK JAWABAN: daftar rinci, bukan satu angka; sajikan sebagai tabel. Hasilnya daftar: yang diperiksa isi baris teratas, bukan seluruh daftar.;
+    HASIL DB 14Agu2026: 11 baris; baris teratas ''OBAT'' dengan nilai 166.355.'

@@ -1,0 +1,16 @@
+name: TC_PGW_RANK_BALAI_01
+scenario_id: TC-PGW-RANK-BALAI-01
+verification_date: '2026-08-14'
+description: 'Peringkat balai; menguji normalisasi nama balai sebelum pengelompokan.'
+turns:
+- prompt: 'balai mana yang paling banyak melaporkan pengawasan iklan?'
+  assert_contains:
+  - 'BALAI BESAR POM DI SEMARANG'
+  assert_any_of:
+  -
+    - '5.888'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT btrim(nama_balai) AS balai, COUNT(*) AS jumlah FROM mv_pengawasan WHERE nama_balai IS NOT NULL GROUP BY 1 ORDER BY 2 DESC LIMIT 5;
+    
+    HASIL DB 14Agu2026: teratas ''BALAI BESAR POM DI SEMARANG'' dengan 5.888. NORMALISASI WAJIB: `btrim(nama_balai)` — sebagian nilai nama balai tersimpan dengan spasi menempel di ujung. Tanpa btrim, satu balai bisa muncul sebagai dua baris peringkat dan urutannya salah. Peringkat mentah memihak balai bervolume besar; sebutkan bahwa ini cacah absolut, bukan proporsi terhadap beban kerja.'

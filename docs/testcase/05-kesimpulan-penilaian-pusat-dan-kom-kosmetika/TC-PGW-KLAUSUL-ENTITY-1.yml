@@ -1,0 +1,16 @@
+name: TC_PGW_KLAUSUL_ENTITY_1
+scenario_id: TC-PGW-KLAUSUL-ENTITY-1
+verification_date: '2026-08-14'
+description: 'TC-PGW-KLAUSUL-ENTITY-1 — Dua entity sah (event vs baris klausul); agent harus memilih yang sesuai pertanyaan atau menyebut basisnya.'
+turns:
+- prompt: 'berapa total iklan yang punya catatan ketidaksesuaian?'
+  assert_contains:
+  - 'ketidaksesuaian'
+  assert_any_of:
+  -
+    - '7.260'
+  -
+    - '9.071'
+    - 'klausul'
+  tolerance_pct: 5
+  note: 'SQL event unik: SELECT COUNT(DISTINCT id_pengawasan) FROM mv_pengawasan_ketidaksesuaian = 7.260. SQL baris klausul: SELECT COUNT(*) = 9.071. DUA JAWABAN SAH, beda entity: satu event bisa kena beberapa klausul, jadi baris selalu lebih banyak dari event. Yang ditanya ''berapa iklan'' -> event unik. Jawaban berbasis baris tetap diterima ASAL menyebut bahwa yang dihitung klausul. JEBAKAN: INNER JOIN dari tabel fakta ke tabel ini menjatuhkan sebagian besar populasi — hanya sebagian kecil event punya ketidaksesuaian. Selalu LEFT JOIN dari fakta.'

@@ -1,0 +1,17 @@
+name: TC_PGW_GAP_BALAI_PUSAT_06
+scenario_id: TC-PGW-GAP-BALAI-PUSAT-06
+verification_date: '2026-08-14'
+description: 'TC-PGW-GAP-BALAI-PUSAT-06 — Regresi dari pertanyaan nyata sistem lama; angka diverifikasi ulang ke database.'
+turns:
+- prompt: 'Tampilkan rekapitulasi jumlah laporan pengawasan iklan obat masing-masing UPT yang telah dikirim Pusat (berdasarkan tanggal kepala balai) pada tahun 2025'
+  assert_contains:
+  - 'LOKA POM DI KOTA TANJUNG PINANG'
+  assert_any_of:
+  -
+    - '1'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    select mpt.tanggal_kirim_kabalai, mp.nama_balai, mp.komoditi, count(*) from mv_pengawasan mp join mv_pengawasan_timeline mpt on mp.id = mpt.id_pengawasan where lower(komoditi) like ''%obat%'' and extract(year from mp.tgl_start) = 2025 and mpt.tanggal_kirim_kabalai is not null group by 1, 2, 3 order by 1, 2, 3;
+    
+    DATA YANG DITANYA: mv_pengawasan + mv_pengawasan_timeline + mp. BENTUK JAWABAN: satu angka agregat; sebutkan entity dan lingkup filternya. Hasilnya daftar: yang diperiksa isi baris teratas, bukan seluruh daftar.;
+    HASIL DB 14Agu2026: 2929 baris; baris teratas ''LOKA POM DI KOTA TANJUNG PINANG'' dengan nilai 1.'

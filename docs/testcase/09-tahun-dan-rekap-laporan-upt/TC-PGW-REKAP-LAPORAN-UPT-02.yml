@@ -1,0 +1,17 @@
+name: TC_PGW_REKAP_LAPORAN_UPT_02
+scenario_id: TC-PGW-REKAP-LAPORAN-UPT-02
+verification_date: '2026-08-14'
+description: 'TC-PGW-REKAP-LAPORAN-UPT-02 — Regresi dari pertanyaan nyata sistem lama; angka diverifikasi ulang ke database.'
+turns:
+- prompt: 'tampilkan rekapitulasi jumlah laporan pengawasan label pangan masing-masing upt yang telah dikirim ke pusat pada periode waktu antara tanggal mulai dan tanggal selesai 2 minggu'
+  assert_contains:
+  - 'BALAI BESAR POM DI BANDA ACEH'
+  assert_any_of:
+  -
+    - '36'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT nama_balai, COUNT(*) AS jumlah_laporan FROM mv_pengawasan WHERE tgl_start >= ''2025-07-15'' AND tgl_start <= ''2025-07-29'' GROUP BY nama_balai;
+    
+    DATA YANG DITANYA: mv_pengawasan. BENTUK JAWABAN: satu angka agregat; sebutkan entity dan lingkup filternya. Hasilnya daftar: yang diperiksa isi baris teratas, bukan seluruh daftar.;
+    HASIL DB 14Agu2026: 72 baris; baris teratas ''BALAI BESAR POM DI BANDA ACEH'' dengan nilai 36.'

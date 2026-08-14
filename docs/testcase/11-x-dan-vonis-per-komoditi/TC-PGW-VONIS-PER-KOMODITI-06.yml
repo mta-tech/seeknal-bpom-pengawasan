@@ -1,0 +1,17 @@
+name: TC_PGW_VONIS_PER_KOMODITI_06
+scenario_id: TC-PGW-VONIS-PER-KOMODITI-06
+verification_date: '2026-08-14'
+description: 'TC-PGW-VONIS-PER-KOMODITI-06 — Regresi dari pertanyaan nyata sistem lama; angka diverifikasi ulang ke database.'
+turns:
+- prompt: 'Tampilkan persentase penilaian UPT (MK, TMK, TMK Mayor, TMK Minor) untuk komoditi pangan pada tiap UPT'
+  assert_contains:
+  - 'BALAI BESAR POM DI BANDA ACEH'
+  assert_any_of:
+  -
+    - '503'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    WITH data_penilaian AS ( SELECT mp.nama_balai, UPPER(mp.kesimpulan_penilaian_balai) AS kesimpulan_penilaian, COUNT(*) AS jumlah FROM mv_pengawasan mp WHERE LOWER(mp.komoditi) LIKE ''%pangan%'' AND mp.kesimpulan_penilaian_pusat IS NOT NULL AND mp.kesimpulan_penilaian_balai IS NOT NULL GROUP BY mp.nama_balai, UPPER(mp.kesimpulan_penilaian_balai) ) SELECT dp.nama_balai, dp.kesimpulan_penilaian, dp.jumlah, ROUND( (dp.jumlah::decimal / NULLIF(SUM(dp.jumlah) OVER (PARTITION BY dp.nama_balai), 0)) * 100, 2 ) AS persentase FROM data_penilaian dp ORDER BY dp.nama_balai, persentase DESC;
+    
+    DATA YANG DITANYA: mv_pengawasan + data_penilaian. BENTUK JAWABAN: satu angka agregat; sebutkan entity dan lingkup filternya. Hasilnya daftar: yang diperiksa isi baris teratas, bukan seluruh daftar.;
+    HASIL DB 14Agu2026: 244 baris; baris teratas ''BALAI BESAR POM DI BANDA ACEH'' dengan nilai 503.'

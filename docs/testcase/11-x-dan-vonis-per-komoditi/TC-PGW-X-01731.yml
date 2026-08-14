@@ -1,0 +1,17 @@
+name: TC_PGW_X_01731
+scenario_id: TC-PGW-X-01731
+verification_date: '2026-08-14'
+description: 'Silang dua kolom berkode; menguji resolusi dua konsep sekaligus.'
+turns:
+- prompt: 'berapa pengawasan iklan SUPLEMEN KESEHATAN dengan media iklan ELEKTRONIK?'
+  assert_contains:
+  - 'SUPLEMEN KESEHATAN'
+  - 'ELEKTRONIK'
+  assert_any_of:
+  -
+    - '5.801'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT COUNT(*) FROM mv_pengawasan WHERE komoditi = ''SUPLEMEN KESEHATAN'' AND media_iklan = ''ELEKTRONIK'';
+    
+    HASIL DB 14Agu2026 = 5.801. DUA KOLOM BERKODE: `komoditi` = ''SUPLEMEN KESEHATAN'' dan `media_iklan` = ''ELEKTRONIK''. Keduanya nilai persis dari data. Bila kolom vonis termasuk di sini, ingat bahwa gradasi dicocokkan dengan pola awalan bila pertanyaannya menyebut keluarga, bukan satu tingkat tertentu.'

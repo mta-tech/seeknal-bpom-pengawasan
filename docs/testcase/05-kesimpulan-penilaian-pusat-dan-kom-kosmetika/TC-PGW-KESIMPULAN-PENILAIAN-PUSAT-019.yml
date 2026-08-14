@@ -1,0 +1,16 @@
+name: TC_PGW_KESIMPULAN_PENILAIAN_PUSAT_019
+scenario_id: TC-PGW-KESIMPULAN-PENILAIAN-PUSAT-019
+verification_date: '2026-08-14'
+description: 'Cacah pengawasan iklan untuk satu nilai `kesimpulan_penilaian_pusat`; menguji pemetaan istilah ke kode filter yang benar.'
+turns:
+- prompt: 'berapa pengawasan iklan dengan kesimpulan penilaian pusat Null?'
+  assert_contains:
+  - 'Null'
+  assert_any_of:
+  -
+    - '55.859'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT COUNT(*) FROM mv_pengawasan WHERE kesimpulan_penilaian_pusat = ''Null'';
+    
+    HASIL DB 14Agu2026 = 55.859. KOLOM: `kesimpulan_penilaian_pusat` di `mv_pengawasan`. NILAI FILTER: ''Null'' — diambil apa adanya dari data, termasuk spasi dan kapitalisasinya. Jangan mengetik nilai dari ingatan; ambil lewat SELECT DISTINCT lalu pakai persis. ENTITY: COUNT(*) menghitung baris tabel fakta.'

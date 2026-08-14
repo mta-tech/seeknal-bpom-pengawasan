@@ -1,0 +1,16 @@
+name: TC_PGW_KESIMPULAN_PENILAIAN_BALAI_013
+scenario_id: TC-PGW-KESIMPULAN-PENILAIAN-BALAI-013
+verification_date: '2026-08-14'
+description: 'Cacah pengawasan iklan untuk satu nilai `kesimpulan_penilaian_balai`; menguji pemetaan istilah ke kode filter yang benar.'
+turns:
+- prompt: 'berapa pengawasan iklan dengan kesimpulan penilaian balai MK?'
+  assert_contains:
+  - 'MK'
+  assert_any_of:
+  -
+    - '111.191'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT COUNT(*) FROM mv_pengawasan WHERE kesimpulan_penilaian_balai = ''MK'';
+    
+    HASIL DB 14Agu2026 = 111.191. KOLOM: `kesimpulan_penilaian_balai` di `mv_pengawasan`. NILAI FILTER: ''MK'' — diambil apa adanya dari data, termasuk spasi dan kapitalisasinya. Jangan mengetik nilai dari ingatan; ambil lewat SELECT DISTINCT lalu pakai persis. ENTITY: COUNT(*) menghitung baris tabel fakta.'

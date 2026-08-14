@@ -1,0 +1,17 @@
+name: TC_PGW_BALAI_1229_2025
+scenario_id: TC-PGW-BALAI-1229-2025
+verification_date: '2026-08-14'
+description: 'Cacah pengawasan iklan untuk satu balai pada satu tahun; menguji normalisasi nama balai dan filter periode.'
+turns:
+- prompt: 'berapa pengawasan iklan yang dilaporkan BALAI BESAR POM DI SURABAYA pada tahun 2025?'
+  assert_contains:
+  - 'BALAI BESAR POM DI SURABAYA'
+  - '2025'
+  assert_any_of:
+  -
+    - '1.413'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT COUNT(*) FROM mv_pengawasan WHERE btrim(nama_balai) = ''BALAI BESAR POM DI SURABAYA'' AND tgl_start >= ''2025-01-01'' AND tgl_start < ''2026-01-01'';
+    
+    HASIL DB 14Agu2026 = 1.413. NORMALISASI WAJIB: `btrim(nama_balai)` — sebagian nilai nama balai tersimpan dengan spasi menempel di ujung, sehingga filter kesamaan persis tanpa btrim bisa mengembalikan nol baris tanpa pesan kesalahan. DUA FILTER: balai dan periode; keduanya harus muncul di SQL final.'

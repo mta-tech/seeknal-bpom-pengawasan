@@ -1,0 +1,16 @@
+name: TC_PGW_KLAUSUL_KLAIM_1
+scenario_id: TC-PGW-KLAUSUL-KLAIM-1
+verification_date: '2026-08-14'
+description: 'TC-PGW-KLAUSUL-KLAIM-1 — Menguji apakah agent tahu klausul pelanggaran punya katalog kode dan bisa memetakan istilah pengguna ke kodenya. v1 tidak mengajarkan kolom maupun kodenya.'
+turns:
+- prompt: 'berapa iklan yang melanggar karena klaim kesehatan?'
+  assert_contains:
+  - 'klaim kesehatan'
+  assert_any_of:
+  -
+    - '3.346'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT COUNT(DISTINCT id_pengawasan) FROM mv_pengawasan_ketidaksesuaian WHERE id_klasifikasi=2. DB 14Agu2026 = 3.346 event. KODE FILTER: klausul disimpan sebagai kode angka di `id_klasifikasi`, berpasangan satu-satu dengan teksnya di `keterangan_ketidaksesuaian`. ''klaim kesehatan'' = kode 2. Enam kode yang ada: 1=produk terlarang, 2=klaim kesehatan, 3=menyesatkan, 4=melanggar norma, 5=superlatif/komparatif, 6=kata/figur/logo terlarang.;
+    
+    KENAPA MUDAH SALAH: context v1 hanya menyebut nama tabel dan kunci join `id_pengawasan`, tidak pernah menyebut kedua kolom isinya maupun keenam kodenya — agent harus menebak atau membakar kuota probe. ENTITY: hitung event unik (COUNT DISTINCT id_pengawasan), bukan COUNT(*), karena satu event bisa kena beberapa klausul. Jangan mencari dengan pola kata di kolom teks: beberapa klausul memuat kata mirip dan teksnya panjang.'

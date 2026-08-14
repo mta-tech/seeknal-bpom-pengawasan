@@ -1,0 +1,16 @@
+name: TC_PGW_RANK_KOMODITI_01
+scenario_id: TC-PGW-RANK-KOMODITI-01
+verification_date: '2026-08-14'
+description: 'Peringkat nilai `komoditi`; menguji pengeluaran penanda kosong dari peringkat.'
+turns:
+- prompt: 'komoditi apa yang paling banyak pada pengawasan iklan?'
+  assert_contains:
+  - 'KOSMETIKA'
+  assert_any_of:
+  -
+    - '48.334'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT komoditi, COUNT(*) AS jumlah FROM mv_pengawasan WHERE komoditi IS NOT NULL AND btrim(komoditi) <> '''' GROUP BY 1 ORDER BY 2 DESC LIMIT 5;
+    
+    HASIL DB 14Agu2026: teratas ''KOSMETIKA'' dengan 48.334. KOLOM: `komoditi` di `mv_pengawasan`. Baris dengan nilai kosong dikeluarkan lewat `btrim(komoditi) <> ''''` — penanda kosong bukan kategori dan tidak boleh ikut diperingkat. Sebutkan porsi yang dikeluarkan bila besar.'

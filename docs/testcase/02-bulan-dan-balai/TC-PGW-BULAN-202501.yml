@@ -1,0 +1,16 @@
+name: TC_PGW_BULAN_202501
+scenario_id: TC-PGW-BULAN-202501
+verification_date: '2026-08-14'
+description: 'Cacah pengawasan iklan untuk satu bulan; menguji pembatasan rentang tanggal yang benar.'
+turns:
+- prompt: 'berapa pengawasan iklan pada bulan 2025-01?'
+  assert_contains:
+  - '2025'
+  assert_any_of:
+  -
+    - '3.233'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT COUNT(*) FROM mv_pengawasan WHERE tgl_start >= ''2025-01-01'' AND tgl_start < ''2025-02-01'';
+    
+    HASIL DB 14Agu2026 = 3.233. BATAS BULAN: pakai >= awal bulan dan < awal bulan berikutnya. Jangan memakai EXTRACT(MONTH ...) di WHERE — tabel ini tanpa indeks, dan EXTRACT memaksa pemindaian penuh. PERIODE BERJALAN: bila bulan yang ditanya adalah bulan berjalan, sebutkan bahwa datanya belum lengkap.'

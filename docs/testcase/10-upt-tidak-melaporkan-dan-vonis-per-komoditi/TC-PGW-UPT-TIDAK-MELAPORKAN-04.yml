@@ -1,0 +1,17 @@
+name: TC_PGW_UPT_TIDAK_MELAPORKAN_04
+scenario_id: TC-PGW-UPT-TIDAK-MELAPORKAN-04
+verification_date: '2026-08-14'
+description: 'TC-PGW-UPT-TIDAK-MELAPORKAN-04 — Regresi dari pertanyaan nyata sistem lama; angka diverifikasi ulang ke database.'
+turns:
+- prompt: 'tampilkan data upt yang tidak melaporkan hasil pengawasan iklan pada media cetak / media luar ruang.'
+  assert_contains:
+  - 'DIREKTORAT PENGAWASAN KMEI ONPPZA'
+  assert_any_of:
+  -
+    - 'DIREKTORAT PENGAWASAN KMEI ONPPZA'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT DISTINCT nama_balai FROM mv_pengawasan EXCEPT SELECT DISTINCT nama_balai FROM mv_pengawasan WHERE media_iklan IN (''CETAK'',''MEDIA_LUARRUANG'') AND kesimpulan_penilaian_akhir IS NOT NULL;
+    
+    DATA YANG DITANYA: mv_pengawasan. BENTUK JAWABAN: daftar rinci, bukan satu angka; sajikan sebagai tabel. Hasilnya daftar: yang diperiksa isi baris teratas, bukan seluruh daftar.;
+    HASIL DB 14Agu2026: 1 baris; baris teratas ''DIREKTORAT PENGAWASAN KMEI ONPPZA''.'

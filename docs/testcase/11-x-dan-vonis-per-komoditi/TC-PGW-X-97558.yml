@@ -1,0 +1,17 @@
+name: TC_PGW_X_97558
+scenario_id: TC-PGW-X-97558
+verification_date: '2026-08-14'
+description: 'Silang dua kolom berkode; menguji resolusi dua konsep sekaligus.'
+turns:
+- prompt: 'berapa pengawasan iklan OBAT dengan media iklan MEDIA_LUARRUANG?'
+  assert_contains:
+  - 'OBAT'
+  - 'MEDIA_LUARRUANG'
+  assert_any_of:
+  -
+    - '4.954'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT COUNT(*) FROM mv_pengawasan WHERE komoditi = ''OBAT'' AND media_iklan = ''MEDIA_LUARRUANG'';
+    
+    HASIL DB 14Agu2026 = 4.954. DUA KOLOM BERKODE: `komoditi` = ''OBAT'' dan `media_iklan` = ''MEDIA_LUARRUANG''. Keduanya nilai persis dari data. Bila kolom vonis termasuk di sini, ingat bahwa gradasi dicocokkan dengan pola awalan bila pertanyaannya menyebut keluarga, bukan satu tingkat tertentu.'

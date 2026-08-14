@@ -1,0 +1,17 @@
+name: TC_PGW_VONIS_PER_KOMODITI_02
+scenario_id: TC-PGW-VONIS-PER-KOMODITI-02
+verification_date: '2026-08-14'
+description: 'TC-PGW-VONIS-PER-KOMODITI-02 — Regresi dari pertanyaan nyata sistem lama; angka diverifikasi ulang ke database.'
+turns:
+- prompt: 'tampilkan persentase kategori pangan yang tmk pada rentang waktu antara tanggal mulai dan tanggal selesai 2 minggu (baik secara nasional maupun per upt).'
+  assert_contains:
+  - 'BALAI BESAR POM DI BANDA ACEH'
+  assert_any_of:
+  -
+    - '3'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT nama_balai, COUNT(CASE WHEN kesimpulan_penilaian_akhir = ''TMK'' THEN 1 END) AS jumlah_pemeriksaan_tmk, COUNT(*) AS jumlah_pemeriksaan_total, CASE WHEN COUNT(*) > 0 THEN ROUND( (CAST(COUNT(CASE WHEN kesimpulan_penilaian_akhir = ''TMK'' THEN 1 END) AS NUMERIC) * 100.0) / COUNT(*), 2 ) ELSE 0.00 END AS persentase_tmk FROM mv_pengawasan WHERE tgl_end - INTERVAL ''14 days'' > tgl_start GROUP BY 1;
+    
+    DATA YANG DITANYA: mv_pengawasan. BENTUK JAWABAN: satu angka agregat; sebutkan entity dan lingkup filternya. Hasilnya daftar: yang diperiksa isi baris teratas, bukan seluruh daftar.;
+    HASIL DB 14Agu2026: 79 baris; baris teratas ''BALAI BESAR POM DI BANDA ACEH'' dengan nilai 3.'

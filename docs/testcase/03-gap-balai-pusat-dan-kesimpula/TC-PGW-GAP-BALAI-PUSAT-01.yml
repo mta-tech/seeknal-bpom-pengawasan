@@ -1,0 +1,20 @@
+name: TC_PGW_GAP_BALAI_PUSAT_01
+scenario_id: TC-PGW-GAP-BALAI-PUSAT-01
+verification_date: '2026-08-14'
+description: 'TC-PGW-GAP-BALAI-PUSAT-01 — Regresi dari pertanyaan nyata sistem lama; angka diverifikasi ulang ke database.'
+turns:
+- prompt: 'tampilkan data hasil kesimpulan tmk berdasarkan hasil verifikasi pusat dengan hasil verifikasi balai mk pada rentang waktu antara tanggal mulai dan tanggal selesai 2 minggu.'
+  assert_contains:
+  - 'PW.01.13.49B.08.26.197'
+  assert_any_of:
+  -
+    - '14'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT * FROM mv_pengawasan WHERE kesimpulan_penilaian_pusat = kesimpulan_penilaian_balai AND kesimpulan_penilaian_pusat = ''TMK'' AND tgl_start >= (SELECT (current_date - interval ''2 week'')) AND tgl_end <= current_date;
+    
+    DATA YANG DITANYA: mv_pengawasan. BENTUK JAWABAN: daftar rinci, bukan satu angka; sajikan sebagai tabel. Hasilnya daftar: yang diperiksa isi baris teratas, bukan seluruh daftar.;
+    HASIL DB 14Agu2026: 14 baris; baris teratas ''PW.
+    01.13.49B.08.26.197'' dengan nilai 237.576.
+    
+    CATATAN URUTAN: SQL ini mengembalikan banyak baris tanpa ORDER BY. sehingga urutan barisnya TIDAK dijamin. Yang diperiksa adalah CACAH BARIS (14), bukan nilai pada baris tertentu. Bila jawaban perlu diurutkan, sebutkan kolom pengurutnya secara eksplisit.'

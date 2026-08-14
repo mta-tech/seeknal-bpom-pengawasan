@@ -1,0 +1,16 @@
+name: TC_PGW_JENIS_PEMBUAT_IKLAN_011
+scenario_id: TC-PGW-JENIS-PEMBUAT-IKLAN-011
+verification_date: '2026-08-14'
+description: 'Cacah pengawasan iklan untuk satu nilai `jenis_pembuat_iklan`; menguji pemetaan istilah ke kode filter yang benar.'
+turns:
+- prompt: 'berapa pengawasan iklan dengan jenis pembuat iklan PELAKU USAHA?'
+  assert_contains:
+  - 'PELAKU USAHA'
+  assert_any_of:
+  -
+    - '29.301'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT COUNT(*) FROM mv_pengawasan WHERE jenis_pembuat_iklan = ''PELAKU USAHA'';
+    
+    HASIL DB 14Agu2026 = 29.301. KOLOM: `jenis_pembuat_iklan` di `mv_pengawasan`. NILAI FILTER: ''PELAKU USAHA'' — diambil apa adanya dari data, termasuk spasi dan kapitalisasinya. Jangan mengetik nilai dari ingatan; ambil lewat SELECT DISTINCT lalu pakai persis. ENTITY: COUNT(*) menghitung baris tabel fakta.'

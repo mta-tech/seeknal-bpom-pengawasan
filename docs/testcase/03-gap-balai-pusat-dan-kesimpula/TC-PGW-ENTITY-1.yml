@@ -1,0 +1,25 @@
+name: TC_PGW_ENTITY_1
+scenario_id: TC-PGW-ENTITY-1
+verification_date: '2026-08-14'
+description: 'TC-PGW-ENTITY-1 — Tiga entity sah dengan angka berbeda; agent harus menyebut basis hitungnya atau mengklarifikasi.'
+turns:
+- prompt: 'total pengawasan iklan yang tercatat ada berapa?'
+  assert_contains: []
+  assert_any_of:
+  -
+    - '172.200'
+  -
+    - '183.988'
+    - 'baris'
+  -
+    - '9.742'
+    - 'surat'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP (tiga entity, jalankan terpisah):
+    -- event unik
+    SELECT COUNT(DISTINCT id) FROM mv_pengawasan;
+    -- baris produk
+    SELECT COUNT(*) FROM mv_pengawasan;
+    -- surat
+    SELECT COUNT(DISTINCT nomor_surat) FROM mv_pengawasan;
+    TIGA ENTITY SAH, angkanya berbeda: event unik COUNT(DISTINCT id) = 172.200; baris produk COUNT(*) = 183.988; surat COUNT(DISTINCT nomor_surat) = 9.742. Sebabnya satu event bisa memuat beberapa produk. Jawaban mana pun diterima ASAL entity-nya disebut. Yang TIDAK diterima: menyajikan angka tanpa menjelaskan yang dihitung apa. Idealnya agent MENGKLARIFIKASI di Gate 1 karena ''berapa pengawasan'' memang ambigu. PENTING untuk perbandingan lintas komoditi: pakai event, bukan baris — grain multi-produk hanya berlaku sebagian komoditi sehingga baris memihak komoditi tertentu.'

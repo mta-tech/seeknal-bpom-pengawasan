@@ -1,0 +1,16 @@
+name: TC_PGW_RANK_JENIS_PEMBUAT_IKLAN_01
+scenario_id: TC-PGW-RANK-JENIS-PEMBUAT-IKLAN-01
+verification_date: '2026-08-14'
+description: 'Peringkat nilai `jenis_pembuat_iklan`; menguji pengeluaran penanda kosong dari peringkat.'
+turns:
+- prompt: 'jenis pembuat iklan apa yang paling banyak pada pengawasan iklan?'
+  assert_contains:
+  - 'PELAKU USAHA'
+  assert_any_of:
+  -
+    - '29.301'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT jenis_pembuat_iklan, COUNT(*) AS jumlah FROM mv_pengawasan WHERE jenis_pembuat_iklan IS NOT NULL AND btrim(jenis_pembuat_iklan) <> '''' GROUP BY 1 ORDER BY 2 DESC LIMIT 5;
+    
+    HASIL DB 14Agu2026: teratas ''PELAKU USAHA'' dengan 29.301. KOLOM: `jenis_pembuat_iklan` di `mv_pengawasan`. Baris dengan nilai kosong dikeluarkan lewat `btrim(jenis_pembuat_iklan) <> ''''` — penanda kosong bukan kategori dan tidak boleh ikut diperingkat. Sebutkan porsi yang dikeluarkan bila besar.'

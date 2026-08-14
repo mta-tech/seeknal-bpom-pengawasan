@@ -1,0 +1,16 @@
+name: TC_PGW_KOMODITI_004
+scenario_id: TC-PGW-KOMODITI-004
+verification_date: '2026-08-14'
+description: 'Cacah pengawasan iklan untuk satu nilai `komoditi`; menguji pemetaan istilah ke kode filter yang benar.'
+turns:
+- prompt: 'berapa pengawasan iklan dengan komoditi OBAT TRADISIONAL (OT)?'
+  assert_contains:
+  - 'OBAT TRADISIONAL (OT)'
+  assert_any_of:
+  -
+    - '19.003'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT COUNT(*) FROM mv_pengawasan WHERE komoditi = ''OBAT TRADISIONAL (OT)'';
+    
+    HASIL DB 14Agu2026 = 19.003. KOLOM: `komoditi` di `mv_pengawasan`. NILAI FILTER: ''OBAT TRADISIONAL (OT)'' — diambil apa adanya dari data, termasuk spasi dan kapitalisasinya. Jangan mengetik nilai dari ingatan; ambil lewat SELECT DISTINCT lalu pakai persis. ENTITY: COUNT(*) menghitung baris tabel fakta.'

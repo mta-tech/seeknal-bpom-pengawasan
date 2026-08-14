@@ -1,0 +1,17 @@
+name: TC_PGW_KOM_KOSMETIKA_2024
+scenario_id: TC-PGW-KOM-KOSMETIKA-2024
+verification_date: '2026-08-14'
+description: 'Silang komoditi dengan periode; menguji apakah kedua komponen pertanyaan masuk ke filter.'
+turns:
+- prompt: 'berapa pengawasan iklan komoditi KOSMETIKA pada tahun 2024?'
+  assert_contains:
+  - 'KOSMETIKA'
+  - '2024'
+  assert_any_of:
+  -
+    - '16.607'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT COUNT(*) FROM mv_pengawasan WHERE komoditi = ''KOSMETIKA'' AND tgl_start >= ''2024-01-01'' AND tgl_start < ''2025-01-01'';
+    
+    HASIL DB 14Agu2026 = 16.607. DUA FILTER SEKALIGUS: komoditi dan periode. Keduanya harus muncul di SQL final; komponen yang halamannya tidak dibuka akan hilang dari filter secara senyap. NILAI KOMODITI: ''KOSMETIKA'' — ejaan domain ini, tidak berlaku di domain lain.'

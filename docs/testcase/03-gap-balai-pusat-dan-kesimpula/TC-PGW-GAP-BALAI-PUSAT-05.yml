@@ -1,0 +1,17 @@
+name: TC_PGW_GAP_BALAI_PUSAT_05
+scenario_id: TC-PGW-GAP-BALAI-PUSAT-05
+verification_date: '2026-08-14'
+description: 'TC-PGW-GAP-BALAI-PUSAT-05 — Regresi dari pertanyaan nyata sistem lama; angka diverifikasi ulang ke database.'
+turns:
+- prompt: 'Tampilkan data capaian UPT berdasarkan jumlah laporan yang dikirimkan ke pusat (tanggal kepala balai) dibandingkan dengan target yang sudah ditetapkan untuk masing-masing UPT'
+  assert_contains:
+  - 'BALAI BESAR POM DI BANDA ACEH'
+  assert_any_of:
+  -
+    - '2.024'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    WITH latest_target_year AS ( SELECT MAX(tahun) AS tahun_terbaru FROM target_balai ), laporan_dikirim AS ( SELECT mp.nama_balai, mp.komoditi, EXTRACT(YEAR FROM mp.tgl_start) AS tahun, COUNT(*) AS jumlah_laporan FROM mv_pengawasan mp WHERE mp.tgl_start IS NOT NULL AND EXTRACT(YEAR FROM mp.tgl_start) = EXTRACT(YEAR FROM CURRENT_DATE) GROUP BY mp.nama_balai, mp.komoditi, EXTRACT(YEAR FROM mp.tgl_start) ) SELECT ld.nama_balai, ld.komoditi, ld.tahun AS tahun_laporan, tb.tahun AS tahun_target, ld.jumlah_laporan, tb.target_pengawasan, ROUND( (ld.jumlah_laporan::decimal / NULLIF(tb.target_pengawasan, 0)) * 100, 2 ) AS capaian_persen FROM laporan_dikirim ld CROSS JOIN latest_target_year lty LEFT JOIN target_balai tb ON LOWER(TRIM(tb.nama_balai)) = LOWER(TRIM(ld.nama_balai)) AND LOWER(TRIM(tb.komoditi)) = LOWER(TRIM(ld.komoditi)) AND tb.tahun = lty.tahun_terbaru ORDER BY ld.nama_balai, ld.komoditi;
+    
+    DATA YANG DITANYA: target_balai + mp + mv_pengawasan + current_date + laporan_dikirim + latest_target_year. BENTUK JAWABAN: satu angka agregat; sebutkan entity dan lingkup filternya. Hasilnya daftar: yang diperiksa isi baris teratas, bukan seluruh daftar.;
+    HASIL DB 14Agu2026: 494 baris; baris teratas ''BALAI BESAR POM DI BANDA ACEH'' dengan nilai 2.024.'

@@ -1,0 +1,17 @@
+name: TC_PGW_TREN_HASIL_PENGAWASAN_01
+scenario_id: TC-PGW-TREN-HASIL-PENGAWASAN-01
+verification_date: '2026-08-14'
+description: 'TC-PGW-TREN-HASIL-PENGAWASAN-01 — Regresi dari pertanyaan nyata sistem lama; angka diverifikasi ulang ke database.'
+turns:
+- prompt: 'tampilkan tren data hasil pengawasan iklan obat tradisional; suplemen kesehatan; obat kuasi pada rentang tahun 2024-2025 berdasarkan hasil verifikasi pusat mk/tmk'
+  assert_contains:
+  - 'OBAT KUASI'
+  assert_any_of:
+  -
+    - '925'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT EXTRACT( YEAR from tgl_start ) AS tahun, komoditi, kesimpulan_penilaian_pusat, COUNT(*) AS jumlah FROM mv_pengawasan WHERE EXTRACT( YEAR from tgl_start ) BETWEEN 2024 AND 2025 AND lower(komoditi) IN (''obat tradisional (ot)'', ''suplemen kesehatan'', ''obat kuasi'') AND kesimpulan_penilaian_pusat != '''' GROUP BY tahun, komoditi, kesimpulan_penilaian_pusat ORDER BY tahun, komoditi;
+    
+    DATA YANG DITANYA: tgl_start + mv_pengawasan. BENTUK JAWABAN: satu angka agregat; sebutkan entity dan lingkup filternya. Hasilnya daftar: yang diperiksa isi baris teratas, bukan seluruh daftar.;
+    HASIL DB 14Agu2026: 30 baris; baris teratas ''OBAT KUASI'' dengan nilai 925.'

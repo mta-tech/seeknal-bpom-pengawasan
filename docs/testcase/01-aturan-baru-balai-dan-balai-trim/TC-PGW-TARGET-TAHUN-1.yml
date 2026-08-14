@@ -1,0 +1,16 @@
+name: TC_PGW_TARGET_TAHUN_1
+scenario_id: TC-PGW-TARGET-TAHUN-1
+verification_date: '2026-08-14'
+description: 'TC-PGW-TARGET-TAHUN-1 — Tahun yang diminta tidak ada di tabel target; agent harus menyatakan keterbatasan, bukan menjawab nol.'
+turns:
+- prompt: 'berapa capaian pengawasan iklan terhadap target tahun 2026?'
+  assert_contains:
+  - '2026'
+  assert_any_of:
+  -
+    - 'tidak tersedia|tidak ada|belum tersedia|hanya tersedia|tidak memuat'
+  tolerance_pct: 0
+  note: 'SQL LENGKAP:
+    SELECT DISTINCT tahun FROM target_balai -> hanya 2024. Tidak ada baris target untuk 2026, sehingga capaian 2026 tidak punya pembanding. Yang SALAH: menjawab capaian nol, atau diam-diam memakai target tahun lain sebagai pengganti. Yang BENAR: menyatakan target untuk tahun yang diminta tidak tersedia.;
+    
+    JAWABAN BENAR = KETERBATASAN DATA, BUKAN ANGKA. KENAPA MUDAH SALAH: v1 tidak menyebut apa pun tentang cakupan tahun tabel target. tolerance_pct 0 karena assert-nya tekstual, bukan numerik.'

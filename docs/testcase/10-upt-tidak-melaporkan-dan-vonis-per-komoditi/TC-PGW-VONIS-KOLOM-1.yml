@@ -1,0 +1,16 @@
+name: TC_PGW_VONIS_KOLOM_1
+scenario_id: TC-PGW-VONIS-KOLOM-1
+verification_date: '2026-08-14'
+description: 'TC-PGW-VONIS-KOLOM-1 — Kolom vonis dipilih dari MAKNA pertanyaan, dan keluarga TMK dicocokkan dengan pola awalan.'
+turns:
+- prompt: 'berapa iklan yang dinyatakan TMK oleh pusat?'
+  assert_contains:
+  - 'pusat'
+  assert_any_of:
+  -
+    - '64.382'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT COUNT(*) FROM mv_pengawasan WHERE kesimpulan_penilaian_pusat LIKE ''TMK%'' = 64.382. Bandingkan kolom balai: 69.965 — ANGKANYA BERBEDA JAUH. TIGA;
+    
+    KOLOM VONIS dengan himpunan nilai berbeda: balai = [''MK'', ''Null'', ''TMK'', ''TMK MAYOR'', ''TMK MINOR'']; pusat = [''MK'', ''Null'', ''TMK'', ''TMK KRITIKAL'', ''TMK MAYOR'', ''TMK MINOR'']. Keduanya TIDAK saling menggantikan. KODE FILTER: keluarga TMK dicocokkan dengan pola awalan LIKE ''TMK%'', bukan kesamaan persis — ada gradasi (mayor/minor/kritikal) yang akan terbuang kalau memakai = ''TMK''. Pertanyaan menyebut ''pusat'' sehingga kolom pusat yang dipakai; kalau pertanyaan tidak menyebut, itu ambigu dan harus diklarifikasi di Gate 1.'

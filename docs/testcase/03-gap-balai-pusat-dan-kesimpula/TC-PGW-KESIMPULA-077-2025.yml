@@ -1,0 +1,17 @@
+name: TC_PGW_KESIMPULA_077_2025
+scenario_id: TC-PGW-KESIMPULA-077-2025
+verification_date: '2026-08-14'
+description: 'Silang `kesimpulan_penilaian_pusat` dengan periode; menguji kelengkapan filter dari pertanyaan majemuk.'
+turns:
+- prompt: 'berapa pengawasan iklan dengan kesimpulan penilaian pusat MK pada tahun 2025?'
+  assert_contains:
+  - 'MK'
+  - '2025'
+  assert_any_of:
+  -
+    - '17.824'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT COUNT(*) FROM mv_pengawasan WHERE kesimpulan_penilaian_pusat = ''MK'' AND tgl_start >= ''2025-01-01'' AND tgl_start < ''2026-01-01'';
+    
+    HASIL DB 14Agu2026 = 17.824. KOLOM: `kesimpulan_penilaian_pusat` di `mv_pengawasan`. NILAI FILTER ''MK'' diambil apa adanya dari data. DUA KOMPONEN: nilai kode dan periode — komponen yang halamannya tidak dibuka akan hilang dari filter secara senyap.'

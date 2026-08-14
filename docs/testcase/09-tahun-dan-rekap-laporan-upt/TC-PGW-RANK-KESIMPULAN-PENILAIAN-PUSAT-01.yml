@@ -1,0 +1,16 @@
+name: TC_PGW_RANK_KESIMPULAN_PENILAIAN_PUSAT_01
+scenario_id: TC-PGW-RANK-KESIMPULAN-PENILAIAN-PUSAT-01
+verification_date: '2026-08-14'
+description: 'Peringkat nilai `kesimpulan_penilaian_pusat`; menguji pengeluaran penanda kosong dari peringkat.'
+turns:
+- prompt: 'kesimpulan penilaian pusat apa yang paling banyak pada pengawasan iklan?'
+  assert_contains:
+  - 'MK'
+  assert_any_of:
+  -
+    - '63.747'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT kesimpulan_penilaian_pusat, COUNT(*) AS jumlah FROM mv_pengawasan WHERE kesimpulan_penilaian_pusat IS NOT NULL AND btrim(kesimpulan_penilaian_pusat) <> '''' GROUP BY 1 ORDER BY 2 DESC LIMIT 5;
+    
+    HASIL DB 14Agu2026: teratas ''MK'' dengan 63.747. KOLOM: `kesimpulan_penilaian_pusat` di `mv_pengawasan`. Baris dengan nilai kosong dikeluarkan lewat `btrim(kesimpulan_penilaian_pusat) <> ''''` — penanda kosong bukan kategori dan tidak boleh ikut diperingkat. Sebutkan porsi yang dikeluarkan bila besar.'

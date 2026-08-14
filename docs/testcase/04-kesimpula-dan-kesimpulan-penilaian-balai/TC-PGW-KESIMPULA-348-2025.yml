@@ -1,0 +1,17 @@
+name: TC_PGW_KESIMPULA_348_2025
+scenario_id: TC-PGW-KESIMPULA-348-2025
+verification_date: '2026-08-14'
+description: 'Silang `kesimpulan_penilaian_pusat` dengan periode; menguji kelengkapan filter dari pertanyaan majemuk.'
+turns:
+- prompt: 'berapa pengawasan iklan dengan kesimpulan penilaian pusat Null pada tahun 2025?'
+  assert_contains:
+  - 'Null'
+  - '2025'
+  assert_any_of:
+  -
+    - '20.261'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT COUNT(*) FROM mv_pengawasan WHERE kesimpulan_penilaian_pusat = ''Null'' AND tgl_start >= ''2025-01-01'' AND tgl_start < ''2026-01-01'';
+    
+    HASIL DB 14Agu2026 = 20.261. KOLOM: `kesimpulan_penilaian_pusat` di `mv_pengawasan`. NILAI FILTER ''Null'' diambil apa adanya dari data. DUA KOMPONEN: nilai kode dan periode — komponen yang halamannya tidak dibuka akan hilang dari filter secara senyap.'

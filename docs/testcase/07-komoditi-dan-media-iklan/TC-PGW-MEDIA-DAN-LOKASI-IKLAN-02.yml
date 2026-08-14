@@ -1,0 +1,17 @@
+name: TC_PGW_MEDIA_DAN_LOKASI_IKLAN_02
+scenario_id: TC-PGW-MEDIA-DAN-LOKASI-IKLAN-02
+verification_date: '2026-08-14'
+description: 'TC-PGW-MEDIA-DAN-LOKASI-IKLAN-02 — Regresi dari pertanyaan nyata sistem lama; angka diverifikasi ulang ke database.'
+turns:
+- prompt: 'tampilkan data iklan yang dilaporkan mk/tmk dari masing-masing upt yang dikategorikan berdasarkan nama produk, sarana produksi, media publikasi, dan klaim dalam promosi/iklan dengan status selesai pad'
+  assert_contains:
+  - 'BALAI BESAR POM DI BANDA ACEH'
+  assert_any_of:
+  -
+    - '1'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT nama_balai, nama_produk, SUM(CASE WHEN kesimpulan_penilaian_akhir = ''MK'' THEN 1 ELSE 0 END) AS jumlah_mk, SUM(CASE WHEN kesimpulan_penilaian_akhir = ''TMK'' THEN 1 ELSE 0 END) AS jumlah_tmk FROM mv_pengawasan WHERE tgl_start >= ''2024-06-10'' AND tgl_end <= ''2025-06-20'' AND kesimpulan_penilaian_akhir IS NOT NULL AND kesimpulan_penilaian_akhir <> '''' GROUP BY nama_balai, nama_produk ORDER BY nama_balai, nama_produk;
+    
+    DATA YANG DITANYA: mv_pengawasan. BENTUK JAWABAN: satu angka agregat; sebutkan entity dan lingkup filternya. Hasilnya daftar: yang diperiksa isi baris teratas, bukan seluruh daftar.;
+    HASIL DB 14Agu2026: 46147 baris; baris teratas ''BALAI BESAR POM DI BANDA ACEH'' dengan nilai 1.'

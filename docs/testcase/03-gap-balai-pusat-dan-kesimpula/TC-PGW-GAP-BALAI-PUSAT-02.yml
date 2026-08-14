@@ -1,0 +1,17 @@
+name: TC_PGW_GAP_BALAI_PUSAT_02
+scenario_id: TC-PGW-GAP-BALAI-PUSAT-02
+verification_date: '2026-08-14'
+description: 'TC-PGW-GAP-BALAI-PUSAT-02 — Regresi dari pertanyaan nyata sistem lama; angka diverifikasi ulang ke database.'
+turns:
+- prompt: 'tampilkan rekapitulasi jumlah laporan pengawasan iklan obat masing-masing upt yang telah dikirim ke pusat (berdasarkan tanggal kepala balai) pada periode waktu antara tanggal mulai 20 Juni 2024 hingga'
+  assert_contains:
+  - 'BALAI BESAR POM DI KUPANG'
+  assert_any_of:
+  -
+    - '1'
+  tolerance_pct: 5
+  note: 'SQL LENGKAP:
+    SELECT nama_balai, COUNT(*) AS jumlah_laporan_dikirim FROM mv_pengawasan vpv WHERE tgl_end >= ''2024-06-20''::date AND tgl_end <= ''2024-06-30''::date AND lower(komoditi) LIKE ''obat'' GROUP BY nama_balai, komoditi ORDER BY count(*);
+    
+    DATA YANG DITANYA: mv_pengawasan. BENTUK JAWABAN: satu angka agregat; sebutkan entity dan lingkup filternya. Hasilnya daftar: yang diperiksa isi baris teratas, bukan seluruh daftar.;
+    HASIL DB 14Agu2026: 56 baris; baris teratas ''BALAI BESAR POM DI KUPANG'' dengan nilai 1.'
