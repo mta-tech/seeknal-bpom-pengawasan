@@ -1,78 +1,83 @@
-Kualitas data — sentinel, kekosongan bermakna, dan teks bebas.
+belum · tanpa · kosong · tidak punya · tidak terisi · data tidak ada · null · sentinel · kualitas data
 
-## 1. ⚠️ Tabel fakta domain ini TIDAK punya SQL NULL sama sekali
+# Kualitas data — kosong, sentinel, teks bebas
 
-Setiap kolom di tabel fakta terisi — yang tampak "kosong" sebenarnya **nilai teks penanda kosong**.
+## Apa yang halaman ini putuskan
 
-| Bentuk sentinel | Di mana |
+Apakah sebuah "kosong" berarti **tidak ada data**, **tidak berlaku untuk kelompok ini**, atau
+**sentinel yang harus dibuang** — diputuskan sebelum kekosongan dipakai menyaring atau menjawab.
+
+## Tabel keputusan — membaca kekosongan sebelum menyaring
+
+| Kolom / istilah | Aturan |
 |---|---|
-| **string penanda** empat huruf | tiga kolom vonis |
-| **string kosong** | media, pembuat iklan, nomor surat, pendaftar |
-| **tanda hubung** (satu atau dua) | nomor surat, NIE |
+| `no_surat` · `nie` | sentinel teks (`''`, `-`, `0`, `Tanpa Surat Tugas`) → **buang sebelum** `COUNT(DISTINCT ...)` |
+| `produk_id` | sering **NULL** (rokok/obat) — daftar produk tetap dari bridge |
+| `provinsi_iklan_id` · `kabupaten_iklan_id` | hanya sebagian kasus — sebutkan cakupan |
+| `kategori_media` | hampir seluruhnya kosong — jangan dijadikan filter tunggal |
+| `kesimpulan_pusat_id` · `kesimpulan_akhir_id` | kolom tertentu saja — sebutkan cakupan |
+| `klasifikasiklaim_id` · `ketidaksesuaianhasil_kode` · `uraian_pelanggaran_id` · `tgl_evaluasi_pusat` · `tgl_pengambilan_iklan` | hanya kategori tertentu — sebutkan cakupan |
 
-> **`WHERE kolom IS NULL` selalu mengembalikan nol baris di tabel fakta ini.** Ini jebakan nomor
-> satu di domain ini, dan ia tidak memunculkan error apa pun.
+## Matriks operasi
 
-Tabel pendamping (log, timeline) **punya** SQL NULL pada sebagian kolom — jadi aturannya berbeda
-antar tabel. Periksa per kolom, jalur **P2**.
+| Kolom | Menyaring | Mengelompokkan | Men-join | Memeringkat |
+|---|---|---|---|---|
+| `no_surat` | sentinel dibuang dulu | biasa | — | bisa |
+| `nama_produk` · `pendaftar` | `ILIKE` **sekali** (P3) lalu nilai persis | hati-hati entity HTML | `dim_produk` (via bridge) | bisa |
+| `verifikasi_pusat_sesuai` dsb. | **hanya** bila pertanyaan menyebutnya | idem | — | — |
 
-Domain BPOM lain memakai ejaan sentinel yang berbeda lagi; jangan menyalin aturan dari sana
-(`95-batas-domain.md`).
+## Kolom yang praktis kosong — jangan dipakai sebagai penyaring
 
-## 2. Kekosongan yang berkorelasi dengan makna = FILTER TERSEMBUNYI
+Menyaring "yang terisi" pada kolom sparsial **diam-diam membuang kelompok** yang memang tidak
+memakai kolom itu. Tanyakan: *apa arti kosongnya?* Bila kosong berarti "tidak berlaku bagi
+kelompok X", menyaringnya membuang X. Silangkan keterisiannya dengan `kategori` — satu query.
 
-Kolom yang kosongnya **tidak acak** menandai sebuah kelompok. Menyaring "yang terisi" pada kolom
-seperti itu **diam-diam memfilter kelompok tersebut**.
+## Cara mencari — periksa per kolom, jangan diasumsikan
 
-Yang berperilaku begitu di domain ini:
+```sql
+SELECT count(*) FILTER (WHERE no_surat IS NULL OR btrim(no_surat) IN ('','-','0','Tanpa Surat Tugas')) AS no_surat_sentinel,
+       count(*) FILTER (WHERE produk_id IS NULL)                                                       AS produk_null,
+       count(*) FILTER (WHERE kesimpulan_pusat_id IS NULL)                                             AS pusat_kosong
+FROM public.fact_pengawasan;
+```
 
-| Kolom | Kosongnya berarti |
-|---|---|
-| `kesimpulan_penilaian_akhir` | komoditi yang tidak memakai kolom akhir — `30-vonis.md` |
-| `jenis_pembuat_iklan` | komoditi selain yang merekamnya — `20-media-dan-iklan.md` |
-| `kesimpulan_penilaian_pusat` | pusat belum menilai |
-| kolom tanggal di timeline | tahap itu belum tercapai — `60-waktu-dan-durasi.md` |
+## Teks bebas dan entity HTML
 
-**Cara mengenalinya pada kolom baru:** tanyakan **apa arti kosongnya**. Bila kosong berarti "tidak
-berlaku bagi kelompok X", menyaringnya membuang kelompok X. Silangkan keterisiannya dengan
-`komoditi` — satu query.
+`nama_produk`, `pendaftar`, `catatan` diisi bebas dan sebagian masih memuat entity HTML
+(`&amp;` seharusnya `&`; `&#039;` seharusnya `'`). Pola kerja:
 
-## 3. Teks bebas
+- Menampilkan: ubah entity ke karakter aslinya.
+- Mencari: cari juga versi entity-nya, atau pakai `ILIKE` potongan kata tanpa tanda baca.
 
-`lokasi_iklan`, `nama_produk`, dan `pendaftar` diisi bebas. `lokasi_iklan` nyaris unik per baris
-dan sebagian sangat panjang — **jangan dikelompokkan**. `pendaftar` memuat string tergandakan yang
-melebihkan cacah perusahaan (`50-produk-dan-pendaftar.md`).
+## Kode status tidak berlabel
 
-Pola kerja: `ILIKE` **sekali** untuk menemukan (jalur **P3**), lalu hitung dengan nilai persis.
+`status_label` kosong untuk seluruh kode (`45-status-dan-alur.md`). Jawab dengan kode apa adanya;
+jangan mengarang artinya. Beberapa kode kamus lain juga belum dikonfirmasi BPOM.
 
-## 4. Populasi log dan timeline lebih luas dari fakta
+## Jebakan
 
-Keduanya memuat id yang tidak ada di tabel fakta. Sifat id tambahan itu **belum dipastikan** —
-jangan menyimpulkan sebabnya. Perlakukan sebagai populasi berbeda dan selalu join dari fakta
-(`45-status-dan-alur.md`).
+| Gejala | Penyebab | Cara memastikan |
+|---|---|---|
+| "nol" padahal datanya tidak direkam | menganggap kosong = nol | nyatakan "memang tidak terekam" untuk kolom yang tidak diisi kelompok itu |
+| angka unik membengkak | sentinel ikut terhitung | buang sentinel sebelum `COUNT(DISTINCT ...)` |
+| persentase menyesatkan | penyebut memakai populasi penuh padahal kolom sparsial | sebutkan cakupan pembilang & penyebut |
+| pencarian teks nol | entity HTML | cari potongan kata tanpa tanda baca |
 
-## 5. Label status tidak lengkap
+## Batas
 
-Blok kode penolakan **tidak punya label**. Mengelompokkan alur berdasarkan label akan menyembunyikan
-seluruh penolakan — pakai langkah alur (`trx_steps`) untuk mengenalinya.
-
-## 6. Kolom "durasi" yang bukan durasi
-
-Salah satu kolom selisih di timeline hanya bernilai beberapa kemungkinan — ia penanda, bukan
-jumlah hari (`60-waktu-dan-durasi.md`). Periksa sebaran nilai kolom durasi mana pun sebelum
-meratakannya.
-
-## 7. Schema `dimension`
-
-Database ini punya schema kedua berisi proyeksi nilai distinct. **Isinya tidak sinkron** dengan
-tabel utama — ia melewatkan nilai baru tanpa error. **Jangan memakainya untuk menemukan nilai.**
-
-## 8. Menyebutkan cakupan di jawaban
-
-Bila kolom yang dipakai hanya terisi untuk sebagian komoditi atau sebagian tahap, **sebutkan
-porsinya sebelum menyajikan peringkat atau persentase**. Satu baris kalimat cukup.
+- Bila kolom yang dipakai hanya terisi sebagian, **sebutkan porsinya sebelum menyajikan peringkat
+  atau persentase** — satu kalimat cukup.
+- Perilaku kosong berbeda antar kolom (sentinel vs NULL) — **jangan menyalin aturan antar kolom**.
 
 ## Rute
 
-- Kembali ke aturan hitung → **naik** ke `00-menghitung.md`.
-- Menyebut batas domain → **seberang** `95-batas-domain.md`.
+- Kembali ke aturan hitung → **naik** ke `00-menghitung.md`
+- Batas domain & wilayah → **lihat** `95-batas-domain.md`
+- Status → **lihat** `45-status-dan-alur.md`
+
+## Manifes
+
+| Tabel | Kolom | Literal |
+|---|---|---|
+| `fact_pengawasan` | `no_surat`, `produk_id`, `kategori_media`, `kesimpulan_akhir_id`, `kesimpulan_pusat_id`, `provinsi_iklan_id`, `kabupaten_iklan_id`, `nama_produk`, `pendaftar` | sentinel `no_surat`: `''`, `-`, `0`, `Tanpa Surat Tugas` |
+| `dim_status_code` | `status_label` | selalu kosong |

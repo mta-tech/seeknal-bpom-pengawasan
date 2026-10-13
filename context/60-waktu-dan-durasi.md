@@ -1,64 +1,65 @@
-Waktu, periode, durasi, dan ketepatan waktu pelaporan.
+tahun · bulan · periode · tren · durasi · lama · berapa hari · tepat waktu · timeline · SLA
 
-## Periode
+# Waktu dan durasi
 
-`tgl_start` adalah tanggal kanonik untuk periode dan tren; `tgl_end` untuk pertanyaan penyelesaian
-dan untuk membandingkan dengan kubus pra-agregasi (`00-menghitung.md` §7).
+## Apa yang halaman ini putuskan
 
-Pakai **rentang berbatas**. Jangan `EXTRACT(YEAR …)` sebagai penyaring — tidak ada indeks.
+Kolom tanggal mana yang kanonik untuk periode, mana untuk penyelesaian, dan durasi apa yang benar-
+benar bisa dihitung di akun ini.
 
-⚠️ `tgl_start` memuat tanggal **di masa depan** relatif hari pengambilan data. Untuk mengetahui
-kesegaran data, pakai kolom `sync`, bukan nilai maksimum kolom tanggal.
+## Tabel keputusan
 
-**Periode berjalan selalu parsial** — setiap tren wajib menyebutnya.
+| Kata dalam pertanyaan | Kolom |
+|---|---|
+| periode · tren · "bulan X" · "tahun X" | `tgl_start` (kanonik) |
+| penyelesaian · "selesai dalam" | `tgl_end` |
+| tanggal surat tugas | `tgl_surat` |
+| kapan iklan ditemukan | `tgl_pengambilan_iklan` |
+| evaluasi Pusat | `tgl_evaluasi_pusat` (hanya untuk kategori tertentu — lihat Batas) |
 
-## Tabel timeline
+## Matriks operasi
 
-`mv_pengawasan_timeline` memuat tanggal milestone (mulai, kirim ke kepala balai, kirim ke direktur,
-kirim ke pusat) dan beberapa kolom selisih.
+| Kolom | Menyaring | Mengelompokkan | Men-join | Memeringkat |
+|---|---|---|---|---|
+| `tgl_start` | **rentang berbatas**, bukan `EXTRACT` | `date_trunc` boleh untuk melabeli | — | bisa |
+| `tgl_end` | rentang berbatas | `date_trunc` | — | bisa |
+| `tgl_pengambilan_iklan` | rentang berbatas | `date_trunc` | — | sebutkan keterisiannya |
+| `tgl_evaluasi_pusat` | rentang berbatas | — | — | hanya kategori tertentu |
 
-⚠️ **Tabel ini memuat id yang tidak ada di fakta** — INNER JOIN dari fakta bila jawabannya tentang
-populasi pengawasan (`45-status-dan-alur.md`).
+## Cara mencari
 
-### ⚠️ Satu kolom "durasi" sebenarnya bukan durasi
+```sql
+-- 1. rentang yang benar-benar terisi
+SELECT min(tgl_start), max(tgl_start), count(*) FILTER (WHERE tgl_start IS NULL)
+FROM public.fact_pengawasan;
 
-Salah satu kolom selisih di tabel ini **hanya bernilai dua kemungkinan plus kosong** — ia berfungsi
-sebagai **penanda sudah/belum**, bukan jumlah hari.
+-- 2. keterisian tanggal yang sparsial sebelum dipakai
+SELECT count(tgl_pengambilan_iklan) terisi FROM public.fact_pengawasan;
+```
 
-> Menghitung rata-rata atau median dari kolom itu menghasilkan angka yang tampak masuk akal tetapi
-> **tidak berarti apa-apa**. Periksa sebaran nilai kolom durasi mana pun sebelum meratakannya —
-> bila nilainya hanya beberapa, itu penanda, bukan durasi.
+## Jebakan
 
-Kolom selisih lain memang berisi jumlah hari, tetapi **kosong pada tahap yang belum tercapai**.
-Merata-ratakan tanpa menyaring mencampur "cepat" dengan "belum sampai" — dan hasilnya bias ke
-bawah.
+| Gejala | Penyebab | Cara memastikan |
+|---|---|---|
+| filter periode membuang banyak baris | `EXTRACT(YEAR …)` di `WHERE` | rentang berbatas; tidak ada indeks |
+| data terlihat "segar" padahal tidak | memakai `max(tgl_start)` sebagai kesegaran | `tgl_start` bisa berisi jadwal masa depan; kesegaran pakai `created_at` |
+| durasi aneh | memakai kolom tanggal yang belum tercapai | saring dulu baris yang tanggalnya terisi, sebutkan cakupannya |
 
-> **Aturan:** sebelum menghitung durasi tahap mana pun, saring baris yang tanggal tahap tujuannya
-> sudah terisi, dan sebutkan berapa bagian populasi yang belum mencapai tahap itu.
+## Batas
 
-## Ketepatan waktu pelaporan
-
-Pertanyaan bentuk *"laporan yang dikirim sebelum tanggal N bulan berikutnya"* dijawab dengan
-membandingkan tanggal kirim terhadap batas yang diturunkan dari bulan pengawasannya.
-
-Dua hal yang harus dinyatakan:
-
-1. **Batas tanggalnya berasal dari aturan unit**, bukan dari data — sebutkan batas yang dipakai.
-   Bila pengguna tidak menyebutnya, tanya.
-2. **Baris yang tanggal kirimnya kosong** bukan "terlambat" — ia belum dikirim. Pisahkan menjadi
-   kategori sendiri, jangan digabungkan ke salah satu sisi.
-
-## Durasi pengawasan itu sendiri
-
-Selisih `tgl_end - tgl_start` memberi lama pengawasan. Sebagian barisnya bernilai nol (mulai dan
-selesai di hari yang sama) dan sebagian sangat panjang.
-
-Untuk pertanyaan "berapa yang durasinya lebih dari N hari", bandingkan selisihnya langsung.
-Perhatikan bahwa kata "pemeriksaan" dalam pertanyaan pengguna kadang merujuk ke **kegiatan
-pengawasan di domain ini**, kadang ke **domain pemeriksaan sarana** — klarifikasi bila konteksnya
-tidak jelas (`95-batas-domain.md`).
+- **Durasi antar-tahap** dihitung dari `created_at` berturutan per kasus (`lag`) di
+  `fact_pengawasan_approval`; durasi kasus = `tgl_end - tgl_start`.
+- `tgl_evaluasi_pusat`, `tgl_pengambilan_iklan` sparsial dan hanya untuk sebagian kategori — sebutkan
+  keterisian sebelum menyajikan tren berbasisnya.
+- Periode berjalan selalu parsial → sebutkan.
 
 ## Rute
 
-- Menyebut alur/tahapan → **seberang** `45-status-dan-alur.md`.
-- Menyebut target/capaian → **seberang** `85-target-capaian.md`.
+- Status & alur → **lihat** `45-status-dan-alur.md`
+- Target & capaian → **lihat** `85-target-capaian.md`
+
+## Manifes
+
+| Tabel | Kolom | Literal |
+|---|---|---|
+| `fact_pengawasan` | `tgl_start`, `tgl_end`, `tgl_surat`, `tgl_pengambilan_iklan`, `tgl_evaluasi_pusat`, `created_at` | — |

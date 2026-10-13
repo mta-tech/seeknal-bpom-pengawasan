@@ -1,55 +1,85 @@
-Media, lokasi, dan pembuat iklan.
+media · iklan · elektronik · cetak · luar ruang · televisi · ecommerce · medsos · pembuat iklan · lokasi iklan
 
-## `media_iklan` — perhatikan bentuk penulisannya
+# Media dan iklan
 
-Berisi kanal tempat iklan tayang. Nilainya mencakup kanal elektronik, cetak, luar ruang, dan satu
-nilai untuk kanal lainnya — ditambah **string kosong** pada sebagian baris.
+## Apa yang halaman ini putuskan
 
-⚠️ **Penulisannya tidak seragam gayanya:** sebagian nilai memakai **garis bawah** sebagai
-pemisah kata, sebagian tidak.
+Media iklan ada di **dua lapis**: satu kolom kasar di fakta, dan detail per kategori di tabel bridge.
+Halaman ini memutuskan lapis mana yang dibaca, dan bagaimana routing-nya.
 
-> Pertanyaan pengguna menulis "media luar ruang" dengan spasi, sedangkan nilainya memakai garis
-> bawah tanpa spasi. `ILIKE '%luar ruang%'` **tidak akan cocok**. Ambil daftar nilainya lebih dulu
-> (jalur **P2**) dan pakai nilai persis.
+## Tabel keputusan — istilah user → sumber
 
-## `lokasi_iklan` — teks bebas, jangan dikelompokkan
-
-Berisi keterangan lokasi/penempatan iklan, diisi bebas. Nilainya nyaris unik per baris, sebagian
-berkutip, dan **sebagian sangat panjang** — memuat rekaman multi-kolom yang tergabung menjadi satu
-teks.
-
-> **Jangan pernah `GROUP BY lokasi_iklan`** untuk membuat peringkat. Hasilnya sebanyak barisnya.
-> Kolom ini hanya untuk lookup satuan atau pencarian `ILIKE` (jalur **P3**).
-
-Bila pertanyaannya meminta pengelompokan "materi yang sama", kolom ini bukan jawabannya — tidak
-ada dua baris yang benar-benar sama. Klarifikasi apa yang dimaksud "materi".
-
-## `jenis_pembuat_iklan` — terkunci satu komoditi
-
-Berisi apakah iklan dibuat pelaku usaha atau perorangan. **Sebagian besar barisnya kosong**, dan
-yang terisi **hanya untuk satu komoditi**.
-
-> `WHERE jenis_pembuat_iklan <> ''` karena itu **identik dengan memfilter komoditi itu** — sebuah
-> filter tersembunyi.
-
-Pertanyaan yang meminta pengelompokan berdasarkan pembuat iklan **hanya bisa dijawab untuk komoditi
-tersebut**. Sebutkan batasnya; jangan menyajikannya sebagai angka lintas komoditi.
-
-Cara memastikan komoditi mana: silangkan keterisian kolom ini dengan `komoditi` — jalur **P2**.
-
-## Yang tidak ada di kolom mana pun
-
-| Diminta pengguna | Status |
+| Istilah user | Sumber |
 |---|---|
-| **materi iklan** (isi/naskah iklan) | tidak ada — hanya keterangan lokasi |
-| **gambar iklan** | tidak ada |
-| **golongan obat pada iklan** (keras/bebas) | tidak ada penandanya |
-| **jenis pangan pada iklan pangan** | tidak ada di tabel ini |
+| "jenis media" (kasar) | `jenis_iklan_id` → `dim_pengawasan_jenis_iklan` |
+| "e-commerce" · "media sosial" · "TV" · "cetak" · "luar ruang" · "website" · "pangan" · "kosmetik online/elektronik/cetak" | lihat **tabel routing** di bawah — bridge berbeda per `kategori` × `media_iklan_kode` |
+| lokasi iklan ditemukan | `provinsi_iklan_id` / `kabupaten_iklan_id` |
+| pembuat iklan | `bridge_pengawasan_media_pangan.pembuat_iklan` (khusus pangan) |
+| "kelompok iklan" · indikasi · promosi (rokok/obat) | `kelompok_iklan_id` → `dim_pengawasan_kelompok_iklan` |
 
-Semuanya **P5 NOT COVERED** — lihat `95-batas-domain.md`.
+## Matriks operasi
+
+| Kolom | Menyaring | Mengelompokkan | Men-join | Memeringkat |
+|---|---|---|---|---|
+| `jenis_iklan_id` | butuh `dim_pengawasan_jenis_iklan` | butuh kamus | `dim_pengawasan_jenis_iklan.id` | bisa |
+| `kategori_media` | teks (visual/audio/…) — **banyak kosong** | langsung | — | sebutkan keterisiannya |
+| `provinsi_iklan_id` / `kabupaten_iklan_id` | **ID kanonik** (`00` P11) | ID kanonik | `dim_provinsi` / `dim_kabupaten` | bisa |
+| `media_iklan_kode` (bridge) | **setelah** cek `kategori` | langsung | bridge media per routing | bisa |
+| `kelompok_iklan_id` | butuh kamus | butuh kamus | `dim_pengawasan_kelompok_iklan.id` | bisa |
+
+## Cara mencari — routing media (cek `kategori` DULU, baru `media_iklan_kode`)
+
+```sql
+-- 1. kode media apa yang ada, per kategori (jangan hafal)
+SELECT kategori, media_iklan_kode, count(*)
+FROM public.bridge_pengawasan_media_detail d
+JOIN public.fact_pengawasan f ON f.id = d.pengawasan_id
+GROUP BY 1,2 ORDER BY 1,3 DESC;
+
+-- 2. setelah tahu kode, baca tabel turunan yang tepat (bridge_*_media_*)
+```
+
+| `kategori` | `media_iklan_kode` | Bridge tujuan |
+|---|---|---|
+| `pangan` | semua nilai | `bridge_pengawasan_media_pangan` |
+| `kosmetik` | `online` | `bridge_pengawasan_media_kosmetik_online` |
+| `kosmetik` | `elektronik` | `bridge_pengawasan_media_kosmetik_elektronik` |
+| `kosmetik` | `mediacetak` · `luarruang` | `bridge_pengawasan_media_kosmetik_cetak_luarruang` |
+| `otsk` / `obat_kuasi` | `mediasosial` | `bridge_pengawasan_media_sosial` |
+| `otsk` / `obat_kuasi` | `ecommerce` | `bridge_pengawasan_media_ecommerce` |
+| `otsk` / `obat_kuasi` | `tvnasional` · `penyiaranlokal` | `bridge_pengawasan_media_tv_radio` |
+| `otsk` / `obat_kuasi` | `cetak` · `luarruang` | `bridge_pengawasan_media_cetak_luarruang` |
+| `otsk` / `obat_kuasi` | `website` · `internetlain` · `medialain` | `bridge_pengawasan_media_website_lain` |
+| `rokok` / `obat` | tidak ada detail media terstruktur | — (mentah: `bridge_pengawasan_media_detail.detail_json`) |
+
+
+Kode media yang sama bisa punya struktur berbeda antar kategori — **selalu cek `kategori` dulu**.
+
+## Jebakan
+
+| Gejala | Penyebab | Cara memastikan |
+|---|---|---|
+| hasil kosong | media dibaca dari bridge kategori yang salah | cek `kategori` sebelum memilih bridge |
+| lokasi iklan hilang | dikira sama dengan lokasi kantor balai | lokasi iklan = `provinsi_iklan_id`/`kabupaten_iklan_id`; lokasi balai = `dim_balai` |
+| nama produk tampak aneh (`&amp;`, `&#039;`) | entity HTML belum dibersihkan | `90-kualitas-data.md` |
+| "kategori media" banyak kosong padahal ada iklan | kolom ini sparsial | sebutkan keterisiannya di jawaban |
+
+## Batas
+
+- `kategori_media` (Visual/Audio/Audio Visual) sering kosong — jangan dipakai sebagai filter tunggal.
+- Media "rokok"/"obat" tidak punya detail media terstruktur; data mentah ada di
+  `bridge_pengawasan_media_detail.detail_json`.
 
 ## Rute
 
-- Menyebut komoditi → **naik** ke `10-komoditi.md`.
-- Menyebut klausul pelanggaran → **seberang** `40-ketidaksesuaian.md`.
-- Menyebut produk/pendaftar → **seberang** `50-produk-dan-pendaftar.md`.
+- Komoditi → **lihat** `10-komoditi.md`
+- Wilayah ganda → **lihat** `95-batas-domain.md`
+- Kekosongan kolom → **lihat** `90-kualitas-data.md`
+
+## Manifes
+
+| Tabel | Kolom | Literal |
+|---|---|---|
+| `fact_pengawasan` | `jenis_iklan_id`, `kategori_media`, `provinsi_iklan_id`, `kabupaten_iklan_id`, `tgl_pengambilan_iklan` | — |
+| `dim_pengawasan_jenis_iklan` | `id`, `kode`, `keterangan` | `LUAR_RUANG`, `ELEKTRONIK`, `CETAK`, `LAIN` |
+| `bridge_pengawasan_media_detail` | `pengawasan_id`, `kategori`, `media_iklan_kode`, `detail_json` | — |
