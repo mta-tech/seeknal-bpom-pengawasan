@@ -1,56 +1,97 @@
-Status dan alur persetujuan — dua hal berbeda yang sering ditukar, plus satu tabel alur.
+status · alur · draft · verifikasi · selesai · ditolak · pipeline · bottleneck
 
-## Dua jalur untuk kata "ditolak"
+# Status dan alur
 
-Kata "ditolak" bisa berarti **vonis** atau **tahapan proses** — jangan campur:
+## Apa yang halaman ini putuskan
 
-- **Vonis** (hasil penilaian iklan): keluarga `TMK*` pada kolom vonis yang ditanyakan
-  (`kesimpulan_pusat_id` / `kesimpulan_balai_id` / `kesimpulan_akhir_id`) — lihat `30-vonis.md`.
-- **Tahapan proses** (log approval): langkah berawalan `ditolak_*` di
-  `fact_pengawasan_approval` (`ditolak_spv_1`, `ditolak_pusat`, `ditolak_kepala_balai`, dst).
+Bagaimana status dibaca, bagaimana riwayat tahapan (approval) dibaca, dan dua jalur untuk kata
+"ditolak".
 
-Jangan menyimpulkan penolakan dari `status_code` saja.
+## Status — satu kolom, satu kamus, filter domain
 
-## `status_code` — angka, tanpa label
+Kode status ada di kolom `status_id` fakta → `dim_status_code.id`. Kolom kamus dipakai **dua
+domain**; join **wajib** memakai filter domain:
 
-Kode status bertipe **angka**. Ambil daftar nilainya lewat `SELECT DISTINCT` — jangan mengetik
-dari ingatan. Untuk membaca makna sebuah kode, pasangkan dengan `trx_steps` pada baris yang sama.
+```sql
+JOIN dim_status_code s ON s.id = f.status_id AND s.domain = 'pengawasan'
+```
 
-## Alur approval — `fact_pengawasan_approval`
+`status_code` berupa **angka-dalam-teks** (`0`–`9` dan blok `990`–`999`).
+
+## Alur tahapan — `fact_pengawasan_approval`
 
 Satu baris per langkah proses: `trx_steps` (nama langkah), `status_code`, `urutan_step`,
-`user_id`, `catatan`, `created_at`. Langkah penolakan berawalan **`ditolak_`** — penamaannya
-jelas, berbeda dari langkah normal (`draft`, `spv_1`, `kepala_balai`, `pusat`, `direktur`,
-`selesai`).
+`user_id`, `catatan`, `created_at`. Langkah penolakan berawalan **`ditolak_`** — penamaannya jelas,
+berbeda dari langkah normal (`draft`, `spv_1`, `kepala_balai`, `pusat`, `direktur`, `selesai`).
 
-⚠️ **Tabel ini memuat id yang tidak ada di fakta** (populasinya lebih besar daripada
-`fact_pengawasan`). Bila jawabannya berbicara tentang populasi pengawasan, **INNER JOIN dari
-fakta** lewat `pengawasan_id`. Sifat id tambahan itu belum dipastikan — perlakukan sebagai
-populasi berbeda, jangan menyimpulkan sebabnya.
+⚠️ **Tabel ini memuat `pengawasan_id` yang tidak ada di fakta** (populasinya lebih besar). Bila
+jawabannya berbicara tentang populasi pengawasan, **INNER JOIN dari `fact_pengawasan`**. Sifat id
+tambahan itu belum dipastikan — perlakukan sebagai populasi berbeda, jangan menyimpulkan sebabnya.
 
-## Batas yang harus dihormati
+## Tabel keputusan
 
-Pertanyaan *"siapa yang menyetujui"*, *"apakah pemisahan tugas berjalan"*, *"apakah ada
-self-approval"* → **P5 NOT COVERED**.
-
-`user_id` terisi penuh, tetapi maknanya tidak dapat dipastikan dari database ini sendirian —
-apakah ia pelaku tahap itu, atau pengirim ke tahap itu. Kedua bacaan menghasilkan angka yang sama
-dan kesimpulan yang berlawanan, dan kesimpulannya bersifat tuduhan.
-
-Yang **boleh** dijawab dari alur: kapan berkas berpindah tahap, berapa lama tersangkut, dan tahap
-mana yang paling banyak menahan berkas — semua tentang **waktu dan volume**, bukan tentang
-**siapa**.
-
-## Istilah pengguna
-
-| Istilah | Cara mengikat |
+| Istilah user | Cara mengikat |
 |---|---|
-| "sudah selesai" | langkah `trx_steps='selesai'` di approval |
-| "belum selesai" / "menggantung" | belum punya langkah `selesai` di approval |
-| "ditolak" | **dua jalur di atas** — vonis (keluarga TMK) atau tahapan (`ditolak_*`); tanya bila ambigu |
-| "riwayat alur" · "pernah ditolak" | langkah `ditolak_*` di `fact_pengawasan_approval` |
+| "draft" · "belum selesai" · "selesai" | kode `status_code` — **tanpa label** (lihat Batas); tahap akhir = `trx_steps='selesai'` di approval |
+| "ditolak" · "tidak lolos" | **dua jalur** — vonis (keluarga TMK pada kolom yang ditanyakan, `30-vonis.md`) atau tahapan (`trx_steps LIKE 'ditolak_%'`); tanya bila ambigu |
+| "bottleneck" · "menumpuk" | distribusi `status_id` saat ini, atau tahap yang paling lama menahan (durasi antar `created_at` approval) |
+| "riwayat alur" · "pernah ditolak" | langkah di `fact_pengawasan_approval` |
+| "siapa yang menyetujui" · "self-approval" | **NOT COVERED** (lihat Batas) |
+
+## Matriks operasi
+
+| Kolom | Menyaring | Mengelompokkan | Men-join | Memeringkat |
+|---|---|---|---|---|
+| `status_id` (fakta) | butuh `dim_status_code` + `domain` | butuh kamus + `domain` | `dim_status_code.id AND domain='pengawasan'` | bisa |
+| `trx_steps` (approval) | `LIKE 'ditolak_%'` untuk penolakan | langsung | `pengawasan_id` → fakta | bisa |
+| `urutan_step` (approval) | — | urutan tahap per kasus | — | bisa |
+
+## Cara mencari
+
+```sql
+-- distribusi status saat ini (jangan hafal artinya)
+SELECT s.status_code, count(*)
+FROM public.fact_pengawasan f
+JOIN public.dim_status_code s ON s.id = f.status_id AND s.domain = 'pengawasan'
+GROUP BY 1 ORDER BY 2 DESC;
+
+-- tahapan penolakan per kasus (INNER JOIN dari fakta)
+SELECT a.trx_steps, count(DISTINCT a.pengawasan_id)
+FROM public.fact_pengawasan_approval a
+JOIN public.fact_pengawasan f ON f.id = a.pengawasan_id
+WHERE a.trx_steps LIKE 'ditolak_%'
+GROUP BY 1 ORDER BY 2 DESC;
+```
+
+## Jebakan
+
+| Gejala | Penyebab | Cara memastikan |
+|---|---|---|
+| join menggandakan | `dim_status_code` dipakai tanpa filter `domain` | tambahkan `AND s.domain='pengawasan'` |
+| arti kode dikarang | `status_label` kosong → mencoba menebak | jawab kode apa adanya |
+| "ditolak" dijawab dari status saja | status bukan bukti penolakan | ikat ke dua jalur: vonis atau `ditolak_*` |
+| angka approval melebihi populasi kasus | menghitung approval tanpa join fakta | INNER JOIN dari `fact_pengawasan` |
+
+## Batas
+
+- **`status_label` kosong untuk semua kode** dan arti kode belum dikonfirmasi — sebutkan ini saat
+  menyajikan kode.
+- `user_id` di approval terisi penuh, tetapi maknanya tidak dapat dipastikan dari database ini
+  sendirian — pelaku tahap itu, atau pengirim ke tahap itu. Pertanyaan *"siapa yang menyetujui"*,
+  *"pemisahan tugas"*, *"self-approval"* → **NOT COVERED** (kesimpulannya bersifat tuduhan).
+- Yang **boleh** dijawab dari alur: kapan berkas berpindah tahap, berapa lama tersangkut, tahap
+  mana yang paling menahan — tentang **waktu dan volume**, bukan tentang **siapa**.
 
 ## Rute
 
-- Menyebut durasi/SLA → **seberang** `60-waktu-dan-durasi.md`.
-- Menyebut vonis → **seberang** `30-vonis.md`.
+- Waktu & durasi → **lihat** `60-waktu-dan-durasi.md`
+- Vonis → **lihat** `30-vonis.md`
+- Petugas/penginput → **lihat** `70-atribusi-kasus.md`
+
+## Manifes
+
+| Tabel | Kolom | Literal |
+|---|---|---|
+| `fact_pengawasan` | `status_id` | — |
+| `dim_status_code` | `id`, `status_code`, `status_label`, `domain` | `domain='pengawasan'` |
+| `fact_pengawasan_approval` | `pengawasan_id`, `trx_steps`, `status_code`, `urutan_step`, `user_id`, `catatan`, `created_at` | penolakan: `trx_steps LIKE 'ditolak_%'` |

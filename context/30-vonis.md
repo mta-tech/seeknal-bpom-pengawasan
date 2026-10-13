@@ -1,84 +1,77 @@
-Tiga kolom vonis — dan kenapa ketiganya tidak bisa dipertukarkan.
+MK · TMK · mayor · minor · kritikal · memenuhi ketentuan · kesimpulan · balai · pusat · akhir
 
-## Kolom
+# Vonis (kesimpulan penilaian)
 
-| Kolom | Menilai | Diisi oleh |
-|---|---|---|
-| `kesimpulan_penilaian_balai` | hasil verifikasi UPT/balai | balai |
-| `kesimpulan_penilaian_pusat` | hasil verifikasi pusat | pusat |
-| `kesimpulan_penilaian_akhir` | kesimpulan akhir | turunan |
+## Apa yang halaman ini putuskan
 
-## ⚠️ Ketiganya punya himpunan nilai yang BERBEDA
+Kolom vonis mana yang dipakai, bagaimana join ke kamusnya, dan mengapa tiga kolom vonis **tidak
+bisa dipertukarkan**.
 
-Ini jebakan utama domain ini.
+## Tiga kolom vonis, satu kamus
 
-- Kolom **balai** memuat vonis dasar plus gradasi mayor dan minor.
-- Kolom **pusat** memuat semua itu **plus satu tingkat gradasi tertinggi** yang **tidak pernah
-  muncul di kolom balai**.
-- Kolom **akhir** hanya biner — gradasi hilang saat diturunkan.
+`kesimpulan_balai_id`, `kesimpulan_pusat_id`, `kesimpulan_akhir_id` **semuanya** merujuk
+`dim_kesimpulan_penilaian.id` — join **tiga kali** dengan alias berbeda.
 
-> Konsekuensi praktis: `kesimpulan_penilaian_pusat = 'TMK'` **melewatkan** seluruh baris bergradasi
-> di kolom itu. Keluarga TMK harus dicocokkan dengan pola awalan, bukan kesamaan persis:
-> `LIKE 'TMK%'`.
->
-> Dan karena keluarganya berbeda antar kolom, **jangan menyalin himpunan kode dari satu kolom ke
-> kolom lain.** Ambil daftar nilai per kolom — jalur **P2**.
+Kode kamus: `MK` · `TMK` · `TMK_MINOR` · `TMK_KRITIKAL` · `TMK_MAYOR`.
 
-## ⚠️ Kolom akhir terkunci komoditi
+## Tabel keputusan
 
-`kesimpulan_penilaian_akhir` **hanya terisi untuk sebagian komoditi**; untuk komoditi lain seluruh
-barisnya bersentinel.
-
-> Menghitung tingkat kepatuhan dari kolom akhir **menghapus komoditi yang tidak terisi secara
-> diam-diam**. Untuk cakupan menyeluruh, pakai kolom **pusat** dengan fallback ke **balai**, dan
-> sebutkan kolom mana yang dipakai.
-
-Cara memastikan komoditi mana yang terisi: silangkan keterisian ketiga kolom dengan `komoditi` —
-satu query, jalur **P2**.
-
-## Hukum penurunan kolom akhir
-
-Ketika kolom akhir terisi, isinya mengikuti kolom pusat bila pusat sudah menilai, dan mengikuti
-kolom balai bila pusat belum. Hukum ini **konsisten**, sehingga kolom akhir tidak membawa
-informasi baru — ia hanya meringkas.
-
-Karena itu, bila pertanyaannya menuntut cakupan penuh, kolom pusat+balai lebih informatif daripada
-kolom akhir.
-
-## Pertanyaan "gap balai vs pusat"
-
-Gap hanya terdefinisi pada baris yang **kedua kolomnya terisi**. Baris bersentinel di salah satu
-sisi bukan "perbedaan pendapat" — melainkan salah satu pihak belum menilai.
-
-> **Aturan:** saring `balai <> sentinel AND pusat <> sentinel` lebih dulu, baru bandingkan.
-> Sebutkan berapa bagian populasi yang dikeluarkan karena belum lengkap.
-
-Perbandingan juga harus sadar gradasi: balai menulis gradasi mayor/minor sedangkan pusat bisa
-menulis tingkat yang lebih tinggi. Bandingkan pada tingkat yang sama (keluarga TMK versus MK),
-atau nyatakan bahwa gradasi diperlakukan sebagai satu keluarga.
-
-## Sentinel
-
-Ketiga kolom memakai **string** sebagai penanda belum-dinilai, bukan SQL NULL. `IS NULL` di sana
-mengembalikan nol baris. Lihat `90-kualitas-data.md`.
-
-Setiap tren berbasis vonis **wajib menyertakan kelompok bersentinel** atau menyebut porsinya —
-pada periode terbaru porsinya besar karena prosesnya belum selesai, dan tanpa disebut periode itu
-terlihat membaik padahal hanya belum dinilai.
-
-## Istilah pengguna
-
-| Istilah | Cara mengikat |
+| Istilah user | Kolom |
 |---|---|
-| "yang lulus" / "memenuhi ketentuan" | vonis dasar positif — **tanya kolom mana** |
-| "ditolak" / "tidak lolos" | keluarga `TMK*` (pola awalan, `LIKE 'TMK%'`) pada kolom vonis yang ditanyakan — **tanya kolom mana**; untuk tahapan penolakan lihat `45-status-dan-alur.md` |
-| "TMK" | keluarga TMK, pakai pola awalan |
-| "hasil verifikasi balai/UPT" | kolom balai |
-| "hasil verifikasi pusat" | kolom pusat |
-| "kesimpulan akhir" | kolom akhir — ingat keterbatasan komoditinya |
+| "menurut balai" · "hasil verifikasi balai" | `kesimpulan_balai_id` |
+| "menurut pusat" · "hasil evaluasi pusat" | `kesimpulan_pusat_id` |
+| "kesimpulan akhir" · "final" | `kesimpulan_akhir_id` — **terisi hanya sebagian** (lihat Batas) |
+| "TMK mayor/minor/kritikal" | `dim_kesimpulan_penilaian.kode` (`TMK_MAYOR` / `TMK_MINOR` / `TMK_KRITIKAL`) |
+| "yang lulus" · "memenuhi" | `kode='MK'` pada kolom vonis yang dimaksud |
+| "ditolak" · "tidak lolos" | dua jalur: keluarga `TMK*` pada kolom vonis (balai/pusat/akhir), atau `trx_steps LIKE 'ditolak_%'` di `fact_pengawasan_approval` (`45-status-dan-alur.md`) |
+
+## Matriks operasi
+
+| Kolom | Menyaring | Mengelompokkan | Men-join | Memeringkat |
+|---|---|---|---|---|
+| `kesimpulan_balai_id` | butuh kamus | butuh kamus | `dim_kesimpulan_penilaian.id` (alias) | bisa |
+| `kesimpulan_pusat_id` | butuh kamus | butuh kamus | idem (alias berbeda) | bisa |
+| `kesimpulan_akhir_id` | butuh kamus + **sadar cakupan** | idem | idem | sebutkan keterisian |
+| `ketidaksesuaianhasil_kode` | `dim_pengawasan_ketidaksesuaian_hasil` | idem | `.kode` | — |
+
+## Cara mencari
+
+```sql
+-- nilai kamus vonis (jangan hafal)
+SELECT id, kode, keterangan FROM public.dim_kesimpulan_penilaian ORDER BY id;
+
+-- keterisian tiap kolom vonis (wajib dicek sebelum menjawab "kesimpulan")
+SELECT count(*) FILTER (WHERE kesimpulan_balai_id IS NOT NULL) balai,
+       count(*) FILTER (WHERE kesimpulan_pusat_id IS NOT NULL) pusat,
+       count(*) FILTER (WHERE kesimpulan_akhir_id IS NOT NULL) akhir
+FROM public.fact_pengawasan;
+```
+
+## Jebakan
+
+| Gejala | Penyebab | Cara memastikan |
+|---|---|---|
+| "yang lulus" angka berbeda 2× | kolom vonis tertukar (balai vs pusat) | tanyakan/ikat kolom yang dimaksud di Gate 1 |
+| TMK terlihat lebih sedikit | hanya menghitung `TMK`, melewatkan `TMK_*` bergradasi | pakai keluarga (prefix) atau set kode lengkap |
+| kesimpulan akhir kosong banyak | kolom sparsial | sebutkan cakupan sebelum persentase |
+| rekap vonis dari bridge iklan-produk | teks mentah, bukan kode | pakai kolom ID di fakta |
+
+## Batas
+
+- `kesimpulan_akhir_id` hanya terisi untuk sebagian kategori (rokok/obat) → jangan menggunakannya
+  sebagai vonis universal.
+- `kesimpulan_pusat_id` terisi parsial; kosong **bukan** berarti "belum diproses" kecuali dijelaskan.
 
 ## Rute
 
-- Menyebut komoditi → **seberang** `10-komoditi.md`.
-- Menyebut klausul pelanggaran → **seberang** `40-ketidaksesuaian.md`.
-- Menyebut status alur → **seberang** `45-status-dan-alur.md`.
+- Komoditi → **lihat** `10-komoditi.md`
+- Klausul/ketidaksesuaian → **lihat** `40-ketidaksesuaian.md`
+- Status & alur → **lihat** `45-status-dan-alur.md`
+
+## Manifes
+
+| Tabel | Kolom | Literal |
+|---|---|---|
+| `fact_pengawasan` | `kesimpulan_balai_id`, `kesimpulan_pusat_id`, `kesimpulan_akhir_id`, `ketidaksesuaianhasil_kode` | — |
+| `dim_kesimpulan_penilaian` | `id`, `kode` | `MK`, `TMK`, `TMK_MINOR`, `TMK_KRITIKAL`, `TMK_MAYOR` |
+| `dim_pengawasan_ketidaksesuaian_hasil` | `kode`, `keterangan` | — |

@@ -1,50 +1,76 @@
-Produk, NIE, dan pendaftar — semuanya teks bebas.
+produk · nama produk · NIE · pendaftar · produsen · perusahaan · importir
 
-## Kolom
+# Produk dan pendaftar
 
-| Kolom | Isi |
+## Apa yang halaman ini putuskan
+
+Daftar produk per kasus berasal dari mana, bagaimana membaca NIE/pendaftar, dan kolom mana yang
+**tidak boleh** dipakai.
+
+## Tabel keputusan
+
+| Istilah user | Sumber |
 |---|---|
-| `nama_produk` | nama produk yang diiklankan |
-| `nie` | nomor izin edar produk |
-| `pendaftar` | pemilik/pendaftar produk |
-| `nomor_surat` | penomoran surat pengawasan |
+| daftar produk dalam kasus | `bridge_pengawasan_produk` (join `pengawasan_id` = `id` fakta) |
+| jumlah produk dalam kasus | `jumlah_produk` (fakta) — cacah yang tercatat; daftar lengkap dari bridge |
+| nama produk | `bridge_pengawasan_produk.nama_produk` — **bukan** `f.produk_id` |
+| NIE | `bridge_pengawasan_produk.nie` · kamus `dim_produk.nomor_registrasi` |
+| pendaftar | `bridge_pengawasan_produk.pendaftar` · kamus `dim_produk.pendaftar` |
+| produsen | `dim_produk.produsen` (via `produk_id`) |
+| status NIE | `dim_produk.status_registrasi` — mayoritas NULL; sebutkan cakupan |
+| asal produk lokal/impor | `bridge_pengawasan_produk_pusat.asal_produk` (khusus kosmetik yang direview Pusat) |
 
-## ⚠️ `pendaftar` memuat string rusak
+> **`f.produk_id` hanya "1 produk wakil" per kasus** — sering NULL dan tidak lengkap. Daftar lengkap
+> selalu dari bridge. Jangan join `dim_produk` lewat `f.produk_id` dan bridge sekaligus (tertukar).
 
-Sebagian nilai `pendaftar` adalah **teks yang tergandakan tanpa pemisah** — nama perusahaan yang
-sama tertulis dua kali menyambung, hasil artefak proses penyalinan data.
+## Matriks operasi
 
-> Akibatnya `COUNT(DISTINCT pendaftar)` **melebihkan** jumlah perusahaan: satu perusahaan terpecah
-> menjadi beberapa varian rusak.
+| Kolom | Menyaring | Mengelompokkan | Men-join | Memeringkat |
+|---|---|---|---|---|
+| `jumlah_produk` (fakta) | biasa | langsung | — | bisa (produk per kasus) |
+| `nama_produk` | `ILIKE` **sekali** (P3) lalu nilai persis | hati-hati ejaan/entity | — | bisa |
+| `nie` | sentinel dibuang dulu | langsung | `dim_produk.nomor_registrasi` | bisa |
+| `produk_id` (bridge) | butuh angka | langsung | `dim_produk.produk_id` | bisa |
+| `pendaftar` | `ILIKE` sekali lalu nilai persis | **string tergandakan** — lihat Jebakan | `dim_produk.pendaftar` | bisa |
+| `dim_produk.is_imported` | **jangan dipakai** (selalu false) | — | — | — |
+| `dim_produk.status_registrasi` | butuh nilai persis | bisa — status NIE | — | bisa |
 
-**Aturan:** perlakukan cacah pendaftar sebagai **diagnostik kasar**, bukan metrik perusahaan.
-Bila pertanyaannya benar-benar tentang jumlah perusahaan, sebutkan keterbatasan ini. Untuk mencari
-satu perusahaan tertentu, `ILIKE` dengan potongan nama yang cukup pendek agar menangkap varian
-rusaknya juga (jalur **P3**).
+## Cara mencari
 
-## Sentinel
+```sql
+-- 1 produk yang paling sering diawasi (hitung KASUS, bukan baris bridge)
+SELECT b.nama_produk, count(DISTINCT f.id) AS kasus
+FROM public.bridge_pengawasan_produk b
+JOIN public.fact_pengawasan f ON f.id = b.pengawasan_id
+GROUP BY 1 ORDER BY 2 DESC LIMIT 10;
+```
 
-`nomor_surat`, `nie`, dan `pendaftar` sama-sama punya nilai bersentinel dalam porsi yang tidak
-kecil. Bentuk sentinelnya berupa string kosong dan tanda hubung — dengan panjang yang berbeda antar
-kolom.
+## Jebakan
 
-> Buang sentinel **sebelum** `COUNT(DISTINCT ...)`, dan sebutkan porsi yang dibuang bila
-> pertanyaannya tentang cakupan.
+| Gejala | Penyebab | Cara memastikan |
+|---|---|---|
+| daftar produk tidak lengkap | membaca `f.produk_id` saja | baca bridge produk |
+| hasil pencarian teks nol padahal ada | entity HTML (`&amp;`, `&#039;`) | cari potongan kata tanpa tanda baca |
+| jumlah perusahaan membengkak | `pendaftar` memuat string tergandakan | normalisasi/`DISTINCT` — sebutkan bila ragu |
+| "impor" selalu false | `dim_produk.is_imported` tidak reliabel | pakai `bridge_pengawasan_produk_pusat.asal_produk` |
 
-Sentinel pada `nie` punya makna tersendiri: produk diiklankan **tanpa nomor izin edar tercatat**.
-Itu bukan kesalahan data — dan bisa jadi justru hal yang ingin ditanyakan. Jangan membuangnya
-diam-diam bila pertanyaannya menyangkut produk tanpa NIE.
+## Batas
 
-## Yang tidak ada
-
-| Diminta | Status |
-|---|---|
-| **provinsi / kabupaten produsen** | **tidak ada kolomnya** — `95-batas-domain.md` |
-| **golongan obat** (keras/bebas) | tidak ada penandanya |
-| **jenis pangan** | tidak ada di tabel ini |
-| **industri farmasi** sebagai entitas terpisah | hanya ada `pendaftar` sebagai teks |
+- `bridge_pengawasan_produk_pusat` hanya untuk kasus yang direview ulang Pusat — tidak ada baris ≠
+  "belum review".
+- Rokok sering tanpa `produk_id` → `dim_produk` tidak bisa di-join; nama tetap ada di bridge.
 
 ## Rute
 
-- Menyebut media/lokasi → **seberang** `20-media-dan-iklan.md`.
-- Menyebut wilayah → **seberang** `95-batas-domain.md`.
+- Vonis → **lihat** `30-vonis.md`
+- Komoditi → **lihat** `10-komoditi.md`
+- Kualitas teks → **lihat** `90-kualitas-data.md`
+
+## Manifes
+
+| Tabel | Kolom | Literal |
+|---|---|---|
+| `fact_pengawasan` | `produk_id`, `jumlah_produk` | — |
+| `bridge_pengawasan_produk` | `pengawasan_id`, `produk_id`, `nama_produk`, `nie`, `pendaftar` | — |
+| `bridge_pengawasan_produk_pusat` | `pengawasan_id`, `produk_id`, `asal_produk` | — |
+| `dim_produk` | `produk_id`, `nomor_registrasi`, `nama_produk`, `pendaftar`, `produsen`, `status_registrasi` | — |
