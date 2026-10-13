@@ -38,11 +38,12 @@ number = STOP and report honestly (what resolved, what failed, which single deci
 - If the expected magnitude and the result differ wildly, do not "search" for a number that
   feels right — re-check the counting entity and population filter once, then either stand by
   the result or stop honestly. **Never tune filters toward an expected number.**
-- Free-text search (`nama_produk`, `pendaftar`, `lokasi_iklan`): try a coded column first; only
+- Free-text search (`nama_produk`, `pendaftar`, `catatan`): try a coded column first; only
   then ONE combined query with `ILIKE` and a `LIMIT`, max 2 probes total. Still 0 rows -> answer
   "tidak ditemukan" honestly. **Zero rows on a name search is an answer, not a failure.**
+  Teks masih memuat entity HTML (`&amp;`, `&#039;`) — cari potongan kata tanpa tanda baca.
   `pendaftar` carries duplicated-string artefacts, so use a short fragment that also catches them.
-- Clarification goes through `request_clarification`/`ask_user` ONLY — a clarifying question
+- Clarification goes through `ask_clarification`/`ask_user` ONLY — a clarifying question
   typed as plain answer text is never answered and kills the turn.
 - A count question on a populated concept expects at least one counting query — if the plan ends
   with none, re-check the entity and population once before answering rather than stopping short.
@@ -65,10 +66,12 @@ Run these as a list, not as a feeling — each one has failed a real case:
   (spaces, hyphens, case) — one spelling is rarely the whole family.
 - **Column chosen by MEANING.** The three verdict columns are not interchangeable and do not share
   a value set (`30-vonis.md`).
-- **Joins to log or timeline start from the fact table**, never the other way round — those tables
-  contain ids the fact table does not (`45-status-dan-alur.md`).
-- **A "duration" column with only a couple of distinct values is a flag, not a number of days**;
-  check the spread before averaging (`60-waktu-dan-durasi.md`).
+- **Setiap join ke bridge WAJIB dari `fact_pengawasan`, dan hitung kasus dengan `COUNT(DISTINCT f.id)`** — bridge
+  memuat baris anak; tanpa join, hitungan kasus membengkak tanpa error (`00-menghitung.md`).
+- **Riwayat tahapan tersedia di `fact_pengawasan_approval`** (`trx_steps`, `urutan_step`, `created_at`) —
+  lihat `45-status-dan-alur.md`; tabel log/timeline terpisah tidak ada.
+- **Durasi antar-tahap** dihitung dari `created_at` berturutan per kasus (`lag`) di `fact_pengawasan_approval`;
+  durasi kasus = `tgl_end - tgl_start`, saring baris yang tanggalnya terisi (`60-waktu-dan-durasi.md`).
 - **Headline total came from its OWN global query**, never summed from a partitioned breakdown.
   Joining a companion table multiplies parent rows; count `DISTINCT` on the parent id after a join.
 - **Status filter = the asked population.** Never stack filters that erase what was asked about.
@@ -77,10 +80,10 @@ Run these as a list, not as a feeling — each one has failed a real case:
   fill-guards — are unrequested narrowing: drop them unless listed as a mandatory exclusion in
   `00-menghitung.md`. The reverse also holds: a clause carrying the subject (sarana, komoditi,
   jenis pangan, period) must NOT be dropped — dropping it answers a wider question.
-- **Exclusions applied** — central units on per-balai counts; sentinels removed before any
-  `COUNT(DISTINCT ...)`.
-- **Sentinel handled by its actual shape.** The fact table has **no SQL NULL at all** — every
-  "empty" is a text value, so `IS NULL` there always returns nothing (`90-kualitas-data.md`).
+- **Exclusions applied** — sentinels removed before any `COUNT(DISTINCT ...)`.
+- **Kekosongan diperlakukan per kolom, bukan diasumsikan.** Sebagian kolom memakai sentinel teks
+  (`no_surat`), sebagian lain benar-benar NULL (`produk_id`, `provinsi_iklan_id`) — cek bentuk
+  kosongnya untuk kolom yang sedang dipakai (`90-kualitas-data.md`).
 - **The final SQL touches exactly the tables the settled scope implies.**
 - **Coverage stated** when the column used is sparsely filled on the asked population — say which
   slice the answer covers before presenting a ranking or a percentage.
@@ -91,9 +94,9 @@ Run these as a list, not as a feeling — each one has failed a real case:
 
 ## Two failure modes specific to this domain
 
-**1. An anti-join that returns nothing is usually the wrong question shape.** "UPT yang tidak
-melaporkan X" tends to be empty because nearly every balai reports something. Say so, then answer
-what the user meant: a ranking by share, lowest first.
+**1. Pertanyaan "balai tertentu" / "UPT mana yang belum".** Akun memuat semua balai — ikat balai
+yang dimaksud lewat `dim_balai` (`balai_id`) dan sebutkan lingkupnya di jawaban
+(`95-batas-domain.md`).
 
 **2. `SELECT *` is not an answer to a recap question.** The answer shape comes from the question's
 verb — "berapa" takes an aggregate, "tren" takes a grouping by period, "tampilkan data" takes a

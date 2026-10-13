@@ -1,23 +1,26 @@
 ---
 name: bpom-pengawasan-forecaster
-description: "Forecasting skill for predicting future trends from any pengawasan iklan time series. Computes projections deterministically from historical data with quality labels."
-tags: [bpom, pengawasan, forecast]
-version: "1.0.0"
+description: "Forecasting skill for predicting future trends from the pengawasan iklan time series (fact_pengawasan). Deterministic projections via the IBA engine."
+tags: [bpom, pengawasan, forecast, nasional]
+version: "1.1.0"
 ---
 
-# BPOM Forecaster (Trigger)
+# BPOM Pengawasan Forecaster (nasional — semua balai)
 
-Routes BPOM forecast requests to `run_forecast`. This skill owns only the
-BPOM CAPTURE parameters — all compute is deterministic (ETS seasonal fit
-inside the IBA forecast engine). The LLM does **no** forecast arithmetic.
+Routes BPOM forecast requests to `run_forecast`. This skill owns only the CAPTURE parameters — all
+compute is deterministic (ETS seasonal fit inside the IBA forecast engine). The LLM does **no**
+forecast arithmetic.
 
-Load `context/00-menghitung.md` first — it has the entity, grain, and join rules.
-This file covers only the tool workflow.
+Load `context/00-menghitung.md` first — entity, grain, and join rules. This file covers only the
+tool workflow.
 
 ## CAPTURE
+
 Lock `{sql, periods}`.
 
-- Default table = `mv_pengawasan`. Series not stated = Total Pengawasan (event).
+- Default table = `public.fact_pengawasan` — akun mencakup semua balai;
+  filter `balai_id` bila user menanyakan balai tertentu.
+- Series not stated = Total Pengawasan (event).
 - **Horizon translation:** `periods` is a step count on the SQL's own grain —
   monthly: 6 bulan -> 6, 1 tahun -> 12, 3 tahun -> 36, 5 tahun -> 60 -> capped.
   Cap at 36; the tool clamps silently, so when the request exceeds it, SAY in
@@ -30,17 +33,16 @@ Lock `{sql, periods}`.
   through June + July running -> first step = Juli, **"bulan depan" = Agustus**.
   So use `periods >= 2` and name that complete month (Agustus) as the answer's target.
 - Build the SQL using the template exactly (table + filter). If the **series** is
-  ambiguous, call `request_clarification` first.
+  ambiguous, call `ask_clarification` first.
 
 ## SQL Template
 
 ```sql
-SELECT date_trunc('month', tanggal_mulai) AS x,
-       COUNT(DISTINCT id)                  AS y
-FROM   <table>
-WHERE  tanggal_mulai >= '2020-01-01'
-  AND  tanggal_mulai < date_trunc('month', CURRENT_DATE)
-  AND  nama_upt NOT IN ('DEMO BALAI BESAR', 'DEMO TIPE A')
+SELECT date_trunc('month', tgl_start) AS x,
+       COUNT(DISTINCT id)             AS y
+FROM   public.fact_pengawasan
+WHERE  tgl_start >= '2020-01-01'
+  AND  tgl_start < date_trunc('month', CURRENT_DATE)
   AND  <series filter, if any>
 GROUP BY 1 ORDER BY 1
 ```
@@ -48,34 +50,31 @@ GROUP BY 1 ORDER BY 1
 Default Y = `COUNT(DISTINCT id)`. Default grain = monthly. No JOINs, no
 `generate_series`, no recursive CTE (tool rejects these). Univariate only.
 
-**Date column:** `tanggal_mulai` for standard series. `tanggal_input` for data-entry lag.
-Never `day_*` columns (contain outliers).
+**Date column:** `tgl_start` — tanggal kanonik kegiatan. Jangan memakai `created_at`
+kecuali pertanyaannya memang tentang jeda input data. Bound the date range explicitly on `tgl_start`
+(kolom ini bisa memuat tanggal jadwal di masa depan).
 
-**Exclusions are mandatory:**
-- Bound the date range explicitly on `tgl_start` (this column carries stray future dates)
-- Exclude central units (`nama_balai` values that are directorates) from per-balai series
+**Semua balai termasuk unit PUSAT ada di fakta** — pertanyaan per-balai wajib filter `balai_id`;
+baris DEMO sudah dibersihkan di sumber.
 
 ## Series Registry
 
-| Series | Table | Filter |
-|---|---|---|
-| Total Pengawasan | mv_pengawasan | none — count events, not rows |
-| Pengawasan TMK (pusat) | mv_pengawasan | verdict pusat matches the TMK family by prefix |
-| Pengawasan MK (pusat) | mv_pengawasan | verdict pusat = MK |
-| Pengawasan per komoditi | mv_pengawasan | `komoditi = '<value>'` — take the value from the column, never from another domain |
-| Pengawasan per media | mv_pengawasan | `media_iklan = '<value>'` — mind the underscore spelling |
-| Ketidaksesuaian per bulan | mv_pengawasan_ketidaksesuaian | JOIN mv_pengawasan ON id_pengawasan = id |
+| Series | Filter (pada kolom fakta — tanpa JOIN) |
+|---|---|
+| Total Pengawasan | none |
+| Pengawasan TMK (pusat) | `kesimpulan_pusat_id IN (2,3,4,5)` — keluarga TMK; resolve ID kamus di query terpisah, jangan hafal |
+| Pengawasan MK (pusat) | `kesimpulan_pusat_id = 1` |
+| Pengawasan per kategori produk | `kategori = '<value>'` — nilai dari kolom, bukan dari domain lain |
+| Pengawasan per jenis media (kasar) | `jenis_iklan_id = <id>` — resolve id via `dim_pengawasan_jenis_iklan` di query terpisah |
 
-⚠️ **Count events (`COUNT(DISTINCT id)`), not rows.** For some komoditi one event carries several
-products, so a row-based series overstates them relative to the rest (`context/00-menghitung.md`).
+Ketidaksesuaian per bulan **tidak didukung** — butuh JOIN ke bridge, dan tool menolak JOIN.
 
-⚠️ **A verdict-based series must exclude the sentinel** and say so — the unfilled share is large in
-recent periods and would read as a decline (`context/30-vonis.md`).
-
-**Custom series:** User can request any valid filter combination. Build the SQL from the template
-with the requested filter. If the filter is ambiguous, clarify first.
+⚠️ **Count events (`COUNT(DISTINCT id)`).** View ini 1 baris = 1 event, tetapi tetap sebutkan entity
+di jawaban. Untuk series berbasis vonis: **keluarkan NULL** (`kesimpulan_pusat_id IS NOT NULL`) dan
+sebutkan porsinya — review Pusat parsial, tanpa itu tren terbaca menurun palsu.
 
 ## RUN
+
 Call `run_forecast(sql, periods)`. Do NOT compute forecast numbers yourself.
 
 - **After a clarification is answered (user picks a scope):** call `run_forecast`
@@ -89,6 +88,7 @@ Call `run_forecast(sql, periods)`. Do NOT compute forecast numbers yourself.
   offer historical trend instead; don't retry unless the request changes.
 
 ## PRESENT
+
 Read the tool's markdown and compose prose around it — don't invent a new
 structure. Lead with the quality label. Follow the forecast guide for
 vocabulary (never show raw `sigma`/`sub_type`/field names/CV number).
