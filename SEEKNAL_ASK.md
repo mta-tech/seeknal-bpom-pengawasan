@@ -66,7 +66,7 @@ the counting SQL. Chart mechanics live in Gate 5 and `visualize-chart/SKILL.md`.
 - **Counting entity ambiguous** — "berapa pengawasan" can mean baris produk, event, or surat;
   they differ because one event may carry several products (`00-menghitung.md`) -> ask BEFORE SQL.
 - **Verdict column ambiguous** — this domain has three verdict columns (balai, pusat, akhir) with
-  **different value sets**; "yang lulus" or "TMK" must be bound to one of them -> ask.
+  **different value sets**; "yang lulus", "TMK", or "ditolak" must be bound to one of them -> ask.
 - **Informal term not yet bound** — "obat" (one komoditi or the family?), "obat keras" (no marker
   exists), "media luar ruang" (spelling differs from the phrase) -> ask or bind explicitly.
 - **A range phrase that reads two ways** ("rentang 2 minggu" = exactly, or at most?) -> ask.

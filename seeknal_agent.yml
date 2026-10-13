@@ -2,6 +2,11 @@ mode:
   default: auto
 locale: {}
 
+# Raise the analysis-mode tool-call ceiling above the engine default (24) so
+# complex multi-step questions finish without hitting the limit mid-turn.
+# Effective only once the engine's get_tool_call_limit reader is deployed.
+tool_call_limit: 40
+
 prompt:
   # Generic seeknal workflow section (reports/pipelines/publishing) disabled —
   # irrelevant noise for the BPOM analyst; BPOM flow lives in SEEKNAL_ASK.md + skills.
@@ -72,11 +77,20 @@ sql_routing:
   pg_passthrough: true
 
 agent_harness:
-  # Context rule documents run longer than the 200-line default read window,
-  # so the tail of predikat.md / filter_code_reference.md was never reaching the
-  # model unless it happened to ask for the next page. Sized above the longest
-  # file so one read returns the whole document.
-  read_max_lines: 500
+  # MS1: LLM sampling overrides. Default unset = provider default (~1.0), which
+  # historically caused factual hallucination in BPOM answers. 0.5 is the
+  # middle ground between determinism and natural-language phrasing -- lower
+  # than provider default to curb fabrication, higher than 0.0 to keep answer
+  # prose readable. Matches the ERBA reference config; tune based on observed
+  # output quality.
+  model_settings:
+    temperature: 0.5
+
+  # Route pages are small (longest is 00-menghitung.md at ~115 lines) and skill
+  # files are loaded whole by the SkillsToolset, not through read_project_file —
+  # so the default 200-line window never truncates any page or skill. Kept at
+  # the engine default, matching the ERBA reference config.
+  read_max_lines: 200
 
   auto_summarization:
     # ON so the deterministic history processors (microcompact +

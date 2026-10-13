@@ -71,6 +71,7 @@ terlihat membaik padahal hanya belum dinilai.
 | Istilah | Cara mengikat |
 |---|---|
 | "yang lulus" / "memenuhi ketentuan" | vonis dasar positif — **tanya kolom mana** |
+| "ditolak" / "tidak lolos" | keluarga `TMK*` (pola awalan, `LIKE 'TMK%'`) pada kolom vonis yang ditanyakan — **tanya kolom mana**; untuk tahapan penolakan lihat `45-status-dan-alur.md` |
 | "TMK" | keluarga TMK, pakai pola awalan |
 | "hasil verifikasi balai/UPT" | kolom balai |
 | "hasil verifikasi pusat" | kolom pusat |
